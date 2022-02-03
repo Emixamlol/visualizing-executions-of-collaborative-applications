@@ -53,8 +53,8 @@ class PN_counter {
     // merge
     this.merge = function (pnc) {
       for (let i = 0; i < n; i++) {
-        this.#P[i] = max(this.#P[i], pnc.#P[i]);
-        this.#N[i] = max(this.#N[i], pnc.#N[i]);
+        this.#P[i] = this.max(this.#P[i], pnc.#P[i]);
+        this.#N[i] = this.max(this.#N[i], pnc.#N[i]);
       }
     };
   }
