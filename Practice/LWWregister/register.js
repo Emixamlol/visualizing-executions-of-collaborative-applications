@@ -24,7 +24,7 @@ class LWW_Register {
     // merge
     this.merge = function (lwwr) {
       const rr = new LWW_Register(); // the resulting register to be returned
-      if (this.#t <= lwwr.#t) {
+      if (this.compare(lwwr)) {
         rr.#X = lwwr.#X;
         rr.#t = lwwr.#t;
       } else {
