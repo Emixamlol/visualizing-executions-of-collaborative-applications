@@ -1,4 +1,4 @@
-class LWW_Register {
+export default class LWW_Register {
   #X;
   #t;
   constructor() {
