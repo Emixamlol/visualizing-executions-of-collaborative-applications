@@ -1,28 +1,26 @@
 export default class LWW_Register {
   #X;
   #t;
+  static #timestamp = 0;
+
   constructor() {
     this.#X = undefined;
     this.#t = 0;
 
     // update
-    this.assign = function (w) {
+    this.assign = (w) => {
       this.#X = w;
-      this.#t = Date.now();
+      this.#t = ++LWW_Register.#timestamp;
     };
 
     // query
-    this.value = function () {
-      return this.#X;
-    };
+    this.value = () => this.#X;
 
     // compare
-    this.compare = function (lwwr) {
-      return this.#t <= lwwr.#t;
-    };
+    this.compare = (lwwr) => this.#t <= lwwr.#t;
 
     // merge
-    this.merge = function (lwwr) {
+    this.merge = (lwwr) => {
       const rr = new LWW_Register(); // the resulting register to be returned
       if (this.compare(lwwr)) {
         rr.#X = lwwr.#X;
