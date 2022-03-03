@@ -36,7 +36,18 @@ const barWidth = svgWidth / datasetB.length;
 
 const svg = d3.select('svg').attr('width', svgWidth).attr('height', svgHeight);
 
-const barChart = svg.selectAll;
+const barChart = svg
+  .selectAll('rect')
+  .data(datasetB)
+  .enter()
+  .append('rect')
+  .attr('y', (data) => svgHeight - data)
+  .attr('height', (data) => data)
+  .attr('width', barWidth - barPadding)
+  .attr('transform', (d, i) => {
+    const translate = [barWidth * i, 0];
+    return 'translate(' + translate + ')';
+  });
 
 // Creating Labels
 
