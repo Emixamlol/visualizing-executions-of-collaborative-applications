@@ -16,6 +16,8 @@ export default class LWW_Register {
     // query
     this.value = () => this.#X;
 
+    this.timestamp = () => this.#t;
+
     // compare
     this.compare = (lwwr) => this.#t <= lwwr.#t;
 
