@@ -15,9 +15,9 @@ x3.assign(3);
 x1.assign(1);
 
 const merges = [
-  { r1: x3, r2: x2 },
-  { r1: x3, r2: x1 },
-  { r1: x1, r2: x2 },
+  { r1: x3, r2: x2, position: 500 },
+  { r1: x3, r2: x1, position: 640 },
+  { r1: x1, r2: x2, position: 640 },
 ];
 
 console.log(`X1 = ${x1.value()}`);
@@ -124,14 +124,63 @@ lines
       `X${idx + 1}=(${data.register.value()},${data.register.timestamp()})`
   );
 
-const merge_operations = svg.append('g');
-
-merge_operations
+const merge_operations = svg
+  .append('g')
   .selectAll('circle')
   .data(merges)
-  .enter()
+  .enter();
+
+merge_operations
   .append('circle')
-  .attr('cx', (data) => 530 + 35 * data.r1.timestamp())
-  .attr('cy', (data, idx) => (idx * height) / merges.length + margin)
+  .attr('cx', (data) => data.position)
+  .attr(
+    'cy',
+    (data) => ((data.r2.value() - 1) * height) / merges.length + margin
+  )
   .attr('r', 10)
-  .attr('fill', (data) => data.color);
+  .attr('fill', (data) => {
+    for (let obj in registers) {
+      const { register, color } = registers[obj];
+      if (data.r2 === register) return color;
+    }
+  });
+
+merge_operations
+  .append('circle')
+  .attr('cx', (data) => data.position + 100)
+  .attr(
+    'cy',
+    (data) => ((data.r1.value() - 1) * height) / merges.length + margin
+  )
+  .attr('r', 10)
+  .attr('fill', (data) => {
+    for (let obj in registers) {
+      const { register, color } = registers[obj];
+      if (data.r1 === register) return color;
+    }
+  });
+
+merge_operations
+  .append('path')
+  .attr('stroke', 'grey')
+  .attr('d', (data) => {
+    return `M ${data.position} ${
+      ((data.r2.value() - 1) * height) / merges.length + margin
+    } L ${data.position + 100} ${
+      ((data.r1.value() - 1) * height) / merges.length + margin
+    }`;
+  });
+
+merge_operations
+  .append('text')
+  .attr('x', (data) => data.position + 100)
+  .attr(
+    'y',
+    (data) => ((data.r1.value() - 1) * height) / merges.length + margin + 30
+  )
+  .text((data, idx) => {
+    const { r1, r2 } = data;
+    return `X${r1.value()}=(${r1.merge(r2).value()},${r1
+      .merge(r2)
+      .timestamp()})`;
+  });
