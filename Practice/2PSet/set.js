@@ -1,4 +1,4 @@
-class TwoPhase_Set {
+export default class TwoPhase_Set {
   #A;
   #R;
   constructor() {
@@ -6,24 +6,18 @@ class TwoPhase_Set {
     this.#R = new Set([]);
 
     // query
-    this.lookup = function (e) {
-      return this.#A.has(e) && !this.#R.has(e);
-    };
+    this.lookup = (e) => this.#A.has(e) && !this.#R.has(e);
 
     // update
-    this.add = function (e) {
-      this.#A.add(e);
-    };
+    this.add = (e) => this.#A.add(e);
 
     // update
-    this.remove = function (e) {
-      if (this.lookup(e)) {
-        this.#R.add(e);
-      }
+    this.remove = (e) => {
+      if (this.lookup(e)) this.#R.add(e);
     };
 
     // help method to test if a set A is a subset of set B
-    this.subset = function (A, B) {
+    this.subset = (A, B) => {
       if (A.size() <= B) {
         A.forEach((e) => {
           if (!B.has(e)) return false;
@@ -34,12 +28,11 @@ class TwoPhase_Set {
     };
 
     // compare
-    this.compare = function (tps) {
-      return this.subset(this.#A, tps.#A) || this.subset(this.#R, tps.#R);
-    };
+    this.compare = (tps) =>
+      this.subset(this.#A, tps.#A) || this.subset(this.#R, tps.#R);
 
     // help method to get the union between two sets A and B
-    this.union = function (A, B) {
+    this.union = (A, B) => {
       if (A.size() <= B.size()) {
         A.forEach((e) => {
           B.add(e);
@@ -54,7 +47,7 @@ class TwoPhase_Set {
     };
 
     // merge
-    this.merge = function (tps) {
+    this.merge = (tps) => {
       const rs = new TwoPhase_Set(); // the resulting set to be returned
       rs.#A = this.union(this.#A, tps.#A);
       rs.#R = this.union(this.#R, tps.#R);
