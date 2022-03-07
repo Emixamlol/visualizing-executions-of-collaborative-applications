@@ -20,18 +20,6 @@ const merges = [
   { r1: x1, r2: x2, position: 640 },
 ];
 
-console.log(`X1 = ${x1.value()}`);
-console.log(`X2 = ${x2.value()}`);
-console.log(`X3 = ${x3.value()}`);
-
-x3.merge(x2);
-x3.merge(x1);
-x1.merge(x2);
-
-console.log(`X3 = ${merges[0].r1.merge(merges[0].r2).value()}`);
-console.log(`X3 = ${merges[1].r1.merge(merges[1].r2).value()}`);
-console.log(`X1 = ${merges[2].r1.merge(merges[2].r2).value()}`);
-
 // --------------------------------------------- Visualization ---------------------------------------------
 
 const width = 900;
