@@ -1,7 +1,6 @@
 import TwoPhase_Set from './set.js';
 
 const A = new TwoPhase_Set();
-const B = new TwoPhase_Set();
 
 const letters = ['a', 'b', 'c'];
 
@@ -73,7 +72,6 @@ rectangle
       }
       elements
         .select(`text#${el}`)
-        .text('test')
         .attr('fill', (data) => {
           if (A.lookup(el)) {
             return 'black';
