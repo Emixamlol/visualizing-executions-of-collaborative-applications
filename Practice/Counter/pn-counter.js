@@ -1,4 +1,4 @@
-class PN_counter {
+export default class PN_counter {
   #P;
   #N;
   #id;
@@ -8,26 +8,26 @@ class PN_counter {
     this.#N = new Array(n).fill(0);
 
     // help method to get the replica's id
-    this.myID = function () {
+    this.myID = () => {
       let res = this.#id;
       this.#id = (this.#id + 1) % n;
       return res;
     };
 
     // update
-    this.increment = function () {
+    this.increment = () => {
       let g = this.myID();
       this.#P[g]++;
     };
 
     // update
-    this.decrement = function () {
+    this.decrement = () => {
       let g = this.myID();
       this.#N[g]++;
     };
 
     // query
-    this.value = function () {
+    this.value = () => {
       let incSum = 0;
       let decSum = 0;
       for (let i = 0; i < n; i++) {
@@ -38,7 +38,7 @@ class PN_counter {
     };
 
     // compare
-    this.compare = function (pnc) {
+    this.compare = (pnc) => {
       for (let i = 0; i < n; i++) {
         if (this.#P[i] > pnc.#P[i] || this.#N[i] > pnc.#N[i]) return false;
       }
@@ -46,12 +46,10 @@ class PN_counter {
     };
 
     // help method to get the maximum between two numbers
-    this.max = function (a, b) {
-      return a > b ? a : b;
-    };
+    this.max = (a, b) => (a > b ? a : b);
 
     // merge
-    this.merge = function (pnc) {
+    this.merge = (pnc) => {
       for (let i = 0; i < n; i++) {
         this.#P[i] = this.max(this.#P[i], pnc.#P[i]);
         this.#N[i] = this.max(this.#N[i], pnc.#N[i]);
@@ -59,11 +57,3 @@ class PN_counter {
     };
   }
 }
-
-let c1 = new PN_counter(5);
-let c2 = new PN_counter(5);
-c1.increment();
-c1.increment();
-
-console.log(c1.compare(c2));
-console.log(c2.compare(c1));
