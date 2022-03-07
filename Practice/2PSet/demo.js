@@ -81,7 +81,6 @@ rectangle
           return 'red';
         })
         .text(el);
-      console.log(data);
     }, 1000 + idx * 1000);
     return `${op} (${el})`;
   });
