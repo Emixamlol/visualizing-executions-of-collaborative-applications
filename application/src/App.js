@@ -1,7 +1,8 @@
 import React from 'react';
+import Demo from './CRDTs/LWW-Register/demo';
 
 const App = () => {
-  return <h1>visualizing executions of collaborative applications</h1>;
+  return <Demo />;
 };
 
 export default App;
