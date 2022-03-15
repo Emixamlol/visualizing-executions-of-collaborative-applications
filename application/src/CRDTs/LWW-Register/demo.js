@@ -36,7 +36,6 @@ const Demo = () => {
   svg.attr('height', height);
 
   const ellipse = svg.append('g');
-  console.log(ellipse);
 
   ellipse
     .append('path')
