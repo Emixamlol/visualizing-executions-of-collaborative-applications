@@ -1,9 +1,14 @@
 import React from 'react';
-import Demo from './CRDTs/LWW-Register/demo';
-import Proxy from './Proxy';
+import Visualization from './Visualization';
+import REPL from './REPL';
 
 const App = () => {
-  return <Proxy />;
+  return (
+    <div className="grid-container">
+      <Visualization />
+      <REPL />
+    </div>
+  );
 };
 
 export default App;
