@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 const CodeInput = () => {
   const [code, setCode] = useState('');
-  const inputRef = useRef(null);
+  const codeRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,19 +15,33 @@ const CodeInput = () => {
     if (e.key === 'Enter' && e.ctrlKey) {
       handleSubmit(e);
     } else {
-      setCode(inputRef.current.value);
+      setCode(codeRef.current.value);
     }
+  };
+
+  const handleKeyUp = (e) => {
+    const textarea = codeRef.current;
+    textarea.style.height = 'auto';
+    const scHeight = e.target.scrollHeight;
+    textarea.style.height = `${scHeight}px`;
   };
 
   useEffect(() => {
     console.log('useEffect called');
-  }, [code]);
+    return () => {};
+  }, []);
 
   return (
     <div className="repl-element">
       <h2>REPL</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" ref={inputRef} onKeyDown={handleKeyDown} />
+        <textarea
+          ref={codeRef}
+          placeholder="add, remove or manipulate existing CRDTs"
+          onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
+          autoFocus
+        ></textarea>
       </form>
     </div>
   );
