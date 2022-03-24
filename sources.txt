@@ -1,0 +1,27 @@
+D3 documentation: https://d3js.org/ - last checked: 24/03/2022
+
+W3Schools: https://www.w3schools.com/ - last checked: 24/03/2022
+
+D3.js - A Practical Introduction: https://www.youtube.com/watch?v=TOJ9yjvlapY - last checked: 24/03/2022
+
+Exploring D3.js Data Binding/ Joins: https://www.youtube.com/watch?v=ZOeWdkq-L90 - last checked: 24/03/2022
+
+Let's learn D3.js - D3 for data visualization (full course): https://www.youtube.com/watch?v=C4t6qfHZ6Tw - last checked: 24/03/2022
+
+Full React Course 2020 - Learn Fundamentals, Hooks, Context API, React Router, Custom Hooks: https://www.youtube.com/watch?v=4UZrsTqkcW4 - last checked: 24/03/2022
+
+Data Visualization with D3, JavaScript, React - Full Course [2021]: https://www.youtube.com/watch?v=2LhoCfjm8R4 - last checked: 24/03/2022
+
+How to Auto Resize Textarea using HTML CSS & JavaScript: https://www.youtube.com/watch?v=Yor9Y73M764 - last checked: 24/03/2022
+
+Distributed Systems: Principles and Paradigms (Second Edition) ; Andrew Tanenbaum & Maarten Van Steen - last checked: 24/03/2022
+
+Distributed Systems: Concepts and Design (Fifth Edition) ; George Coulouris, Jean Dollimore, Tim Kindberg, Gordon Blair - last checked: 24/03/2022
+
+Operational Transformations as an algorithm for automatic conflict resolution: https://medium.com/coinmonks/operational-transformations-as-an-algorithm-for-automatic-conflict-resolution-3bf8920ea447 - last checked: 24/03/2022
+
+Concurrecy Control in Groupware Systems ; C.A. Ellis, S.J. Gibbs: https://doi.org/10.1145/67544.66963 - last checked: 24/03/2022
+
+Conflict-free Replicated Data Types ; Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski: https://hal.inria.fr/inria-00609399/document - last checked: 24/03/2022
+
+A Comprehensive study of Convergent and Commutative Replicated Data Types ; Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski: https://hal.inria.fr/inria-00555588/document - last checked: 24/03/2022
