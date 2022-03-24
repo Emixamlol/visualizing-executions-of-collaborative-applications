@@ -25,3 +25,5 @@ Concurrecy Control in Groupware Systems ; C.A. Ellis, S.J. Gibbs: https://doi.or
 Conflict-free Replicated Data Types ; Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski: https://hal.inria.fr/inria-00609399/document - last checked: 24/03/2022
 
 A Comprehensive study of Convergent and Commutative Replicated Data Types ; Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski: https://hal.inria.fr/inria-00555588/document - last checked: 24/03/2022
+
+Learn JavaScript Generators In 12 Minutes: https://www.youtube.com/watch?v=IJ6EgdiI_wU - last checked: 24/03/2022
