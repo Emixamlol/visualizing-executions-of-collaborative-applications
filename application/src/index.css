@@ -8,3 +8,18 @@
   display: flex;
   justify-content: space-between;
 }
+
+#repl textarea {
+  width: 40vw;
+  padding: 10px;
+  resize: none;
+  max-height: 36vh;
+}
+
+textarea::-webkit-scrollbar {
+  width: 0px;
+}
+
+#repl button {
+  display: block;
+}
