@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import LWW_Register from './register';
 import * as d3 from 'd3';
 
@@ -30,152 +30,157 @@ const margin = 60;
 
 const Demo = () => {
   const svgRef = useRef(null);
-  const svg = d3.select(svgRef.current);
 
-  svg.attr('width', width);
-  svg.attr('height', height);
+  useEffect(() => {
+    const svg = d3.select(svgRef.current);
 
-  const ellipse = svg.append('g');
+    svg.attr('width', width);
+    svg.attr('height', height);
 
-  ellipse
-    .append('path')
-    .attr('stroke', 'black')
-    .attr('fill', 'none')
-    .attr('stroke-dasharray', '10 10')
-    .attr('d', 'M 30 200 A 50 200 0 0 1 130 200 A 50 200 0 0 1 30 200');
+    const ellipse = svg.append('g');
 
-  const circles = svg.append('g');
+    ellipse
+      .append('path')
+      .attr('stroke', 'black')
+      .attr('fill', 'none')
+      .attr('stroke-dasharray', '10 10')
+      .attr('d', 'M 30 200 A 50 200 0 0 1 130 200 A 50 200 0 0 1 30 200');
 
-  circles
-    .selectAll('circle')
-    .data(registers)
-    .enter()
-    .append('circle')
-    .attr('cx', 80)
-    .attr('cy', (data, idx) => (idx * height) / registers.length + margin)
-    .attr('r', 30)
-    .attr('fill', 'none')
-    .attr('stroke', (data) => data.color);
+    const circles = svg.append('g');
 
-  circles
-    .selectAll('text')
-    .data(registers)
-    .enter()
-    .append('text')
-    .attr('x', 70)
-    .attr('y', (data, idx) => (idx * height) / registers.length + margin)
-    .attr('fill', (data) => data.color)
-    .text((data, idx) => 'X' + (idx + 1));
+    circles
+      .selectAll('circle')
+      .data(registers)
+      .enter()
+      .append('circle')
+      .attr('cx', 80)
+      .attr('cy', (data, idx) => (idx * height) / registers.length + margin)
+      .attr('r', 30)
+      .attr('fill', 'none')
+      .attr('stroke', (data) => data.color);
 
-  const names = svg.append('g');
+    circles
+      .selectAll('text')
+      .data(registers)
+      .enter()
+      .append('text')
+      .attr('x', 70)
+      .attr('y', (data, idx) => (idx * height) / registers.length + margin)
+      .attr('fill', (data) => data.color)
+      .text((data, idx) => 'X' + (idx + 1));
 
-  names
-    .selectAll('text')
-    .data(registers)
-    .enter()
-    .append('text')
-    .attr('x', 150)
-    .attr('y', (data, idx) => (idx * height) / registers.length + margin)
-    .attr('fill', (data) => data.color)
-    .text((data, idx) => 'X' + (idx + 1) + '=(0,0)');
+    const names = svg.append('g');
 
-  const lines = svg.append('g');
+    names
+      .selectAll('text')
+      .data(registers)
+      .enter()
+      .append('text')
+      .attr('x', 150)
+      .attr('y', (data, idx) => (idx * height) / registers.length + margin)
+      .attr('fill', (data) => data.color)
+      .text((data, idx) => 'X' + (idx + 1) + '=(0,0)');
 
-  lines
-    .selectAll('path')
-    .data(registers)
-    .enter()
-    .append('path')
-    .attr('stroke', (data) => data.color)
-    .attr(
-      'd',
-      (data, idx) =>
-        `M 250 ${(idx * height) / registers.length + margin} l ${width - 250} 0`
-    );
+    const lines = svg.append('g');
 
-  lines
-    .selectAll('circle')
-    .data(registers)
-    .enter()
-    .append('circle')
-    .attr('cx', (data) => 230 + 45 * data.register.timestamp())
-    .attr('cy', (data, idx) => (idx * height) / registers.length + margin)
-    .attr('r', 10)
-    .attr('fill', (data) => data.color);
+    lines
+      .selectAll('path')
+      .data(registers)
+      .enter()
+      .append('path')
+      .attr('stroke', (data) => data.color)
+      .attr(
+        'd',
+        (data, idx) =>
+          `M 250 ${(idx * height) / registers.length + margin} l ${
+            width - 250
+          } 0`
+      );
 
-  lines
-    .selectAll('text')
-    .data(registers)
-    .enter()
-    .append('text')
-    .attr('x', (data) => 230 + 45 * data.register.timestamp())
-    .attr('y', (data, idx) => (idx * height) / registers.length + 40)
-    .attr('fill', (data) => data.color)
-    .text(
-      (data, idx) =>
-        `X${idx + 1}=(${data.register.value()},${data.register.timestamp()})`
-    );
+    lines
+      .selectAll('circle')
+      .data(registers)
+      .enter()
+      .append('circle')
+      .attr('cx', (data) => 230 + 45 * data.register.timestamp())
+      .attr('cy', (data, idx) => (idx * height) / registers.length + margin)
+      .attr('r', 10)
+      .attr('fill', (data) => data.color);
 
-  const merge_operations = svg
-    .append('g')
-    .selectAll('circle')
-    .data(merges)
-    .enter();
+    lines
+      .selectAll('text')
+      .data(registers)
+      .enter()
+      .append('text')
+      .attr('x', (data) => 230 + 45 * data.register.timestamp())
+      .attr('y', (data, idx) => (idx * height) / registers.length + 40)
+      .attr('fill', (data) => data.color)
+      .text(
+        (data, idx) =>
+          `X${idx + 1}=(${data.register.value()},${data.register.timestamp()})`
+      );
 
-  merge_operations
-    .append('circle')
-    .attr('cx', (data) => data.position)
-    .attr(
-      'cy',
-      (data) => ((data.r2.value() - 1) * height) / merges.length + margin
-    )
-    .attr('r', 10)
-    .attr('fill', (data) => {
-      for (let obj in registers) {
-        const { register, color } = registers[obj];
-        if (data.r2 === register) return color;
-      }
-    });
+    const merge_operations = svg
+      .append('g')
+      .selectAll('circle')
+      .data(merges)
+      .enter();
 
-  merge_operations
-    .append('circle')
-    .attr('cx', (data) => data.position + 100)
-    .attr(
-      'cy',
-      (data) => ((data.r1.value() - 1) * height) / merges.length + margin
-    )
-    .attr('r', 10)
-    .attr('fill', (data) => {
-      for (let obj in registers) {
-        const { register, color } = registers[obj];
-        if (data.r1 === register) return color;
-      }
-    });
+    merge_operations
+      .append('circle')
+      .attr('cx', (data) => data.position)
+      .attr(
+        'cy',
+        (data) => ((data.r2.value() - 1) * height) / merges.length + margin
+      )
+      .attr('r', 10)
+      .attr('fill', (data) => {
+        for (let obj in registers) {
+          const { register, color } = registers[obj];
+          if (data.r2 === register) return color;
+        }
+      });
 
-  merge_operations
-    .append('path')
-    .attr('stroke', 'grey')
-    .attr('d', (data) => {
-      return `M ${data.position} ${
-        ((data.r2.value() - 1) * height) / merges.length + margin
-      } L ${data.position + 100} ${
-        ((data.r1.value() - 1) * height) / merges.length + margin
-      }`;
-    });
+    merge_operations
+      .append('circle')
+      .attr('cx', (data) => data.position + 100)
+      .attr(
+        'cy',
+        (data) => ((data.r1.value() - 1) * height) / merges.length + margin
+      )
+      .attr('r', 10)
+      .attr('fill', (data) => {
+        for (let obj in registers) {
+          const { register, color } = registers[obj];
+          if (data.r1 === register) return color;
+        }
+      });
 
-  merge_operations
-    .append('text')
-    .attr('x', (data) => data.position + 100)
-    .attr(
-      'y',
-      (data) => ((data.r1.value() - 1) * height) / merges.length + margin + 30
-    )
-    .text((data, idx) => {
-      const { r1, r2 } = data;
-      return `X${r1.value()}=(${r1.merge(r2).value()},${r1
-        .merge(r2)
-        .timestamp()})`;
-    });
+    merge_operations
+      .append('path')
+      .attr('stroke', 'grey')
+      .attr('d', (data) => {
+        return `M ${data.position} ${
+          ((data.r2.value() - 1) * height) / merges.length + margin
+        } L ${data.position + 100} ${
+          ((data.r1.value() - 1) * height) / merges.length + margin
+        }`;
+      });
+
+    merge_operations
+      .append('text')
+      .attr('x', (data) => data.position + 100)
+      .attr(
+        'y',
+        (data) => ((data.r1.value() - 1) * height) / merges.length + margin + 30
+      )
+      .text((data, idx) => {
+        const { r1, r2 } = data;
+        return `X${r1.value()}=(${r1.merge(r2).value()},${r1
+          .merge(r2)
+          .timestamp()})`;
+      });
+  }, []);
 
   return <svg ref={svgRef} width={width} height={height} />;
 };
