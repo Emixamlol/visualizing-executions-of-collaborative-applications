@@ -5,7 +5,7 @@ import { reducer } from './reducer';
 const proxies = [];
 const defaultState = {};
 
-const Index = ({ id, crdt }) => {
+const Index = ({ id, proc, params }) => {
   const [state, dispatch] = useReducer(reducer, defaultState);
 
   /* https://www.w3schools.com/js/js_function_call.asp */
