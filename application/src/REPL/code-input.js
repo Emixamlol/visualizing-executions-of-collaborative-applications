@@ -1,25 +1,22 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { ProxyContext } from '../Proxy/proxy-context';
-import { IdGenerator } from './id-generator';
+import { execute } from './execute';
+import { read } from './read';
 
 const CodeInput = () => {
   const [code, setCode] = useState(''); // the code that gets written in the textarea
   const codeRef = useRef(null); // reference to the textarea
 
-  const { removeProxy, addProxy } = useContext(ProxyContext); // get the functions in order to add/delete proxies from the ProxyContext
+  const proxyFunctionality = useContext(ProxyContext); // get the functions in order to add/delete proxies from the ProxyContext
 
   // Handle what has to happen when the user submits the code
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(e);
-    console.log('submitting code');
-    // try to parse the code, if valid create a Proxy
     try {
-      const parsed = JSON.parse(`{"code": "${codeRef.current.value},"}`);
-      console.log(parsed);
-      addProxy({ id: IdGenerator.next().value, crdt: 'crdt' });
+      execute(read(code), proxyFunctionality);
     } catch (e) {
-      console.log(e);
+      console.log(e.message);
     } finally {
       setCode('');
       codeRef.current.value = '';
@@ -33,8 +30,8 @@ const CodeInput = () => {
 
   // Handle what has to happen when a key is released
   const handleKeyUp = (e) => {
-    setCode(codeRef.current.value);
     const textarea = codeRef.current;
+    setCode(textarea.value);
     textarea.style.height = 'auto';
     const scHeight = e.target.scrollHeight;
     textarea.style.height = `${scHeight}px`;
@@ -42,6 +39,7 @@ const CodeInput = () => {
 
   useEffect(() => {
     console.log('useEffect called');
+    read('const x1 = new counter(5)');
     return () => {};
   }, []);
 
