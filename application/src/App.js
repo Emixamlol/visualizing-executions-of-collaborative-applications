@@ -16,9 +16,10 @@ const App = () => {
   };
 
   const addProxy = (proxy) => {
-    setProxies((proxies) => {
-      return [...proxies, proxy];
-    });
+    if (!proxies.find((el) => el.id === proxy.id))
+      setProxies((proxies) => {
+        return [...proxies, proxy];
+      });
   };
 
   console.log(proxies);
@@ -27,7 +28,7 @@ const App = () => {
     console.log('App useEffect called');
   });
 
-  // Wrap the application in the ProxyContext.Provider so that any component can have access to the properties from 'value' by using the useContext hook
+  // Wrap the application in the ProxyContext.Provider so that any component can have access to the properties from 'value' by using ProxyContext
   return (
     <ProxyContext.Provider value={{ removeProxy, addProxy }}>
       <div className="grid-container">
