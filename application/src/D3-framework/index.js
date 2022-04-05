@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 const data = [];
 
-const Index = () => {
+const Index = ({ proxy }) => {
   // useEffect hook, the function defined within this hook is called each time the component is rendered again
   useEffect(() => {}, [data]); // Render the component if data changes
 
