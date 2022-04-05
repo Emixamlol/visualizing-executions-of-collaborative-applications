@@ -1,12 +1,15 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import Framework from '../D3-framework';
 import { reducer } from './reducer';
+import { createCRDT } from './create-crdt';
 
-const proxies = [];
-const defaultState = {};
+const Index = ({ id, crdt, params }) => {
+  const [data, setData] = useState();
+  // const defaultState = { crdt: createCRDT(crdt, params) };
+  // const [state, dispatch] = useReducer(reducer, defaultState);
 
-const Index = ({ id, proc, params }) => {
-  const [state, dispatch] = useReducer(reducer, defaultState);
+  console.log(id, crdt, params);
+  // console.log(defaultState.crdt);
 
   /* https://www.w3schools.com/js/js_function_call.asp */
 
@@ -39,7 +42,12 @@ const Index = ({ id, proc, params }) => {
 
   const apply = () => {};
 
-  return null; // a Proxy itself does not render anything
+  // useEffect function, renders visualization according to the CRDT data
+  useEffect(() => {
+    console.log('proxy useEffect');
+  }, [data]);
+
+  return <h2>{id}</h2>; // a Proxy itself does not render anything
 };
 
 export default Index;
