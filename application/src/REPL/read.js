@@ -23,7 +23,7 @@ export const read = (code) => {
       if (parsed.shift() !== 'apply')
         throw new Error('cannot read invalid code');
 
-      proc = parsed.shift();
+      proc = 'apply';
       parameters = [keyword, ...parsed];
   }
 
