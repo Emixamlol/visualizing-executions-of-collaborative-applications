@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { ProxyContext } from '../Proxy/proxy-context';
+import { ProxyContext } from '../Proxy/state-handling';
 import { execute } from './execute';
 import { read } from './read';
 
