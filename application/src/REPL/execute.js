@@ -1,7 +1,7 @@
 import { IdGenerator } from './id-generator';
 
 export const execute = ({ proc, parameters }, proxyFunctionality) => {
-  const { addProxy, removeProxy } = proxyFunctionality;
+  const { addProxy, removeProxy, applyProxy } = proxyFunctionality;
 
   console.log(proc, parameters);
 
@@ -18,7 +18,13 @@ export const execute = ({ proc, parameters }, proxyFunctionality) => {
       break;
     }
 
-    default:
+    case 'apply': {
+      const [name, fn, ...params] = parameters;
+      applyProxy(name, fn, params);
       break;
+    }
+
+    default:
+      throw new Error('cannot execute invalid code');
   }
 };
