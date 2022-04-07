@@ -1,12 +1,14 @@
 import { Counter, Register, TPSet } from '../CRDTs';
 
-// this file defines the function which instantiates new CRDT objects
+/**
+ * This file defines the api between proxies and CRDTs, such that the user can call generic functions on a proxy without worrying what CRDT it contains
+ */
 
 export const createCRDT = (crdt, params) => {
-  console.log(crdt);
+  console.log(`creating crdt ${crdt}`);
   switch (crdt) {
     case 'counter':
-      return new Counter(params[0]);
+      return new Counter(parseInt(params[0], 10));
 
     case 'register':
       return new Register();
