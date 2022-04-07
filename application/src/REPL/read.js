@@ -19,11 +19,12 @@ export const read = (code) => {
       parameters = parsed;
       break;
 
-    default:
-      if (parsed.shift() !== 'apply')
+    default: // in this case the first word was a variable name; the next word is then the keyword
+      const fn = parsed.shift();
+      if (!['query', 'merge', 'compare', 'apply'].includes(fn))
         throw new Error('cannot read invalid code');
 
-      proc = 'apply';
+      proc = fn;
       parameters = [keyword, ...parsed];
   }
 
