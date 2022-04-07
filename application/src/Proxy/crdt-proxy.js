@@ -1,80 +1,63 @@
-import { crdt_handler } from './crdt-handler';
 import { createCRDT } from './create-crdt';
 
 export default class CrdtProxy {
   #crdt;
-  #data;
-  #updateData;
+  #state;
 
   constructor(id, crdt, params) {
     this.id = id;
-    this.#crdt = new Proxy(createCRDT(crdt, params), crdt_handler);
-    this.#data = [];
+    this.#crdt = crdt !== undefined ? createCRDT(crdt, params) : crdt;
+    this.#state = [];
 
-    this.#updateData = () => {};
-
-    this.query = () => {
+    this.query = (...args) => {
       switch (crdt) {
         case 'counter':
         case 'register':
           return this.#crdt.value();
 
         case 'set':
-          return this.#crdt.lookup(arguments[0]);
+          return this.#crdt.lookup(args[0]);
 
         default:
-          throw new Error('cannot query unvalid crdt');
+          throw new Error('cannot query invalid crdt');
       }
     };
 
-    this.update = () => {
-      name: switch (crdt) {
-        case 'counter': {
-          const update = arguments[0];
-          switch (update) {
-            case 'increment':
-              this.#crdt.increment();
-              break name;
-
-            case 'decrement':
-              this.#crdt.decrement();
-              break name;
-          }
-        }
-
-        case 'register': {
-          const w = arguments[0];
-          this.#crdt.assign(w);
-          break name;
-        }
-
-        case 'set': {
-          const [update, el] = arguments;
-          switch (update) {
-            case 'add':
-              this.#crdt.add(el);
-              break name;
-
-            case 'remove':
-              this.#crdt.remove(el);
-          }
-        }
-
-        default:
-          throw new Error('cannot update unvalid crdt');
-      }
-    };
-
-    this.compare = (other) => this.#crdt.compare(other);
+    this.compare = (other) => this.#crdt.compare(other.#crdt);
 
     this.merge = (other) => {
-      this.#crdt.merge(other);
+      const crdt = this.#crdt.merge(other.#crdt);
+      const proxy = new CrdtProxy();
+      proxy.id = this.id;
+      proxy.#crdt = crdt;
+      return proxy;
     };
 
-    this.apply = () => {
+    this.apply = (fn, params) => {
       console.log('applying in crdtProxy');
+      this.#crdt[fn].apply(params); // apply the function
+      return this.#updateState(); // update the state and return it
     };
-
-    this.getData = () => this.#data.slice(); // can only get copy of the data so that it cannot be changed directly
   }
+
+  // this method updates the state and returns a copy of it after the update
+  #updateState = (crdt) => {
+    switch (crdt) {
+      case 'counter':
+        this.#state.push();
+        break;
+
+      case 'register':
+        break;
+
+      case 'set':
+        break;
+
+      default:
+        break;
+    }
+    return this.getState();
+  };
+
+  getState = () => this.#state.slice(); // can only get copy of the data so that it cannot be changed directly
 }
