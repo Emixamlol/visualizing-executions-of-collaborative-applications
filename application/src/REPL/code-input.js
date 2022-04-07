@@ -39,7 +39,7 @@ const CodeInput = () => {
 
   useEffect(() => {
     console.log('useEffect called');
-    read('const x1 = new counter(5)');
+    // read('const x1 = new counter(5)');
     return () => {};
   }, []);
 
