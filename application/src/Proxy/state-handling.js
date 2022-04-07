@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Visualization from '../Visualization';
 import REPL from '../REPL';
 import CrdtProxy from './crdt-proxy';
@@ -7,34 +7,43 @@ import CrdtProxy from './crdt-proxy';
 export const ProxyContext = React.createContext();
 
 const StateHandling = () => {
-  const [proxies, setProxies] = useState([]);
+  const [proxies, setProxies] = useState(new Map());
 
-  const addProxy = ({ id, crdt, params }) => {
-    if (!proxies.find((el) => el.id === id)) {
+  const addProxy = (id, crdt, params) => {
+    if (!proxies.has(id)) {
       const proxy = new CrdtProxy(id, crdt, params);
       setProxies((proxies) => {
-        return [...proxies, proxy];
+        return new Map(proxies).set(id, proxy);
       });
     }
   };
 
   const removeProxy = (id) => {
     setProxies((proxies) => {
-      return proxies.filter((proxy) => proxy.id !== id);
+      proxies.delete(id);
+      return new Map(proxies);
     });
   };
 
-  const applyProxy = (id, fn, params) => {
-    const proxy = proxies.find((el) => (el.id = id));
-    proxy.apply(id, fn, params);
+  const mergeProxy = (id, other_id) => {
+    const [p1, p2] = [proxies.get(id), proxies.get(other_id)];
+    proxies.set(id, p1.merge(p2));
+    removeProxy(other_id);
   };
 
-  console.log(proxies);
+  const applyToProxy = (id, fn, params) => {
+    const proxy = proxies.get(id);
+    proxy.apply(fn, params);
+  };
+
+  useEffect(() => {
+    console.log(proxies);
+  }, [proxies]);
 
   // Wrap the application in the ProxyContext.Provider so that any component can have access to the properties from 'value' by using ProxyContext
   return (
     <ProxyContext.Provider
-      value={{ addProxy, removeProxy, applyProxy, proxies }}
+      value={{ addProxy, removeProxy, mergeProxy, applyToProxy, proxies }}
     >
       <div className="grid-container">
         <Visualization />
