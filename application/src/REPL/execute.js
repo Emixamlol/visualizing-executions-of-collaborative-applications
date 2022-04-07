@@ -1,26 +1,31 @@
-import { IdGenerator } from './id-generator';
-
 export const execute = ({ proc, parameters }, proxyFunctionality) => {
-  const { addProxy, removeProxy, applyProxy } = proxyFunctionality;
+  const { addProxy, removeProxy, mergeProxy, applyToProxy } =
+    proxyFunctionality;
 
   console.log(proc, parameters);
 
   switch (proc) {
     case 'new': {
-      const [name, crdt, ...params] = parameters;
-      addProxy({ id: name, crdt, params });
+      const [id, crdt, ...params] = parameters;
+      addProxy(id, crdt, params);
       break;
     }
 
     case 'delete': {
-      const [name] = parameters;
-      removeProxy(name);
+      const [id] = parameters;
+      removeProxy(id);
+      break;
+    }
+
+    case 'merge': {
+      const [id, other_id] = parameters;
+      mergeProxy(id, other_id);
       break;
     }
 
     case 'apply': {
-      const [name, fn, ...params] = parameters;
-      applyProxy(name, fn, params);
+      const [id, fn, ...params] = parameters;
+      applyToProxy(id, fn, params);
       break;
     }
 
