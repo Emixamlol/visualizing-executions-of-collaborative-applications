@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { ProxyContext } from '../Proxy/state-handling';
-import Proxy from '../Proxy';
+import Framework from '../D3-framework';
 import Demo from '../CRDTs/LWW-Register/demo';
 
 // General visualisation of the states of the CRDTs
@@ -11,8 +11,8 @@ const General = () => {
   return (
     <div className="visualization-element">
       <h2>Visualization</h2>
-      {proxies.map((proxy) => {
-        return <Proxy key={proxy.id} {...proxy} />;
+      {Array.from(proxies).map(([id, proxy]) => {
+        return <Framework key={id} proxy={proxy} />;
       })}
       {/* <Demo /> */}
     </div>
