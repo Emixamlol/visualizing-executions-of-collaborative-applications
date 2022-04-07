@@ -45,15 +45,19 @@ export default class PN_counter {
       return true;
     };
 
-    // help method to get the maximum between two numbers
-    this.max = (a, b) => (a > b ? a : b);
-
     // merge
     this.merge = (pnc) => {
+      const rc = new PN_counter(n);
       for (let i = 0; i < n; i++) {
-        this.#P[i] = this.max(this.#P[i], pnc.#P[i]);
-        this.#N[i] = this.max(this.#N[i], pnc.#N[i]);
+        rc.#P[i] = this.#max(this.#P[i], pnc.#P[i]);
+        rc.#N[i] = this.#max(this.#N[i], pnc.#N[i]);
       }
+      return rc;
     };
   }
+
+  // help method to get the maximum between two numbers
+  #max = (a, b) => (a > b ? a : b);
+
+  specificSate = () => [this.value(), this.#id, this.#P, this.#N].slice(); // method to get the entire state of a counter
 }
