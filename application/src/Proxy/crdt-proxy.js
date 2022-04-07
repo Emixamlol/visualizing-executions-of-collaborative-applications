@@ -27,8 +27,7 @@ export default class CrdtProxy {
 
     this.merge = (other) => {
       const crdt = this.#crdt.merge(other.#crdt);
-      const proxy = new CrdtProxy();
-      proxy.id = this.id;
+      const proxy = new CrdtProxy(this.id);
       proxy.#crdt = crdt;
       return proxy;
     };
