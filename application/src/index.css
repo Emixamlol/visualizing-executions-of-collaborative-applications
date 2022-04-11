@@ -1,7 +1,7 @@
 .grid-container {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  grid-auto-rows: 49vh;
+  grid-template-rows: 70vh 28vh;
 }
 
 .flexbox-container {
@@ -13,7 +13,7 @@
   width: 40vw;
   padding: 10px;
   resize: none;
-  max-height: 36vh;
+  max-height: 15vh;
 }
 
 textarea::-webkit-scrollbar {
