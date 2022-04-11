@@ -16,7 +16,7 @@ const CodeInput = () => {
     try {
       execute(read(code), proxyFunctionality);
     } catch (e) {
-      console.log(e.message);
+      console.warn(e.message);
     } finally {
       setCode('');
       codeRef.current.value = '';
