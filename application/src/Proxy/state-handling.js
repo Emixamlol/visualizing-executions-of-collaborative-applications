@@ -34,6 +34,9 @@ const StateHandling = () => {
   const applyToProxy = (id, fn, params) => {
     const proxy = proxies.get(id);
     proxy.apply(fn, params);
+    setProxies((proxies) => {
+      return new Map(proxies).set(id, proxy);
+    });
   };
 
   useEffect(() => {
