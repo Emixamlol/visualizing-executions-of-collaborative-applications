@@ -31,7 +31,7 @@ export default class TwoPhase_Set {
 
   // help method to test if a set A is a subset of set B
   #subset = (A, B) => {
-    if (A.size() <= B) {
+    if (A.size <= B) {
       A.forEach((e) => {
         if (!B.has(e)) return false;
       });
@@ -42,7 +42,7 @@ export default class TwoPhase_Set {
 
   // help method to get the union between two sets A and B
   #union = (A, B) => {
-    if (A.size() <= B.size()) {
+    if (A.size <= B.size) {
       A.forEach((e) => {
         B.add(e);
       });
