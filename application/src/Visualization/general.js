@@ -4,7 +4,7 @@ import Demo from '../CRDTs/LWW-Register/demo';
 
 // General visualisation of the states of the CRDTs
 
-const General = ({ dimensions, proxies }) => {
+const General = ({ dimensions }) => {
   const {
     width,
     height,
@@ -21,17 +21,7 @@ const General = ({ dimensions, proxies }) => {
         width={width}
         height={height}
       />
-      <Framework proxies={proxies} dimensions={dimensions} svgRef={svgRef} />
-      {/* {Array.from(proxies).map(([id, proxy]) => {
-        return (
-          <Framework
-            key={id}
-            proxy={proxy}
-            dimensions={dimensions}
-            svgRef={svgRef}
-          />
-        );
-      })} */}
+      <Framework dimensions={dimensions} svgRef={svgRef} />
       {/* <Demo /> */}
     </div>
   );
