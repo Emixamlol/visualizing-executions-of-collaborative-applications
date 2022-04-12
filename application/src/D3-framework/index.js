@@ -1,7 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import * as d3 from 'd3';
+import { ProxyContext } from '../Proxy/state-handling';
+import Timeline from './timeline';
+import Text from './text';
 
-const Index = ({ proxies, dimensions, svgRef }) => {
+const Index = ({ dimensions, svgRef }) => {
   const {
     width,
     height,
@@ -11,16 +14,16 @@ const Index = ({ proxies, dimensions, svgRef }) => {
   // const [state, setState] = useState(proxy.getState());
   // console.log(state);
 
+  const { proxies } = useContext(ProxyContext);
+
   console.log(proxies);
-  const svg = d3.select(svgRef.current);
-  const idDiv = svg.append('g');
 
   // useEffect hook, the function defined within this hook is called each time the component is rendered again
   useEffect(() => {
-    // const svg = d3.select(svgRef.current);
+    const svg = d3.select(svgRef.current);
     // const idDiv = svg.append('g');
 
-    idDiv
+    /* svg
       .selectAll('text')
       .data(Array.from(proxies))
       .enter()
@@ -28,20 +31,25 @@ const Index = ({ proxies, dimensions, svgRef }) => {
       .attr('x', (d, i) => i * 20)
       .attr('y', 70)
       .attr('fill', 'black')
-      .text(([id, proxy]) => id);
+      .text(([id, proxy]) => id); */
 
     // console.log(proxy);
     console.log(svg);
 
-    console.log(idDiv);
-
     return () => {
-      // idDiv.remove();
-      idDiv.selectAll('text').data(Array.from(proxies)).exit().remove();
+      // svg.selectAll('text').data(Array.from(proxies)).exit().remove();
     };
   }, [proxies]); // Render the component if state changes
 
-  return null;
+  return (
+    <>
+      <Text
+        dimensions={{ ...dimensions, margin: { top: 25 } }}
+        svgRef={svgRef}
+      />
+      <Timeline dimensions={dimensions} svgRef={svgRef} />
+    </>
+  );
 };
 
 export default Index;
