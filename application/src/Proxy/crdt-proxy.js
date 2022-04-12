@@ -1,4 +1,5 @@
 import { createCRDT } from './create-crdt';
+import { createState } from './create-state';
 
 export default class CrdtProxy {
   #crdt;
@@ -7,7 +8,7 @@ export default class CrdtProxy {
   constructor(id, crdt, params) {
     this.id = id;
     this.#crdt = crdt !== undefined ? createCRDT(crdt, params) : crdt;
-    this.#state = {};
+    this.#state = crdt !== undefined ? createState(crdt, params) : {};
 
     this.query = (...args) => {
       switch (crdt) {
