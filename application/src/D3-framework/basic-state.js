@@ -6,10 +6,10 @@ import { ProxyContext } from '../Proxy/state-handling';
  * @returns the svg point which represents the crdt
  */
 
-const Point = ({ dimensions, svgRef }) => {
+const BasicState = ({ dimensions, svgRef }) => {
   const proxies = React.useContext(ProxyContext);
 
-  return <div>Point</div>;
+  return <div>Basic State</div>;
 };
 
-export default Point;
+export default BasicState;
