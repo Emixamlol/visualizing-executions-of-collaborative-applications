@@ -4,9 +4,11 @@ import { createState } from './create-state';
 export default class CrdtProxy {
   #crdt;
   #state;
+  #replica;
 
   constructor(id, crdt, params) {
     this.id = id;
+    this.#replica = id;
     this.#crdt = crdt !== undefined ? createCRDT(crdt, params) : crdt;
     this.#state = crdt !== undefined ? createState(crdt, params) : {};
 
@@ -37,6 +39,15 @@ export default class CrdtProxy {
       console.log(fn, params);
       this.#crdt[fn].apply(this.#crdt, params); // apply the function on the crdt
       return this.#updateState(crdt); // update the state and return it
+    };
+
+    this.replicate = (id) => {
+      // create a copy replica of this crdt
+      const newProxy = new CrdtProxy(id);
+      newProxy.#replica = this.#replica;
+      newProxy.#crdt = this.#crdt;
+      newProxy.#state = this.#state;
+      return newProxy;
     };
   }
 

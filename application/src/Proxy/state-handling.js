@@ -25,6 +25,13 @@ const StateHandling = () => {
     });
   };
 
+  const replicateProxy = (idToReplicate, name) => {
+    const newProxy = proxies.get(idToReplicate).replicate(name);
+    setProxies((proxies) => {
+      return new Map(proxies).set(name, newProxy);
+    });
+  };
+
   const mergeProxy = (id, other_id) => {
     const [p1, p2] = [proxies.get(id), proxies.get(other_id)];
     proxies.set(id, p1.merge(p2));
@@ -46,7 +53,14 @@ const StateHandling = () => {
   // Wrap the application in the ProxyContext.Provider so that any component can have access to the properties from 'value' by using ProxyContext
   return (
     <ProxyContext.Provider
-      value={{ addProxy, removeProxy, mergeProxy, applyToProxy, proxies }}
+      value={{
+        addProxy,
+        removeProxy,
+        replicateProxy,
+        mergeProxy,
+        applyToProxy,
+        proxies,
+      }}
     >
       <div className="grid-container">
         <Visualization />

@@ -1,5 +1,5 @@
 export const execute = ({ proc, parameters }, proxyFunctionality) => {
-  const { addProxy, removeProxy, mergeProxy, applyToProxy } =
+  const { addProxy, removeProxy, replicateProxy, mergeProxy, applyToProxy } =
     proxyFunctionality;
 
   console.log(proc, parameters);
@@ -14,6 +14,12 @@ export const execute = ({ proc, parameters }, proxyFunctionality) => {
     case 'delete': {
       const [id] = parameters;
       removeProxy(id);
+      break;
+    }
+
+    case 'replicate': {
+      const [idToReplicate, name] = parameters; // which object to replicate and the name of the new replica
+      replicateProxy(idToReplicate, name);
       break;
     }
 

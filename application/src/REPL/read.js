@@ -19,6 +19,11 @@ export const read = (code) => {
       parameters = parsed;
       break;
 
+    case 'replicate':
+      proc = keyword;
+      parameters = parsed;
+      break;
+
     default: // in this case the first word was a variable name; the next word is then the keyword
       const fn = parsed.shift();
       if (!['query', 'merge', 'compare', 'apply'].includes(fn))
