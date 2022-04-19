@@ -29,9 +29,11 @@ export default class CrdtProxy {
     this.compare = (other) => this.#crdt.compare(other.#crdt);
 
     this.merge = (other) => {
-      const proxy = new CrdtProxy(this.id);
-      proxy.#crdt = this.#crdt.merge(other.#crdt);
-      return proxy;
+      if (this.#replica === other.#replica) {
+        const proxy = new CrdtProxy(this.id);
+        proxy.#crdt = this.#crdt.merge(other.#crdt);
+        return proxy;
+      }
     };
 
     this.apply = (fn, params) => {
