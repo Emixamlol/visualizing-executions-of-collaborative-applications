@@ -10,7 +10,7 @@ const Index = () => {
   const dimensions = {
     width: '50vw',
     height: '70vh',
-    margin: { top: 20, right: 20, bottom: 20, left: 20 },
+    margin: { top: 50, right: 20, bottom: 20, left: 20 },
   };
 
   const { proxies } = useContext(ProxyContext);
