@@ -1,3 +1,4 @@
+import { max } from 'd3';
 import { createCRDT } from './create-crdt';
 import { createState } from './create-state';
 
@@ -9,8 +10,14 @@ export default class CrdtProxy {
   constructor(id, crdt, params) {
     this.id = id;
     this.#replica = id;
-    this.#crdt = crdt !== undefined ? createCRDT(crdt, params) : crdt;
-    this.#state = crdt !== undefined ? createState(crdt, params) : {};
+    this.#crdt =
+      crdt !== undefined && params !== undefined
+        ? createCRDT(crdt, params)
+        : crdt;
+    this.#state =
+      crdt !== undefined && params !== undefined
+        ? createState(crdt, params)
+        : {};
 
     this.query = (...args) => {
       switch (crdt) {
@@ -30,10 +37,12 @@ export default class CrdtProxy {
 
     this.merge = (other) => {
       if (this.#replica === other.#replica) {
-        const proxy = new CrdtProxy(this.id);
+        const proxy = new CrdtProxy(this.id, crdt);
         proxy.#crdt = this.#crdt.merge(other.#crdt);
+        proxy.#state = this.#state;
         return proxy;
       }
+      return false;
     };
 
     this.apply = (fn, params) => {
@@ -43,13 +52,23 @@ export default class CrdtProxy {
       return this.#updateState(crdt); // update the state and return it
     };
 
-    this.replicate = (id) => {
+    this.replicate = (id, pid) => {
       // create a copy replica of this crdt
-      const newProxy = new CrdtProxy(id);
-      newProxy.#replica = this.#replica;
-      newProxy.#crdt = this.#crdt;
-      newProxy.#state = this.#state;
-      return newProxy;
+      const [maxProcesses] = params;
+      console.log(maxProcesses);
+      if (pid < maxProcesses) {
+        const newProxy = new CrdtProxy(id, crdt);
+        newProxy.#replica = this.#replica;
+        newProxy.#crdt = createCRDT(crdt, [maxProcesses, pid]);
+        newProxy.#state = this.#state;
+        return newProxy;
+      }
+      return false; // if we reached the max number of processes, don't replicate the crdt
+    };
+
+    this.remove = () => {
+      // removing a proxy simply sets the state color to red
+      this.#state.color = 'red';
     };
   }
 
