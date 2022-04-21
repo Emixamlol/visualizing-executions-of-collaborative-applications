@@ -12,8 +12,8 @@ export const execute = ({ proc, parameters }, proxyFunctionality) => {
     }
 
     case 'delete': {
-      const [id] = parameters;
-      removeProxy(id);
+      const [id, ...replicas] = parameters;
+      removeProxy(id, replicas);
       break;
     }
 
