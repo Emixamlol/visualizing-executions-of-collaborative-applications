@@ -6,7 +6,7 @@ export const createState = (crdt, params) => {
 
   switch (crdt) {
     case 'counter': {
-      state.color = 'red';
+      state.color = 'DarkGoldenRod';
       state.content = 0;
       state.leftWrapper = ''; // defines how the displayed content is wrapped from the left
       state.rightWrapper = ''; // defines how the displayed content is wrapped from the right
