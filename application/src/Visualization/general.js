@@ -20,7 +20,7 @@ const General = ({ dimensions }) => {
         width={width}
         height={height}
       />
-      {/* <Framework dimensions={dimensions} svgRef={svgRef} /> */}
+      <Framework dimensions={dimensions} svgRef={svgRef} />
       {/* <Demo /> */}
     </div>
   );
