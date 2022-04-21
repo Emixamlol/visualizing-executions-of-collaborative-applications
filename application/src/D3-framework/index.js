@@ -3,13 +3,14 @@ import * as d3 from 'd3';
 import { ProxyContext } from '../Proxy/state-handling';
 import Timeline from './timeline';
 import Text from './text';
+import BasicState from './basic-state';
 
 const Index = ({ dimensions, svgRef }) => {
-  const {
+  /* const {
     width,
     height,
     margin: { top, right, bottom, left },
-  } = dimensions;
+  } = dimensions; */
 
   // const [state, setState] = useState(proxy.getState());
   // console.log(state);
@@ -44,10 +45,12 @@ const Index = ({ dimensions, svgRef }) => {
   return (
     <>
       <Text
-        dimensions={{ ...dimensions, margin: { top: 25 } }}
+        dimensions={{ ...dimensions, margin: { top: 55 } }}
         svgRef={svgRef}
+        position={{ x: 50, y: 50 }}
       />
       <Timeline dimensions={dimensions} svgRef={svgRef} />
+      <BasicState dimensions={dimensions} svgRef={svgRef} />
     </>
   );
 };
