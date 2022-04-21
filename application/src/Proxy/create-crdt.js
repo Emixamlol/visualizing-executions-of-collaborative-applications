@@ -7,14 +7,20 @@ import { Counter, Register, TPSet } from '../CRDTs';
 export const createCRDT = (crdt, params) => {
   console.log(`creating crdt ${crdt}`);
   switch (crdt) {
-    case 'counter':
-      return new Counter(parseInt(params[0], 10));
+    case 'counter': {
+      const [n, pid] = params.map((value) => parseInt(value, 10));
+      return new Counter(n, pid);
+    }
 
-    case 'register':
-      return new Register();
+    case 'register': {
+      const [maxProcesses, pid] = params.map((value) => parseInt(value, 10));
+      return new Register(maxProcesses, pid);
+    }
 
-    case 'set':
-      return new TPSet();
+    case 'set': {
+      const [maxProcesses, pid] = params.map((value) => parseInt(value, 10));
+      return new TPSet(maxProcesses, pid);
+    }
 
     default:
       throw new Error('this CRDT does not exist');
