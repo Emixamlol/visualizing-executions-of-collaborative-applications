@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import LWW_Register from './register';
 import * as d3 from 'd3';
 
-const x1 = new LWW_Register();
-const x2 = new LWW_Register();
-const x3 = new LWW_Register();
+const x1 = new LWW_Register(3, 0);
+const x2 = new LWW_Register(3, 1);
+const x3 = new LWW_Register(3, 2);
 
 const registers = [
   { register: x1, color: 'blue' },
@@ -102,7 +102,7 @@ const Demo = () => {
       .data(registers)
       .enter()
       .append('circle')
-      .attr('cx', (data) => 230 + 45 * data.register.timestamp())
+      .attr('cx', (data) => 230 + 45 * data.register.printClock())
       .attr('cy', (data, idx) => (idx * height) / registers.length + margin)
       .attr('r', 10)
       .attr('fill', (data) => data.color);
@@ -112,12 +112,12 @@ const Demo = () => {
       .data(registers)
       .enter()
       .append('text')
-      .attr('x', (data) => 230 + 45 * data.register.timestamp())
+      .attr('x', (data) => 230 + 45 * data.register.printClock())
       .attr('y', (data, idx) => (idx * height) / registers.length + 40)
       .attr('fill', (data) => data.color)
       .text(
         (data, idx) =>
-          `X${idx + 1}=(${data.register.value()},${data.register.timestamp()})`
+          `X${idx + 1}=(${data.register.value()},${data.register.printClock()})`
       );
 
     const merge_operations = svg
@@ -178,7 +178,7 @@ const Demo = () => {
         const { r1, r2 } = data;
         return `X${r1.value()}=(${r1.merge(r2).value()},${r1
           .merge(r2)
-          .timestamp()})`;
+          .printClock()})`;
       });
   }, []);
 
