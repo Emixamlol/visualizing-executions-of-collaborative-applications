@@ -15,6 +15,13 @@ const BasicState = ({ dimensions, svgRef }) => {
   } = dimensions;
 
   const { proxies } = React.useContext(ProxyContext);
+  const replicas = (() => {
+    let arr = [];
+    for (const [id, [original, map]] of proxies.entries()) {
+      arr = arr.concat(Array.from(map));
+    }
+    return arr;
+  })();
 
   const localHeight = (parseInt(height, 10) * visualViewport.height) / 100;
   const localWidth = (parseInt(width, 10) * visualViewport.width) / 100;
@@ -23,11 +30,11 @@ const BasicState = ({ dimensions, svgRef }) => {
     const svg = d3.select(svgRef.current);
     const basicStates = svg.append('g');
 
-    console.log(Array.from(proxies));
+    console.log(replicas);
 
     basicStates
       .selectAll('circle')
-      .data(Array.from(proxies))
+      .data(replicas)
       .enter()
       .append('circle')
       .attr('cx', ([id, proxy]) => 170)

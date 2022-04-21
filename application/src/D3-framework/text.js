@@ -14,7 +14,15 @@ const Text = ({ dimensions, svgRef, position }) => {
     margin: { top, right, bottom, left },
   } = dimensions;
   const { x: xpos, y: ypos } = position;
+
   const { proxies } = React.useContext(ProxyContext);
+  const replicas = (() => {
+    let arr = [];
+    for (const [id, [original, map]] of proxies.entries()) {
+      arr = arr.concat(Array.from(map));
+    }
+    return arr;
+  })();
 
   // convert the vh values to numbers
   const localHeight = (parseInt(height, 10) * visualViewport.height) / 100;
@@ -26,7 +34,7 @@ const Text = ({ dimensions, svgRef, position }) => {
 
     text
       .selectAll('text')
-      .data(Array.from(proxies))
+      .data(replicas)
       .enter()
       .append('text')
       .attr('x', xpos)

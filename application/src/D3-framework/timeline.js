@@ -15,6 +15,13 @@ const Timeline = ({ dimensions, svgRef }) => {
   } = dimensions;
 
   const { proxies } = useContext(ProxyContext);
+  const replicas = (() => {
+    let arr = [];
+    for (const [id, [original, map]] of proxies.entries()) {
+      arr = arr.concat(Array.from(map));
+    }
+    return arr;
+  })();
   //   const timelines = svg.append('g');
 
   // convert the vh values to numbers
@@ -29,7 +36,7 @@ const Timeline = ({ dimensions, svgRef }) => {
 
     timelines
       .selectAll('path')
-      .data(Array.from(proxies))
+      .data(replicas)
       .enter()
       .append('path')
       .attr('stroke', ([id, proxy]) => proxy.getState().color)
