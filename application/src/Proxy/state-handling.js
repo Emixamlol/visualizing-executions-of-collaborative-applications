@@ -7,7 +7,8 @@ import CrdtProxy from './crdt-proxy';
 export const ProxyContext = React.createContext();
 
 const StateHandling = () => {
-  const [proxies, setProxies] = useState(new Map()); // TODO : refactor to map of [id -> [originalProxy, Map of replicas]]
+  const [proxies, setProxies] = useState(new Map());
+  const [originalCRDTs] = useState(new Map()); // maps replicas to the original crdt id they were replicated from
 
   const addProxy = (id, crdt, params) => {
     if (!proxies.has(id)) {
@@ -18,71 +19,79 @@ const StateHandling = () => {
     }
   };
 
-  const removeProxy = (id, replicas) => {
-    console.log(replicas);
-    if (!replicas.length) {
-      // we want to delete all the replicas (including the original one)
-      setProxies((proxies) => {
-        const [original, replicas] = proxies.get(id);
-        original.remove();
-        replicas.forEach((replica) => replica.remove());
-        proxies.delete(id);
-        return new Map(proxies);
-      });
-    } else {
-      // we only want to delete the specified replicas
-      const [original, reps] = proxies.get(id);
-      replicas.forEach((replica) => {
-        reps.get(replica).remove();
-        reps.delete(replica);
-      });
-      setProxies((proxies) => {
-        return new Map(proxies).set(id, [original, reps]);
-      });
-    }
+  const removeProxy = (id) => {
+    const originalCrdtId = originalCRDTs.get(id); // get the id of crdt of which id is a replica
+    const [original, replicas] = proxies.get(originalCrdtId);
+    const proxy = replicas.get(id);
+    proxy.remove();
+    setProxies((proxies) => {
+      replicas.delete(id);
+      originalCRDTs.delete(id);
+      return new Map(proxies).set(originalCrdtId, [
+        original,
+        new Map(replicas),
+      ]);
+    });
   };
 
-  const replicateProxy = (idToReplicate, name) => {
+  const replicateProxy = (idToReplicate, replicaId) => {
     if (
       proxies.has(idToReplicate) &&
-      !proxies.get(idToReplicate)[1].has(name)
+      !proxies.get(idToReplicate)[1].has(replicaId)
     ) {
       const [original, replicas] = proxies.get(idToReplicate); // get the original proxy we want to replicate and the map of its current replicas
       const pid = replicas.size + 1;
-      const newProxy = original.replicate(name, pid);
+      const newProxy = original.replicate(replicaId, pid);
       if (newProxy) {
+        originalCRDTs.set(replicaId, idToReplicate); // save the fact that replicaId was replicated from idToReplicate
         setProxies((proxies) => {
           return new Map(proxies).set(idToReplicate, [
             original,
-            new Map(replicas).set(name, newProxy),
+            new Map(replicas).set(replicaId, newProxy),
           ]);
         });
       }
     }
   };
 
-  const mergeProxy = (object, id, other_id) => {
+  const mergeProxy = (id, other_id) => {
+    const originalCrdtId = originalCRDTs.get(id); // get the id of crdt of which id is a replica
     // get the map of object's replicas
-    const [original, replicas] = proxies.get(object);
+    const [original, replicas] = proxies.get(originalCrdtId);
     const [p1, p2] = [replicas.get(id), replicas.get(other_id)];
     const merged = p1.merge(p2);
     if (merged) {
-      proxies.set(object, [original, new Map(replicas).set(id, p1.merge(p2))]);
+      proxies.set(originalCrdtId, [
+        original,
+        new Map(replicas).set(id, p1.merge(p2)),
+      ]);
       removeProxy(other_id);
     }
   };
 
   const applyToProxy = (id, fn, params) => {
-    const proxy = proxies.get(id);
+    const originalCrdtId = originalCRDTs.get(id); // get the id of crdt of which id is a replica
+    const [original, replicas] = proxies.get(originalCrdtId);
+    const proxy = replicas.get(id);
     proxy.apply(fn, params);
     setProxies((proxies) => {
-      return new Map(proxies).set(id, proxy);
+      return new Map(proxies).set(originalCrdtId, [
+        original,
+        new Map(replicas).set(id, proxy),
+      ]);
     });
   };
 
   useEffect(() => {
     console.log(proxies);
-    console.log(proxies.entries());
+    const replicas = (() => {
+      let arr = [];
+      for (const [id, [original, map]] of proxies.entries()) {
+        arr = arr.concat(Array.from(map));
+      }
+      return arr;
+    })();
+    console.log(replicas);
   }, [proxies]);
 
   // Wrap the application in the ProxyContext.Provider so that any component can have access to the properties from 'value' by using ProxyContext
