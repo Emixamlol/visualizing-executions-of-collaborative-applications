@@ -1,4 +1,3 @@
-import { max } from 'd3';
 import { createCRDT } from './create-crdt';
 import { createState } from './create-state';
 
@@ -52,12 +51,12 @@ export default class CrdtProxy {
       return this.#updateState(crdt); // update the state and return it
     };
 
-    this.replicate = (id, pid) => {
+    this.replicate = (replicaId, pid) => {
       // create a copy replica of this crdt
       const [maxProcesses] = params;
       console.log(maxProcesses);
       if (pid < maxProcesses) {
-        const newProxy = new CrdtProxy(id, crdt);
+        const newProxy = new CrdtProxy(replicaId, crdt);
         newProxy.#replica = this.#replica;
         newProxy.#crdt = createCRDT(crdt, [maxProcesses, pid]);
         newProxy.#state = this.#state;
