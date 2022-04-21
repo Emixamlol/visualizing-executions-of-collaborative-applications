@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useRef } from 'react';
 import Framework from '../D3-framework';
 import Demo from '../CRDTs/LWW-Register/demo';
 
@@ -14,14 +14,13 @@ const General = ({ dimensions }) => {
 
   return (
     <div className="visualization-element">
-      {/* <h2>Visualization</h2> */}
       <svg
         id="general-visualization"
         ref={svgRef}
         width={width}
         height={height}
       />
-      <Framework dimensions={dimensions} svgRef={svgRef} />
+      {/* <Framework dimensions={dimensions} svgRef={svgRef} /> */}
       {/* <Demo /> */}
     </div>
   );
