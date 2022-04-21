@@ -1,9 +1,16 @@
+import VectorClock from '../vector-clock';
+
 export default class PN_counter {
-  #P;
-  #N;
-  #id;
-  constructor(n) {
+  #P; // increments
+  #N; // decrements
+  #id; // id of the replica
+  #pid; // id of the process handling the replica
+  #timestamp; // vector clock
+
+  constructor(n, pid) {
     this.#id = 0;
+    this.#pid = pid;
+    this.#timestamp = new VectorClock(n);
     this.#P = new Array(n).fill(0);
     this.#N = new Array(n).fill(0);
 
@@ -18,12 +25,14 @@ export default class PN_counter {
     this.increment = () => {
       let g = this.myID();
       this.#P[g]++;
+      this.#timestamp.increase(pid);
     };
 
     // update
     this.decrement = () => {
       let g = this.myID();
       this.#N[g]++;
+      this.#timestamp.increase(pid);
     };
 
     // query
@@ -49,15 +58,24 @@ export default class PN_counter {
     this.merge = (pnc) => {
       const rc = new PN_counter(n);
       for (let i = 0; i < n; i++) {
-        rc.#P[i] = this.#max(this.#P[i], pnc.#P[i]);
-        rc.#N[i] = this.#max(this.#N[i], pnc.#N[i]);
+        rc.#P[i] = Math.max(this.#P[i], pnc.#P[i]);
+        rc.#N[i] = Math.max(this.#N[i], pnc.#N[i]);
       }
+      rc.#pid = this.#pid;
+      rc.#timestamp = this.#timestamp.merge(pnc.#timestamp);
       return rc;
     };
   }
 
-  // help method to get the maximum between two numbers
-  #max = (a, b) => (a > b ? a : b);
+  printClock = () => this.#timestamp.printClock();
 
-  specificSate = () => [this.value(), this.#id, this.#P, this.#N].slice(); // method to get the entire state of a counter
+  specificSate = () =>
+    [
+      this.value(),
+      this.#id,
+      this.#P,
+      this.#N,
+      this.#pid,
+      this.#timestamp.printClock,
+    ].slice(); // method to get the entire state of a counter
 }

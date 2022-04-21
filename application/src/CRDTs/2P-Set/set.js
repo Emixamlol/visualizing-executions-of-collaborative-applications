@@ -1,7 +1,13 @@
+import VectorClock from '../vector-clock';
+
 export default class TwoPhase_Set {
   #A;
   #R;
-  constructor() {
+  #timestamp;
+  #pid;
+  constructor(maxProcesses, pid) {
+    this.#timestamp = new VectorClock(maxProcesses);
+    this.#pid = pid;
     this.#A = new Set([]);
     this.#R = new Set([]);
 
@@ -9,11 +15,15 @@ export default class TwoPhase_Set {
     this.lookup = (e) => this.#A.has(e) && !this.#R.has(e);
 
     // update
-    this.add = (e) => this.#A.add(e);
+    this.add = (e) => {
+      this.#A.add(e);
+      this.#timestamp.increase(pid);
+    };
 
     // update
     this.remove = (e) => {
       if (this.lookup(e)) this.#R.add(e);
+      this.#timestamp.increase(pid);
     };
 
     // compare
@@ -25,6 +35,8 @@ export default class TwoPhase_Set {
       const rs = new TwoPhase_Set(); // the resulting set to be returned
       rs.#A = this.#union(this.#A, tps.#A);
       rs.#R = this.#union(this.#R, tps.#R);
+      rs.#pid = this.#pid;
+      rs.#timestamp = this.#timestamp.merge(tps.#timestamp);
       return rs;
     };
   }
@@ -54,6 +66,8 @@ export default class TwoPhase_Set {
       return A;
     }
   };
+
+  printClock = () => this.#timestamp.printClock();
 
   specificState = () => [];
 }

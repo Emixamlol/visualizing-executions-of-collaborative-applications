@@ -1,25 +1,26 @@
-export default class LWW_Register {
-  #X;
-  #t;
-  static #timestamp = 0;
+import VectorClock from '../vector-clock';
 
-  constructor() {
+export default class LWW_Register {
+  #X; // value stored in the register
+  #t; // timestamp (vector clock)
+  #pid; // id of the process handling the replica
+
+  constructor(maxProcesses, pid) {
     this.#X = undefined;
-    this.#t = 0;
+    this.#t = new VectorClock(maxProcesses);
+    this.#pid = pid;
 
     // update
     this.assign = (w) => {
       this.#X = w;
-      this.#t = ++LWW_Register.#timestamp;
+      this.#t.increase(pid);
     };
 
     // query
     this.value = () => this.#X;
 
-    this.timestamp = () => this.#t;
-
     // compare
-    this.compare = (lwwr) => this.#t <= lwwr.#t;
+    this.compare = (lwwr) => this.#t.lessOrEqual(lwwr.#t);
 
     // merge
     this.merge = (lwwr) => {
@@ -31,9 +32,13 @@ export default class LWW_Register {
         rr.#X = this.#X;
         rr.#t = this.#t;
       }
+      rr.#pid = this.#pid;
+      rr.#t = this.#t.merge(lwwr.#t);
       return rr;
     };
   }
+
+  printClock = () => this.#t.printClock();
 
   specificState = () => [];
 }
