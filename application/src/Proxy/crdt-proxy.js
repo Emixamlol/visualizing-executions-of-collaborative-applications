@@ -1,3 +1,4 @@
+import { thresholdSturges } from 'd3';
 import { createCRDT } from './create-crdt';
 import { createState } from './create-state';
 
@@ -35,10 +36,19 @@ export default class CrdtProxy {
     this.compare = (other) => this.#crdt.compare(other.#crdt);
 
     this.merge = (other) => {
+      // TODO: refactor
+      console.log('check if same replica');
       if (this.#replica === other.#replica) {
+        console.log('merging');
         const proxy = new CrdtProxy(this.id, crdt);
         proxy.#crdt = this.#crdt.merge(other.#crdt);
-        proxy.#state = this.#state;
+        // save merge in history
+        // proxy.#state = {
+        //   ...this.#state,
+        //   history: [...this.#state.history, `merged ${id} with ${other.id}`],
+        // };
+        proxy.#updateState(crdt);
+        console.log('finished updating state');
         return proxy;
       }
       return false;
@@ -48,18 +58,27 @@ export default class CrdtProxy {
       console.log('applying in crdtProxy');
       console.log(fn, params);
       this.#crdt[fn].apply(this.#crdt, params); // apply the function on the crdt
+      // save function application in history
+      // this.#state = {
+      //   ...this.#state,
+      //   history: [
+      //     ...this.#state.history,
+      //     `applied '${fn}' to ${id} with parameters = ${JSON.stringify(
+      //       params
+      //     )}`,
+      //   ],
+      // };
       return this.#updateState(crdt); // update the state and return it
     };
 
     this.replicate = (replicaId, pid) => {
       // create a copy replica of this crdt
       const [maxProcesses] = params;
-      console.log(maxProcesses);
       if (pid < maxProcesses) {
         const newProxy = new CrdtProxy(replicaId, crdt);
         newProxy.#replica = this.#replica;
         newProxy.#crdt = createCRDT(crdt, [maxProcesses, pid]);
-        newProxy.#state = this.#state;
+        newProxy.#state = { ...this.#state }; // copy the state
         return newProxy;
       }
       return false; // if we reached the max number of processes, don't replicate the crdt
@@ -73,21 +92,13 @@ export default class CrdtProxy {
 
   // this method updates the state and returns a copy of it after the update
   #updateState = (crdt) => {
-    switch (crdt) {
-      case 'counter': {
-        // this.#state.push();
-        break;
-      }
-
-      case 'register':
-        break;
-
-      case 'set':
-        break;
-
-      default:
-        break;
-    }
+    console.log('updating state');
+    const payload = this.#crdt['payload'].apply(this.#crdt);
+    this.#state = {
+      ...this.#state,
+      payload,
+      history: this.#state.history.concat([payload]),
+    };
     return this.getState();
   };
 
