@@ -23,6 +23,7 @@ const StateHandling = () => {
     const originalCrdtId = originalCRDTs.get(id); // get the id of crdt of which id is a replica
     const [original, replicas] = proxies.get(originalCrdtId);
     const proxy = replicas.get(id);
+    console.log(proxy);
     proxy.remove();
     setProxies((proxies) => {
       replicas.delete(id);
@@ -56,16 +57,23 @@ const StateHandling = () => {
 
   const mergeProxy = (id, other_id) => {
     const originalCrdtId = originalCRDTs.get(id); // get the id of crdt of which id is a replica
+    console.log(originalCrdtId);
     // get the map of object's replicas
     const [original, replicas] = proxies.get(originalCrdtId);
+    console.log(original);
+    console.log(replicas);
     const [p1, p2] = [replicas.get(id), replicas.get(other_id)];
+    console.log(p1);
+    console.log(p2);
     const merged = p1.merge(p2);
+    console.log(merged);
     if (merged) {
-      proxies.set(originalCrdtId, [
-        original,
-        new Map(replicas).set(id, p1.merge(p2)),
-      ]);
-      removeProxy(other_id);
+      setProxies((proxies) => {
+        return new Map(proxies).set(originalCrdtId, [
+          original,
+          new Map(replicas).set(id, merged),
+        ]);
+      });
     }
   };
 
@@ -92,6 +100,25 @@ const StateHandling = () => {
       return arr;
     })();
     console.log(replicas);
+    const originals = (() => {
+      let arr = [];
+      for (const [id, [original, map]] of proxies.entries()) {
+        arr = arr.concat([[id].concat(Array.from(map.keys()))]);
+      }
+      return arr;
+    })();
+    console.log(originals);
+    for (const [id, [original, map]] of proxies.entries()) {
+      console.log(`${id}'s state = ${JSON.stringify(original.getState())}`);
+      for (const [id, proxy] of map.entries()) {
+        console.log(`${id}'s state = ${JSON.stringify(proxy.getState())}`);
+      }
+    }
+
+    const arr = [1, 2, 3, 4];
+    console.log(arr);
+    console.log(arr.toString());
+    console.log(JSON.stringify(arr));
   }, [proxies]);
 
   // Wrap the application in the ProxyContext.Provider so that any component can have access to the properties from 'value' by using ProxyContext
