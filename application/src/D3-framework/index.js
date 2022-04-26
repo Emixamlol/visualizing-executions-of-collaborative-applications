@@ -4,6 +4,7 @@ import { ProxyContext } from '../Proxy/state-handling';
 import Timeline from './timeline';
 import Text from './text';
 import BasicState from './basic-state';
+import ReplicaEllipse from './replicaEllipse';
 
 const Index = ({ dimensions, svgRef }) => {
   const { proxies } = useContext(ProxyContext);
@@ -16,20 +17,19 @@ const Index = ({ dimensions, svgRef }) => {
 
     console.log(svg);
 
-    return () => {
-      // svg.selectAll('text').data(Array.from(proxies)).exit().remove();
-    };
+    return () => {};
   }, [proxies]); // Render the component if state changes
 
   return (
     <>
-      <Text
+      {/* <Text
         dimensions={{ ...dimensions, margin: { top: 55 } }}
         svgRef={svgRef}
         position={{ x: 50, y: 50 }}
-      />
+      /> */}
       <Timeline dimensions={dimensions} svgRef={svgRef} />
       <BasicState dimensions={dimensions} svgRef={svgRef} />
+      <ReplicaEllipse dimensions={dimensions} svgRef={svgRef} />
     </>
   );
 };
