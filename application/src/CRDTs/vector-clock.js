@@ -44,6 +44,6 @@ export default class VectorClock {
       return true;
     };
 
-    this.printClock = () => this.#vector.toString();
+    this.printClock = () => JSON.stringify(this.#vector);
   }
 }
