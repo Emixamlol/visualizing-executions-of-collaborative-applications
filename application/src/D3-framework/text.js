@@ -37,12 +37,40 @@ const Text = ({ dimensions, svgRef, position }) => {
       .data(replicas)
       .enter()
       .append('text')
-      .attr('x', xpos)
-      .attr('y', ([id, proxy], idx) => idx * (localHeight / 10) + top)
+      .attr('x', ([id, proxy], idx) => {
+        const dynamics = [
+          localHeight,
+          localWidth,
+          proxy.getState().history,
+          top,
+          right,
+          bottom,
+          left,
+          xpos,
+          ypos,
+        ];
+        return xpos;
+      })
+      .attr('y', ([id, proxy], idx) => {
+        const dynamics = [
+          localHeight,
+          localWidth,
+          proxy.getState().history,
+          top,
+          right,
+          bottom,
+          left,
+          xpos,
+          ypos,
+        ];
+        const old = idx * (localHeight / 10) + top;
+        return ypos + old;
+      })
       .attr('fill', ([id, proxy]) => proxy.getState().color)
       .text(([id, proxy], idx) => {
         const state = proxy.getState();
-        return `${id}=${state.leftWrapper}${state.content}${state.rightWrapper}`;
+        console.log(state.payload);
+        return `${id}=${JSON.stringify(state.payload)}`;
       });
 
     return () => {
