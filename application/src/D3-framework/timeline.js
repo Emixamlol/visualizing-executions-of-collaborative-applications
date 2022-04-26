@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { ProxyContext } from '../Proxy/state-handling';
 import * as d3 from 'd3';
+import Text from './text';
 
 /**
  *
@@ -49,11 +50,16 @@ const Timeline = ({ dimensions, svgRef }) => {
     // cleanup function
     return () => {
       timelines.remove();
-      //   svg.selectAll('path').data(Array.from(proxies)).exit().remove();
     };
   }, [proxies]);
 
-  return null;
+  return (
+    <Text
+      dimensions={{ ...dimensions, margin: { top: 55 } }}
+      svgRef={svgRef}
+      position={{ x: 160, y: -20 }}
+    />
+  );
 };
 
 export default Timeline;
