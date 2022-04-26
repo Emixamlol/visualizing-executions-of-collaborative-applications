@@ -67,6 +67,9 @@ export default class PN_counter {
     };
   }
 
+  // gives the payload of this replica
+  payload = () => [this.value(), this.printClock()];
+
   printClock = () => this.#timestamp.printClock();
 
   specificSate = () =>

@@ -38,6 +38,9 @@ export default class LWW_Register {
     };
   }
 
+  // gives the payload of this replica
+  payload = () => [this.#X, this.printClock()];
+
   printClock = () => this.#t.printClock();
 
   specificState = () => [];

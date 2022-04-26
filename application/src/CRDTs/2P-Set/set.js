@@ -67,6 +67,13 @@ export default class TwoPhase_Set {
     }
   };
 
+  // gives the payload of this replica
+  payload = () => {
+    const result = new Set(Array.from(this.#A));
+    this.#R.forEach((el) => result.delete(el));
+    return Array.from(result).concat(this.printClock());
+  };
+
   printClock = () => this.#timestamp.printClock();
 
   specificState = () => [];
