@@ -16,7 +16,11 @@ export default class CrdtProxy {
         : crdt;
     this.#state =
       crdt !== undefined && params !== undefined
-        ? createState(crdt, params)
+        ? {
+            ...createState(crdt, params),
+            history: [{ msg: 'initialized', payload: this.#crdt.payload() }], // history of payloads
+            payload: this.#crdt.payload(), // current payload
+          }
         : {};
 
     this.query = (...args) => {
@@ -42,12 +46,14 @@ export default class CrdtProxy {
         console.log('merging');
         const proxy = new CrdtProxy(this.id, crdt);
         proxy.#crdt = this.#crdt.merge(other.#crdt);
+        proxy.#replica = this.#replica;
         // save merge in history
         // proxy.#state = {
         //   ...this.#state,
         //   history: [...this.#state.history, `merged ${id} with ${other.id}`],
         // };
-        proxy.#updateState(crdt);
+        proxy.#state = this.#state;
+        proxy.#updateState('merge');
         console.log('finished updating state');
         return proxy;
       }
@@ -68,7 +74,7 @@ export default class CrdtProxy {
       //     )}`,
       //   ],
       // };
-      return this.#updateState(crdt); // update the state and return it
+      return this.#updateState('update'); // update the state and return it
     };
 
     this.replicate = (replicaId, pid) => {
@@ -91,13 +97,14 @@ export default class CrdtProxy {
   }
 
   // this method updates the state and returns a copy of it after the update
-  #updateState = (crdt) => {
+  #updateState = (msg) => {
+    console.log(this);
     console.log('updating state');
     const payload = this.#crdt['payload'].apply(this.#crdt);
     this.#state = {
       ...this.#state,
       payload,
-      history: this.#state.history.concat([payload]),
+      history: this.#state.history.concat({ msg, payload }),
     };
     return this.getState();
   };
