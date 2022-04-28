@@ -102,7 +102,7 @@ const Demo = () => {
       .data(registers)
       .enter()
       .append('circle')
-      .attr('cx', (data) => 230 + 45 * data.register.printClock())
+      .attr('cx', (data) => 230 + 45 * data.register.getTimestamp())
       .attr('cy', (data, idx) => (idx * height) / registers.length + margin)
       .attr('r', 10)
       .attr('fill', (data) => data.color);
@@ -112,12 +112,14 @@ const Demo = () => {
       .data(registers)
       .enter()
       .append('text')
-      .attr('x', (data) => 230 + 45 * data.register.printClock())
+      .attr('x', (data) => 230 + 45 * data.register.getTimestamp())
       .attr('y', (data, idx) => (idx * height) / registers.length + 40)
       .attr('fill', (data) => data.color)
       .text(
         (data, idx) =>
-          `X${idx + 1}=(${data.register.value()},${data.register.printClock()})`
+          `X${
+            idx + 1
+          }=(${data.register.value()},${data.register.getTimestamp()})`
       );
 
     const merge_operations = svg
@@ -178,7 +180,7 @@ const Demo = () => {
         const { r1, r2 } = data;
         return `X${r1.value()}=(${r1.merge(r2).value()},${r1
           .merge(r2)
-          .printClock()})`;
+          .getTimestamp()})`;
       });
   }, []);
 

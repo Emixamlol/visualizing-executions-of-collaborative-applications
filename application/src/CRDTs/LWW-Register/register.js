@@ -39,9 +39,9 @@ export default class LWW_Register {
   }
 
   // gives the payload of this replica
-  payload = () => [this.#X, this.printClock()];
+  payload = () => [this.#X, this.getTimestamp()];
 
-  printClock = () => this.#t.printClock();
+  getTimestamp = () => this.#t.getVector();
 
   specificState = () => [];
 }

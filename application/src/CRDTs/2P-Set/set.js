@@ -71,10 +71,10 @@ export default class TwoPhase_Set {
   payload = () => {
     const result = new Set(Array.from(this.#A));
     this.#R.forEach((el) => result.delete(el));
-    return Array.from(result).concat(this.printClock());
+    return Array.from(result).concat(this.getTimestamp());
   };
 
-  printClock = () => this.#timestamp.printClock();
+  getTimestamp = () => this.#timestamp.getVector();
 
   specificState = () => [];
 }
