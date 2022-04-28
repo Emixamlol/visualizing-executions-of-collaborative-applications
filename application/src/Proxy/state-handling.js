@@ -114,11 +114,6 @@ const StateHandling = () => {
         console.log(`${id}'s state = ${JSON.stringify(proxy.getState())}`);
       }
     }
-
-    const arr = [1, 2, 3, 4];
-    console.log(arr);
-    console.log(arr.toString());
-    console.log(JSON.stringify(arr));
   }, [proxies]);
 
   // Wrap the application in the ProxyContext.Provider so that any component can have access to the properties from 'value' by using ProxyContext
