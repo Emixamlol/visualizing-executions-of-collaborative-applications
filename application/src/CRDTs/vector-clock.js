@@ -10,7 +10,7 @@ export default class VectorClock {
     };
 
     this.merge = (vc) => {
-      const rvc = new VectorClock();
+      const rvc = new VectorClock(n);
       for (let i = 0; i < n; i++) {
         rvc.#vector[i] = Math.max(this.#vector[i], vc.#vector[i]);
       }
@@ -44,6 +44,6 @@ export default class VectorClock {
       return true;
     };
 
-    this.printClock = () => JSON.stringify(this.#vector);
+    this.getVector = () => this.#vector.slice();
   }
 }
