@@ -17,13 +17,13 @@ export default class TwoPhase_Set {
     // update
     this.add = (e) => {
       this.#A.add(e);
-      this.#timestamp.increase(pid);
+      this.#timestamp.increase(this.#pid);
     };
 
     // update
     this.remove = (e) => {
       if (this.lookup(e)) this.#R.add(e);
-      this.#timestamp.increase(pid);
+      this.#timestamp.increase(this.#pid);
     };
 
     // compare
@@ -32,7 +32,7 @@ export default class TwoPhase_Set {
 
     // merge
     this.merge = (tps) => {
-      const rs = new TwoPhase_Set(); // the resulting set to be returned
+      const rs = new TwoPhase_Set(maxProcesses, pid); // the resulting set to be returned
       rs.#A = this.#union(this.#A, tps.#A);
       rs.#R = this.#union(this.#R, tps.#R);
       rs.#pid = this.#pid;

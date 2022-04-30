@@ -14,14 +14,14 @@ export default class PN_counter {
 
     // update
     this.increment = () => {
-      this.#P[pid]++;
-      this.#timestamp.increase(pid);
+      this.#P[this.#pid]++;
+      this.#timestamp.increase(this.#pid);
     };
 
     // update
     this.decrement = () => {
-      this.#N[pid]++;
-      this.#timestamp.increase(pid);
+      this.#N[this.#pid]++;
+      this.#timestamp.increase(this.#pid);
     };
 
     // query
@@ -45,13 +45,14 @@ export default class PN_counter {
 
     // merge
     this.merge = (pnc) => {
-      const rc = new PN_counter(n);
+      const rc = new PN_counter(n, pid);
       for (let i = 0; i < n; i++) {
         rc.#P[i] = Math.max(this.#P[i], pnc.#P[i]);
         rc.#N[i] = Math.max(this.#N[i], pnc.#N[i]);
       }
       rc.#pid = this.#pid;
       rc.#timestamp = this.#timestamp.merge(pnc.#timestamp);
+      console.log(rc);
       return rc;
     };
   }
@@ -64,8 +65,8 @@ export default class PN_counter {
   specificSate = () =>
     [
       this.value(),
-      this.#P,
-      this.#N,
+      this.#P.slice(),
+      this.#N.slice(),
       this.#pid,
       this.#timestamp.getVector(),
     ].slice(); // method to get the entire state of a counter

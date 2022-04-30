@@ -13,7 +13,7 @@ export default class LWW_Register {
     // update
     this.assign = (w) => {
       this.#X = w;
-      this.#t.increase(pid);
+      this.#t.increase(this.#pid);
     };
 
     // query
@@ -24,7 +24,7 @@ export default class LWW_Register {
 
     // merge
     this.merge = (lwwr) => {
-      const rr = new LWW_Register(); // the resulting register to be returned
+      const rr = new LWW_Register(maxProcesses, pid); // the resulting register to be returned
       if (this.compare(lwwr)) {
         rr.#X = lwwr.#X;
         rr.#t = lwwr.#t;
