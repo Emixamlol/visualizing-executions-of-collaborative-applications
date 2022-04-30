@@ -23,7 +23,7 @@ const StateHandling = () => {
     const originalCrdtId = originalCRDTs.get(id); // get the id of crdt of which id is a replica
     const [original, replicas] = proxies.get(originalCrdtId);
     const proxy = replicas.get(id);
-    console.log(proxy);
+    // console.log(proxy);
     proxy.remove();
     setProxies((proxies) => {
       replicas.delete(id);
@@ -57,11 +57,11 @@ const StateHandling = () => {
 
   const mergeProxy = (id, other_id) => {
     const originalCrdtId = originalCRDTs.get(id); // get the id of crdt of which id is a replica
-    console.log(originalCrdtId);
+    // console.log(originalCrdtId);
     // get the map of object's replicas
     const [original, replicas] = proxies.get(originalCrdtId);
-    console.log(original);
-    console.log(replicas);
+    // console.log(original);
+    // console.log(replicas);
     const [p1, p2] = [replicas.get(id), replicas.get(other_id)];
     console.log(p1);
     console.log(p2);
@@ -81,6 +81,7 @@ const StateHandling = () => {
     const originalCrdtId = originalCRDTs.get(id); // get the id of crdt of which id is a replica
     const [original, replicas] = proxies.get(originalCrdtId);
     const proxy = replicas.get(id);
+    console.log(proxy);
     proxy.apply(fn, params);
     setProxies((proxies) => {
       return new Map(proxies).set(originalCrdtId, [
@@ -91,7 +92,7 @@ const StateHandling = () => {
   };
 
   useEffect(() => {
-    console.log(proxies);
+    // console.log(proxies);
     const replicas = (() => {
       let arr = [];
       for (const [id, [original, map]] of proxies.entries()) {
@@ -99,7 +100,7 @@ const StateHandling = () => {
       }
       return arr;
     })();
-    console.log(replicas);
+    // console.log(replicas);
     const originals = (() => {
       let arr = [];
       for (const [id, [original, map]] of proxies.entries()) {
@@ -107,13 +108,25 @@ const StateHandling = () => {
       }
       return arr;
     })();
-    console.log(originals);
+    // console.log(originals);
     for (const [id, [original, map]] of proxies.entries()) {
-      console.log(`${id}'s state = ${JSON.stringify(original.getState())}`);
+      // console.log(`${id}'s state = ${JSON.stringify(original.getState())}`);
       for (const [id, proxy] of map.entries()) {
         console.log(`${id}'s state = ${JSON.stringify(proxy.getState())}`);
       }
     }
+    const histories = (() => {
+      let arr = [];
+      for (const [id, [original, map]] of proxies.entries()) {
+        for (const [replicaId, proxy] of map.entries()) {
+          // console.log(proxy.getState().history);
+          arr = arr.concat([proxy.getState().history]);
+        }
+      }
+      return arr;
+    })();
+    // console.log(histories);
+    console.log(proxies);
   }, [proxies]);
 
   // Wrap the application in the ProxyContext.Provider so that any component can have access to the properties from 'value' by using ProxyContext

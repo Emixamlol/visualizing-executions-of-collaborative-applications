@@ -5,7 +5,6 @@ import { Counter, Register, TPSet } from '../CRDTs';
  */
 
 export const createCRDT = (crdt, params) => {
-  console.log(`creating crdt ${crdt}`);
   switch (crdt) {
     case 'counter': {
       const [n, pid] = params.map((value) => parseInt(value, 10));
