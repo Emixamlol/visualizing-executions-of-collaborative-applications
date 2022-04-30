@@ -12,7 +12,6 @@ const CodeInput = () => {
   // Handle what has to happen when the user submits the code
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(e);
     try {
       execute(read(code), proxyFunctionality);
     } catch (e) {
@@ -38,8 +37,6 @@ const CodeInput = () => {
   };
 
   useEffect(() => {
-    console.log('useEffect called');
-    // read('const x1 = new counter(5)');
     return () => {};
   }, []);
 
