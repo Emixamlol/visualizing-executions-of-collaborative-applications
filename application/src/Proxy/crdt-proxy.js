@@ -40,40 +40,21 @@ export default class CrdtProxy {
     this.compare = (other) => this.#crdt.compare(other.#crdt);
 
     this.merge = (other) => {
-      // TODO: refactor
       console.log('check if same replica');
       if (this.#replica === other.#replica) {
         console.log('merging');
-        const proxy = new CrdtProxy(this.id, crdt);
-        proxy.#crdt = this.#crdt.merge(other.#crdt);
-        proxy.#replica = this.#replica;
-        // save merge in history
-        // proxy.#state = {
-        //   ...this.#state,
-        //   history: [...this.#state.history, `merged ${id} with ${other.id}`],
-        // };
-        proxy.#state = this.#state;
-        proxy.#updateState('merge');
+        this.#crdt = this.#crdt.merge(other.#crdt);
+        this.#updateState('merge');
         console.log('finished updating state');
-        return proxy;
+        console.log(this);
+        return this;
       }
       return false;
     };
 
     this.apply = (fn, params) => {
-      console.log('applying in crdtProxy');
-      console.log(fn, params);
+      console.log(this);
       this.#crdt[fn].apply(this.#crdt, params); // apply the function on the crdt
-      // save function application in history
-      // this.#state = {
-      //   ...this.#state,
-      //   history: [
-      //     ...this.#state.history,
-      //     `applied '${fn}' to ${id} with parameters = ${JSON.stringify(
-      //       params
-      //     )}`,
-      //   ],
-      // };
       return this.#updateState('update'); // update the state and return it
     };
 
@@ -98,8 +79,6 @@ export default class CrdtProxy {
 
   // this method updates the state and returns a copy of it after the update
   #updateState = (msg) => {
-    console.log(this);
-    console.log('updating state');
     const payload = this.#crdt['payload'].apply(this.#crdt);
     this.#state = {
       ...this.#state,
