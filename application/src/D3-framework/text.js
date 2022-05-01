@@ -69,7 +69,6 @@ const Text = ({ dimensions, svgRef, position }) => {
       .attr('fill', ([id, proxy]) => proxy.getState().color)
       .text(([id, proxy], idx) => {
         const state = proxy.getState();
-        console.log(state.payload);
         return `${id}=${JSON.stringify(state.payload)}`;
       });
 
