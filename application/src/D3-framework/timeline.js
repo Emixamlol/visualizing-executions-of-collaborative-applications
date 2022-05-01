@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
-import { ProxyContext } from '../Proxy/state-handling';
+// import { ProxyContext } from '../Proxy/state-handling';
+import { useProxyData } from '../CustomHooks/useProxyData';
 import * as d3 from 'd3';
-import Text from './text';
 
 /**
  *
@@ -10,29 +10,31 @@ import Text from './text';
 
 const Timeline = ({ dimensions, svgRef }) => {
   const {
-    height,
-    width,
     margin: { top, right, bottom, left },
   } = dimensions;
 
-  const { proxies } = useContext(ProxyContext);
-  const replicas = (() => {
-    let arr = [];
-    for (const [id, [original, map]] of proxies.entries()) {
-      arr = arr.concat(Array.from(map));
-    }
-    return arr;
-  })();
+  const [replicas, proxies] = useProxyData('replicas');
+  // const { proxies } = useContext(ProxyContext);
+  // const replicas = (() => {
+  //   let arr = [];
+  //   for (const [id, [original, map]] of proxies.entries()) {
+  //     arr = arr.concat(Array.from(map));
+  //   }
+  //   return arr;
+  // })();
   //   const timelines = svg.append('g');
-
-  // convert the vh values to numbers
-  const localHeight = (parseInt(height, 10) * visualViewport.height) / 100;
-  const localWidth = (parseInt(width, 10) * visualViewport.width) / 100;
-
-  console.log(localHeight);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
+    const { height, width, x, y } = svgRef.current.getBoundingClientRect();
+    console.log(svg);
+    console.log(svgRef.current.getBoundingClientRect());
+    console.log(document.getElementById('general-visualization'));
+    console.log(
+      svgRef.current.getBoundingClientRect().height,
+      svgRef.current.getBoundingClientRect().width
+    );
+    console.log(x, y);
     const timelines = svg.append('g');
 
     timelines
@@ -44,7 +46,9 @@ const Timeline = ({ dimensions, svgRef }) => {
       .attr(
         'd',
         ([id, proxy], idx) =>
-          `M 150 ${idx * (localHeight / 10) + top} l ${localWidth - 150} 0`
+          `M ${x + width / 5} ${idx * (height / 10) + top} l ${
+            width - (x + width / 5)
+          } 0`
       );
 
     // cleanup function
@@ -54,11 +58,12 @@ const Timeline = ({ dimensions, svgRef }) => {
   }, [proxies]);
 
   return (
-    <Text
-      dimensions={{ ...dimensions, margin: { top: 55 } }}
-      svgRef={svgRef}
-      position={{ x: 160, y: -20 }}
-    />
+    //    // <Text
+    //    //   dimensions={{ ...dimensions, margin: { top: 55 } }}
+    //    //   svgRef={svgRef}
+    //    //   position={{ x: 160, y: -20 }}
+    //    // />
+    null
   );
 };
 
