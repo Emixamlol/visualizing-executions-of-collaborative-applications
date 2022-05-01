@@ -13,7 +13,6 @@ const ReplicaEllipse = ({ dimensions, svgRef }) => {
   } = dimensions;
 
   const { proxies } = React.useContext(ProxyContext);
-  console.log(proxies);
   const crdtReplicaIds = (() => {
     let arr = [];
     for (const [id, [original, map]] of proxies.entries()) {
@@ -26,7 +25,6 @@ const ReplicaEllipse = ({ dimensions, svgRef }) => {
   const localWidth = (parseInt(width, 10) * visualViewport.width) / 100;
 
   useEffect(() => {
-    console.log(crdtReplicaIds);
     const svg = d3.select(svgRef.current);
     const replicas = svg.append('g');
 
@@ -46,11 +44,8 @@ const ReplicaEllipse = ({ dimensions, svgRef }) => {
       .attr('fill', 'black')
       .text((crdt, idx) => {
         const text = crdtReplicaIds[idx].shift();
-        console.log(text);
         return text;
       });
-
-    console.log(crdtReplicaIds);
 
     replicas
       .selectAll('path')
@@ -71,7 +66,6 @@ const ReplicaEllipse = ({ dimensions, svgRef }) => {
           crdt.length,
           crdtReplicaIds.length,
         ];
-        console.log(crdt.length * 200);
         const old = 'M 30 200 A 50 200 0 0 1 130 200 A 50 200 0 0 1 30 200';
         const d = `M 30 ${
           (localHeight / crdtReplicaIds.length) * (idx + 1)
@@ -88,11 +82,12 @@ const ReplicaEllipse = ({ dimensions, svgRef }) => {
 
   // return null;
   return (
-    <ReplicaCircle
-      dimensions={dimensions}
-      svgRef={svgRef}
-      position={{ x: 30, y: 40 }}
-    />
+    ////<ReplicaCircle
+    ////  dimensions={dimensions}
+    ////  svgRef={svgRef}
+    ////  position={{ x: 30, y: 40 }}
+    /////>
+    null
   );
 };
 
