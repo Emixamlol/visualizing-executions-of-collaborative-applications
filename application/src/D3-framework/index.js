@@ -1,32 +1,18 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import * as d3 from 'd3';
-import { ProxyContext } from '../Proxy/state-handling';
+import React from 'react';
 import Timeline from './timeline';
-import Text from './text';
 import BasicState from './basic-state';
 import ReplicaEllipse from './replicaEllipse';
 
 const Index = ({ dimensions, svgRef }) => {
-  const { proxies } = useContext(ProxyContext);
-
-  console.log(proxies);
-
   // useEffect hook, the function defined within this hook is called each time the component is rendered again
-  useEffect(() => {
-    const svg = d3.select(svgRef.current);
+  // useEffect(() => {
+  //   const svg = d3.select(svgRef.current);
 
-    console.log(svg);
-
-    return () => {};
-  }, [proxies]); // Render the component if state changes
+  //   return () => {};
+  // }, [proxies]); // Render the component if state changes
 
   return (
     <>
-      {/* <Text
-        dimensions={{ ...dimensions, margin: { top: 55 } }}
-        svgRef={svgRef}
-        position={{ x: 50, y: 50 }}
-      /> */}
       <Timeline dimensions={dimensions} svgRef={svgRef} />
       <BasicState dimensions={dimensions} svgRef={svgRef} />
       <ReplicaEllipse dimensions={dimensions} svgRef={svgRef} />
