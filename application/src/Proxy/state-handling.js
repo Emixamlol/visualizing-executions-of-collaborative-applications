@@ -100,7 +100,7 @@ const StateHandling = () => {
       }
       return arr;
     })();
-    // console.log(replicas);
+    console.log(replicas);
     const originals = (() => {
       let arr = [];
       for (const [id, [original, map]] of proxies.entries()) {
@@ -108,7 +108,7 @@ const StateHandling = () => {
       }
       return arr;
     })();
-    // console.log(originals);
+    console.log(originals);
     for (const [id, [original, map]] of proxies.entries()) {
       // console.log(`${id}'s state = ${JSON.stringify(original.getState())}`);
       for (const [id, proxy] of map.entries()) {
@@ -125,7 +125,7 @@ const StateHandling = () => {
       }
       return arr;
     })();
-    // console.log(histories);
+    console.log(histories);
     console.log(proxies);
   }, [proxies]);
 
