@@ -27,8 +27,6 @@ const ReplicaCircle = ({ dimensions, svgRef, position }) => {
     const svg = d3.select(svgRef.current);
     const circles = svg.append('g');
 
-    console.log(replicas);
-
     circles
       .selectAll('circle')
       .data(replicas)
@@ -38,7 +36,6 @@ const ReplicaCircle = ({ dimensions, svgRef, position }) => {
       .attr('cy', ([id, proxy], idx) => idx * (localHeight / 10) + top)
       .attr('r', 10)
       .attr('fill', ([id, proxy]) => {
-        console.log(proxy);
         return proxy.getState().color;
       });
 
@@ -49,11 +46,12 @@ const ReplicaCircle = ({ dimensions, svgRef, position }) => {
   }, [proxies]);
 
   return (
-    <Text
-      dimensions={{ ...dimensions, margin: { top: 55 } }}
-      svgRef={svgRef}
-      position={{ x: 50, y: 20 }}
-    />
+    //// <Text
+    ////   dimensions={{ ...dimensions, margin: { top: 55 } }}
+    ////   svgRef={svgRef}
+    ////   position={{ x: 50, y: 20 }}
+    //// />
+    null
   );
 };
 
