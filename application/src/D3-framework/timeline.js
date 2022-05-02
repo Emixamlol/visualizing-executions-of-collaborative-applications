@@ -1,5 +1,4 @@
-import React, { useEffect, useContext } from 'react';
-// import { ProxyContext } from '../Proxy/state-handling';
+import React, { useEffect } from 'react';
 import { useProxyData } from '../CustomHooks/useProxyData';
 import * as d3 from 'd3';
 
@@ -28,6 +27,7 @@ const Timeline = ({ dimensions, svgRef }) => {
     const svg = d3.select(svgRef.current);
     const { height, width, x, y } = svgRef.current.getBoundingClientRect();
     console.log(svg);
+    console.log(svg.node());
     console.log(svgRef.current.getBoundingClientRect());
     console.log(document.getElementById('general-visualization'));
     console.log(
@@ -57,14 +57,7 @@ const Timeline = ({ dimensions, svgRef }) => {
     };
   }, [proxies]);
 
-  return (
-    //    // <Text
-    //    //   dimensions={{ ...dimensions, margin: { top: 55 } }}
-    //    //   svgRef={svgRef}
-    //    //   position={{ x: 160, y: -20 }}
-    //    // />
-    null
-  );
+  return null;
 };
 
 export default Timeline;
