@@ -1,6 +1,6 @@
 import { thresholdSturges } from 'd3';
 import { createCRDT } from './create-crdt';
-import { createState } from './create-state';
+import { createState, colorGenerator } from './create-state';
 
 export default class CrdtProxy {
   #crdt;
@@ -65,7 +65,10 @@ export default class CrdtProxy {
         const newProxy = new CrdtProxy(replicaId, crdt);
         newProxy.#replica = this.#replica;
         newProxy.#crdt = createCRDT(crdt, [maxProcesses, pid]);
-        newProxy.#state = { ...this.#state }; // copy the state
+        newProxy.#state = {
+          ...this.#state,
+          color: colorGenerator.next().value,
+        }; // copy the state except for the color representation
         return newProxy;
       }
       return false; // if we reached the max number of processes, don't replicate the crdt
