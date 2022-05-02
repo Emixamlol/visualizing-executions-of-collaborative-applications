@@ -1,30 +1,17 @@
 import React, { useEffect } from 'react';
-import { ProxyContext } from '../Proxy/state-handling';
+import { useProxyData } from '../CustomHooks/useProxyData';
 import * as d3 from 'd3';
-import Text from './text';
 
-const ReplicaCircle = ({ dimensions, svgRef, position }) => {
+const ReplicaCircle = ({ dimensions, svgRef }) => {
   const {
-    height,
-    width,
     margin: { top, right, bottom, left },
   } = dimensions;
-  const { x: xpos, y: ypos } = position;
 
-  const { proxies } = React.useContext(ProxyContext);
-  const replicas = (() => {
-    let arr = [];
-    for (const [id, [original, map]] of proxies.entries()) {
-      arr = arr.concat(Array.from(map));
-    }
-    return arr;
-  })();
-
-  const localHeight = (parseInt(height, 10) * visualViewport.height) / 100;
-  const localWidth = (parseInt(width, 10) * visualViewport.width) / 100;
+  const [replicas, proxies] = useProxyData('replicas');
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
+    const { height, width, x, y } = svgRef.current.getBoundingClientRect();
     const circles = svg.append('g');
 
     circles
@@ -32,12 +19,21 @@ const ReplicaCircle = ({ dimensions, svgRef, position }) => {
       .data(replicas)
       .enter()
       .append('circle')
-      .attr('cx', ([id, proxy]) => 170)
-      .attr('cy', ([id, proxy], idx) => idx * (localHeight / 10) + top)
-      .attr('r', 10)
-      .attr('fill', ([id, proxy]) => {
-        return proxy.getState().color;
-      });
+      .attr('cx', () => width / 11 + right)
+      .attr('cy', (d, idx) => idx * (height / 10) + top)
+      .attr('r', 20)
+      .attr('fill', 'none')
+      .attr('stroke', ([, proxy]) => proxy.getState().color);
+
+    circles
+      .selectAll('text')
+      .data(replicas)
+      .enter()
+      .append('text')
+      .attr('x', width / 12 + right)
+      .attr('y', (d, idx) => idx * (height / 10) + top + y)
+      .attr('fill', ([, proxy]) => proxy.getState().color)
+      .text(([id]) => `${id}`);
 
     return () => {
       circles.remove();
@@ -45,14 +41,7 @@ const ReplicaCircle = ({ dimensions, svgRef, position }) => {
     };
   }, [proxies]);
 
-  return (
-    //// <Text
-    ////   dimensions={{ ...dimensions, margin: { top: 55 } }}
-    ////   svgRef={svgRef}
-    ////   position={{ x: 50, y: 20 }}
-    //// />
-    null
-  );
+  return null;
 };
 
 export default ReplicaCircle;
