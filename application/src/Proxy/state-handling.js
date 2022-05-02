@@ -12,7 +12,7 @@ const StateHandling = () => {
 
   const addProxy = (id, crdt, params) => {
     if (!proxies.has(id)) {
-      const proxy = new CrdtProxy(id, crdt, [...params, 0]); // by adding a new crdt instance its pid is 0
+      const proxy = new CrdtProxy(id, crdt, [...params, -1]); // by adding a new crdt instance its pid is -1
       setProxies((proxies) => {
         return new Map(proxies).set(id, [proxy, new Map()]); // id maps to the original proxy and a map of all its replicas
       });
@@ -41,7 +41,7 @@ const StateHandling = () => {
       !proxies.get(idToReplicate)[1].has(replicaId)
     ) {
       const [original, replicas] = proxies.get(idToReplicate); // get the original proxy we want to replicate and the map of its current replicas
-      const pid = replicas.size + 1;
+      const pid = replicas.size;
       const newProxy = original.replicate(replicaId, pid);
       if (newProxy) {
         originalCRDTs.set(replicaId, idToReplicate); // save the fact that replicaId was replicated from idToReplicate
