@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-// import { ProxyContext } from '../Proxy/state-handling';
 import { useProxyData } from '../CustomHooks/useProxyData';
 import * as d3 from 'd3';
 
@@ -60,13 +59,13 @@ const BasicState = ({ dimensions, svgRef }) => {
       .append('text')
       .attr(
         'x',
-        ([id, [msg, payload]], idx) => x + width / 5 + idx * (x + width / 6)
+        ([id, [msg, payload]], idx) => width / 5 + idx * (x + width / 6)
       )
       .attr('y', ([id, [msg, payload]]) => {
         const idx = replicas.findIndex(
           ([replicaId, proxy]) => id === replicaId
         );
-        return idx * (height / 10) + top - y;
+        return idx * (height / 10) + top - y - 5;
       })
       .attr('fill', ([id, [msg, payload]]) => {
         const [, proxy] = replicas.find(
