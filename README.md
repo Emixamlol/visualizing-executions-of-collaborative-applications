@@ -1,3 +1,3 @@
 # Visualizing Executions of Collaborative Applications
 
-3rd bach project of Maxime Van Uffelen about "visualizing executions of collaborative applications in real time"
+migration from current 3rd bachelor project to TypeScript % d3.js
