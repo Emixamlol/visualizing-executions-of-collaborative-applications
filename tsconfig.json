@@ -2,8 +2,12 @@
   "compileOnSave": true,
   "compilerOptions": {
     "target": "es6",
-    "rootDir": "./src",
     "outDir": "./dist",
-    "module": "commonjs"
-  }
+    "module": "esnext",
+    "watch": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true
+  },
+  "include": ["./src"]
 }
