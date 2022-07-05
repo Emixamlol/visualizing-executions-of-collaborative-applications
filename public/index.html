@@ -6,7 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bachelorproef 21/22</title>
     <link rel="icon" href="favicon.ico" />
-    <script src="../dist/main.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="bundle.js" defer></script>
   </head>
-  <body></body>
+  <body>
+    <div class="grid-container">
+      <div class="visualization">
+        <div class="visualization-element">
+          <svg id="general-visualization" width="960" height="600"></svg>
+        </div>
+      </div>
+      <div id="repl" class="flexbox-container">
+        <div class="repl-element">
+          <h2>REPL</h2>
+        </div>
+      </div>
+    </div>
+    <svg width="960" height="600"></svg>
+  </body>
 </html>
