@@ -1,29 +1,8 @@
-/* const statuses = {
-  notStarted: 0,
-  inProgress: 1,
-  done: 2,
-};
+import * as d3 from 'd3';
+import { textarea } from './REPL/code-input';
 
-console.log(statuses.inProgress);
- */
+export const arc = d3.arc();
 
-enum StatusEnum {
-  NotStarted = 'notStarted',
-  InProgress = 'inProgress',
-  Done = 'done',
-}
-
-interface Task {
-  id: string;
-  status: StatusEnum;
-}
-
-console.log(StatusEnum.InProgress);
-
-let notStartedStatus: StatusEnum = StatusEnum.NotStarted;
-
-console.log(notStartedStatus);
-
-notStartedStatus = StatusEnum.Done;
-
-console.log(notStartedStatus);
+console.log(arc);
+// console.log(textarea.node());
+textarea;
