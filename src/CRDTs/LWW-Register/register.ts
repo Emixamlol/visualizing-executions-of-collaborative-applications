@@ -1,19 +1,19 @@
-import CRDTInterface from '../crdt';
+import { CRDTInterface } from '../../types';
 import VectorClock from '../vector-clock';
 
-interface RegisterInterface extends CRDTInterface<LWW_Register, any> {
+interface RegisterInterface extends CRDTInterface<LWW_Register> {
   // update
-  assign: (w: any) => void;
+  assign: (w: string) => void;
 
   // query
-  value: () => any;
+  value: () => string;
 
   // compare
   compare: (lwwr: LWW_Register) => boolean;
 }
 
 export default class LWW_Register implements RegisterInterface {
-  private X: any; // value stored in register
+  private X: string; // value stored in register
   private pid: number; // id of the process handling the replica
   private timestamp: VectorClock;
 
@@ -23,12 +23,12 @@ export default class LWW_Register implements RegisterInterface {
     this.timestamp = new VectorClock(maxProcesses);
   }
 
-  assign = (w: any): void => {
+  assign = (w: string): void => {
     this.X = w;
     this.timestamp.increase(this.pid);
   };
 
-  value = (): any => this.X;
+  value = (): string => this.X;
 
   compare = (lwwr: LWW_Register): boolean =>
     this.timestamp.lessOrEqual(lwwr.timestamp);
@@ -47,7 +47,7 @@ export default class LWW_Register implements RegisterInterface {
     return rr;
   };
 
-  payload = (): [any, number[]] => [this.X, this.getTimestamp()];
+  payload = (): [string, number[]] => [this.X, this.getTimestamp()];
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 }

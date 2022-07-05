@@ -1,7 +1,7 @@
-import CRDTInterface from '../crdt';
+import { CRDTInterface } from '../../types';
 import VectorClock from '../vector-clock';
 
-interface SetInterface<T> extends CRDTInterface<TwoPhase_Set<T>, T[]> {
+interface SetInterface<T> extends CRDTInterface<TwoPhase_Set<T>> {
   // updates
   add: (e: T) => void;
 
@@ -76,11 +76,11 @@ export default class TwoPhase_Set<T> implements SetInterface<T> {
   };
 
   // gives the payload of this replia
-  payload = (): [T[], number[]] => {
+  payload = (): [string, number[]] => {
     const result = new Set(Array.from(this.A));
     this.R.forEach((e) => result.delete(e));
-    return [Array.from(result), this.getTimestamp()];
+    return [Array.from(result).toString(), this.getTimestamp()];
   };
 
-  getTimestamp: () => number[];
+  getTimestamp = (): number[] => this.timestamp.getVector();
 }

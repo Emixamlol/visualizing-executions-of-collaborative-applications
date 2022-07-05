@@ -1,7 +1,7 @@
-import CRDTInterface from '../crdt';
+import { CRDTInterface } from '../../types';
 import VectorClock from '../vector-clock';
 
-interface PN_CounterInterface extends CRDTInterface<PN_Counter, number> {
+interface PN_CounterInterface extends CRDTInterface<PN_Counter> {
   // updates
   increment: () => void;
 
@@ -66,7 +66,10 @@ export default class PN_Counter implements PN_CounterInterface {
     return rc;
   };
 
-  payload = (): [number, number[]] => [this.value(), this.getTimestamp()];
+  payload = (): [string, number[]] => [
+    this.value().toString(),
+    this.getTimestamp(),
+  ];
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
