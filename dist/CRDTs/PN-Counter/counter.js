@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const vector_clock_1 = require("../vector-clock");
-class PN_Counter {
+import VectorClock from '../vector-clock';
+export default class PN_Counter {
     constructor(n, pid) {
         this.increment = () => {
             this.P[this.pid]++;
@@ -38,7 +36,10 @@ class PN_Counter {
             console.log(rc);
             return rc;
         };
-        this.payload = () => [this.value(), this.getTimestamp()];
+        this.payload = () => [
+            this.value().toString(),
+            this.getTimestamp(),
+        ];
         this.getTimestamp = () => this.timestamp.getVector();
         this.specificState = () => [
             this.value(),
@@ -48,9 +49,8 @@ class PN_Counter {
             this.timestamp.getVector(),
         ];
         this.pid = pid;
-        this.timestamp = new vector_clock_1.default(n);
+        this.timestamp = new VectorClock(n);
         this.P = new Array(n).fill(0);
         this.N = new Array(n).fill(0);
     }
 }
-exports.default = PN_Counter;

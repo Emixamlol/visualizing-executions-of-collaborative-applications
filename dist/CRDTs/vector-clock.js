@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class VectorClock {
+export default class VectorClock {
     constructor(n) {
         this.vector = [];
         this.length = 0;
@@ -40,4 +38,3 @@ class VectorClock {
         this.vector = new Array(n).fill(0);
     }
 }
-exports.default = VectorClock;

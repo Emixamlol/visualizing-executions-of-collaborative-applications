@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const vector_clock_1 = require("../vector-clock");
-class TwoPhase_Set {
+import VectorClock from '../vector-clock';
+export default class TwoPhase_Set {
     constructor(maxProcesses, pid) {
         this.add = (e) => {
             this.A.add(e);
@@ -50,12 +48,12 @@ class TwoPhase_Set {
         this.payload = () => {
             const result = new Set(Array.from(this.A));
             this.R.forEach((e) => result.delete(e));
-            return [Array.from(result), this.getTimestamp()];
+            return [Array.from(result).toString(), this.getTimestamp()];
         };
+        this.getTimestamp = () => this.timestamp.getVector();
         this.A = new Set([]);
         this.R = new Set([]);
         this.pid = pid;
-        this.timestamp = new vector_clock_1.default(maxProcesses);
+        this.timestamp = new VectorClock(maxProcesses);
     }
 }
-exports.default = TwoPhase_Set;

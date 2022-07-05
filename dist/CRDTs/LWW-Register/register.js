@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const vector_clock_1 = require("../vector-clock");
-class LWW_Register {
+import VectorClock from '../vector-clock';
+export default class LWW_Register {
     constructor(maxProcesses, pid) {
         this.assign = (w) => {
             this.X = w;
@@ -27,7 +25,6 @@ class LWW_Register {
         this.getTimestamp = () => this.timestamp.getVector();
         this.X = undefined;
         this.pid = pid;
-        this.timestamp = new vector_clock_1.default(maxProcesses);
+        this.timestamp = new VectorClock(maxProcesses);
     }
 }
-exports.default = LWW_Register;
