@@ -1,4 +1,4 @@
-import { Keyword } from '../types';
+import { Keyword } from '../types/repl-types';
 export const read = (code) => {
     const toParse = `toParse: ${code}`;
     console.log(toParse);

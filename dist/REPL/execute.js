@@ -1,20 +1,30 @@
-import { CRDTMethod } from '../types';
+import { ProxyMethod } from '../types/proxy-types';
 export const execute = ({ proc, parameters }) => {
     switch (proc) {
-        case CRDTMethod.new: {
+        case ProxyMethod.new: {
             // create a new proxy
+            console.log(`Executing ${proc} with parameters ${parameters}`);
+            break;
         }
-        case CRDTMethod.delete: {
+        case ProxyMethod.delete: {
             // remove a proxy
+            console.log(`Executing ${proc} with parameters ${parameters}`);
+            break;
         }
-        case CRDTMethod.replicate: {
+        case ProxyMethod.replicate: {
             // replicate a proxy
+            console.log(`Executing ${proc} with parameters ${parameters}`);
+            break;
         }
-        case CRDTMethod.merge: {
+        case ProxyMethod.merge: {
             // merge two proxies
+            console.log(`Executing ${proc} with parameters ${parameters}`);
+            break;
         }
-        case CRDTMethod.apply: {
+        case ProxyMethod.apply: {
             // apply a proxy method to a proxy
+            console.log(`Executing ${proc} with parameters ${parameters}`);
+            break;
         }
         default:
             throw new Error('cannot execute invalid code');

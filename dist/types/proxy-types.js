@@ -1,10 +1,5 @@
-export var Keyword;
-(function (Keyword) {
-    Keyword["const"] = "const";
-    Keyword["delete"] = "delete";
-    Keyword["replicate"] = "replicate";
-})(Keyword || (Keyword = {}));
 // State
+// ------------------------------------------------------------------------------
 function* ColorGenerator() {
     const colors = ['DarkMagenta', 'blue', 'brown', 'DarkGoldenRod', 'green'];
     let i = 0;
@@ -14,7 +9,9 @@ function* ColorGenerator() {
     }
 }
 export const colorGenerator = ColorGenerator();
+// ------------------------------------------------------------------------------
 // Proxy
+// ------------------------------------------------------------------------------
 export var ProxyMethod;
 (function (ProxyMethod) {
     ProxyMethod["new"] = "new";
@@ -23,3 +20,4 @@ export var ProxyMethod;
     ProxyMethod["merge"] = "merge";
     ProxyMethod["apply"] = "apply";
 })(ProxyMethod || (ProxyMethod = {}));
+// ------------------------------------------------------------------------------

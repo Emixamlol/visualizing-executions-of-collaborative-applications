@@ -21,7 +21,7 @@ const handleSubmit = (e) => {
         textarea.property('value', '');
     }
 };
-form.attr('action', 'test').on('submit', handleSubmit);
+form.on('submit', handleSubmit);
 // add a textarea to the form, this is where the user input will be written and executed
 export const textarea = d3.select(form.node()).append('textarea');
 // handle what has to happen when a or multiple keys are pressed
