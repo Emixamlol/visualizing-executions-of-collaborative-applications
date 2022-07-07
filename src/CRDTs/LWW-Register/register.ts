@@ -1,4 +1,4 @@
-import { CRDTInterface } from '../../types';
+import { CRDTInterface } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
 interface RegisterInterface extends CRDTInterface<LWW_Register> {

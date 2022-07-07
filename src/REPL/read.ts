@@ -1,6 +1,6 @@
-import { CodeInterface, Keyword } from '../types';
+import { ParsedCode, Keyword } from '../types/repl-types';
 
-export const read = (code: string): CodeInterface => {
+export const read = (code: string): ParsedCode => {
   const toParse = `toParse: ${code}`;
   console.log(toParse);
 
