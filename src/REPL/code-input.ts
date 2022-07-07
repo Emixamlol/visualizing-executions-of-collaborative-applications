@@ -25,7 +25,7 @@ const handleSubmit = (e: KeyboardEvent): void => {
   }
 };
 
-form.attr('action', 'test').on('submit', handleSubmit);
+form.on('submit', handleSubmit);
 
 // add a textarea to the form, this is where the user input will be written and executed
 export const textarea: d3.Selection<
