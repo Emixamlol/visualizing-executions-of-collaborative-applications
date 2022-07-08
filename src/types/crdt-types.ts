@@ -2,7 +2,7 @@ import TwoPhase_Set from '../CRDTs/2P-Set/set';
 import LWW_Register from '../CRDTs/LWW-Register/register';
 import PN_Counter from '../CRDTs/PN-Counter/counter';
 
-export type crdt<T> = PN_Counter | LWW_Register | TwoPhase_Set<T>;
+export type crdt = PN_Counter | LWW_Register | TwoPhase_Set;
 
 export enum CRDT {
   counter = 'counter',
