@@ -1,4 +1,4 @@
-import { CRDTInterface } from '../../types/crdt-types';
+import { CRDT, CRDTInterface } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
 interface PN_CounterInterface extends CRDTInterface<PN_Counter> {
@@ -19,6 +19,7 @@ export default class PN_Counter implements PN_CounterInterface {
   private N: number[]; // decrements
   private pid: number; // id of the process handling the replica
   private timestamp: VectorClock; // vector clock
+  type: CRDT.counter;
 
   constructor(n: number, pid: number) {
     this.pid = pid;

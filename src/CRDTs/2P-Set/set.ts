@@ -1,4 +1,4 @@
-import { CRDTInterface } from '../../types/crdt-types';
+import { CRDT, CRDTInterface } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
 interface SetInterface extends CRDTInterface<TwoPhase_Set> {
@@ -19,6 +19,7 @@ export default class TwoPhase_Set implements SetInterface {
   private R: Set<string>;
   private pid: number;
   private timestamp: VectorClock;
+  type: CRDT.set;
 
   constructor(maxProcesses: number, pid: number) {
     this.A = new Set([]);

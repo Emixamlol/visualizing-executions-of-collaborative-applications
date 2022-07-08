@@ -1,4 +1,4 @@
-import { CRDTInterface } from '../../types/crdt-types';
+import { CRDT, CRDTInterface } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
 interface RegisterInterface extends CRDTInterface<LWW_Register> {
@@ -16,6 +16,7 @@ export default class LWW_Register implements RegisterInterface {
   private X: string; // value stored in register
   private pid: number; // id of the process handling the replica
   private timestamp: VectorClock;
+  type: CRDT.register;
 
   constructor(maxProcesses: number, pid: number) {
     this.X = undefined;
