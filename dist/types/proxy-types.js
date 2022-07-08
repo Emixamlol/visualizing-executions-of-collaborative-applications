@@ -9,6 +9,12 @@ function* ColorGenerator() {
     }
 }
 export const colorGenerator = ColorGenerator();
+export var Msg;
+(function (Msg) {
+    Msg["initialized"] = "initialized";
+    Msg["update"] = "update";
+    Msg["merge"] = "merge";
+})(Msg || (Msg = {}));
 // ------------------------------------------------------------------------------
 // Proxy
 // ------------------------------------------------------------------------------
