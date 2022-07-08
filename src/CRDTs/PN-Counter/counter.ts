@@ -1,4 +1,4 @@
-import { CRDTInterface } from '../../types';
+import { CRDTInterface } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
 interface PN_CounterInterface extends CRDTInterface<PN_Counter> {
