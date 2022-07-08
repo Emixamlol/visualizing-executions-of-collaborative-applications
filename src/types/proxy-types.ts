@@ -1,10 +1,11 @@
 import VectorClock from '../CRDTs/vector-clock';
-import { crdt } from './crdt-types';
+import CrdtProxy from '../Proxy/crdt-proxy';
+import { crdt, payload } from './crdt-types';
 
 // State
 // ------------------------------------------------------------------------------
 
-function* ColorGenerator(): Generator<string, void, string> {
+function* ColorGenerator(): Generator<string, string, string> {
   const colors = ['DarkMagenta', 'blue', 'brown', 'DarkGoldenRod', 'green'];
 
   let i = 0;
@@ -16,16 +17,22 @@ function* ColorGenerator(): Generator<string, void, string> {
 
 export const colorGenerator = ColorGenerator();
 
-// the type parameter T is the type of the payload
-interface HistoryInterface<T> {
-  msg: string;
-  payload: [T, VectorClock];
+export enum Msg {
+  initialized = 'initialized',
+  update = 'update',
+  merge = 'merge',
 }
 
 // the type parameter T is the type of the payload
-export interface StateInterface<T> {
-  history: HistoryInterface<T>[]; // array of payload history with msg giving information on which update was executed
-  payload: [T, VectorClock]; // payload of current state
+interface HistoryInterface {
+  msg: Msg;
+  payload: payload;
+}
+
+// the type parameter T is the type of the payload
+export interface StateInterface {
+  history: HistoryInterface[]; // array of payload history with msg giving information on which update was executed
+  payload: payload; // payload of current state
   color: string; // color to be used by d3
 }
 
@@ -45,15 +52,15 @@ export enum ProxyMethod {
 export interface ProxyInterface<T> {
   id: string;
 
-  query: (...args: string[]) => T;
+  query: (...args: string[]) => T; // T is the return type of a crdt query
 
-  compare: (other: T) => boolean;
+  compare: (other: CrdtProxy<T>) => boolean;
 
-  merge: (other: T) => T;
+  merge: (other: CrdtProxy<T>) => crdt;
 
-  apply: (crdtReplica: T) => void;
+  apply: (crdtReplica: CrdtProxy<T>) => void;
 
-  replicate: (replicaId: number) => T;
+  replicate: (replicaId: number) => CrdtProxy<T>;
 }
 
 // ------------------------------------------------------------------------------
