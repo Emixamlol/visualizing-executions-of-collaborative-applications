@@ -4,7 +4,7 @@ import { ProxyInterface, StateInterface } from '../types/proxy-types';
 export default class CrdtProxy<T> implements ProxyInterface<T> {
   readonly id: string; // the id (name) of the local replica
   protected replicaName: string; // name of the CRDT object the instance represents
-  private crdtReplica: crdt<T>; // instance of CRDT replica the proxy contains
+  private crdtReplica: crdt; // instance of CRDT replica the proxy contains
   private state: StateInterface<T>; // the state of the CRDT replica
 
   constructor(id: string, crdt: CRDT, params: string[]) {
