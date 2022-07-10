@@ -85,5 +85,3 @@ export default class TwoPhase_Set implements SetInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 }
-
-export const s = new TwoPhase_Set(5, 0);

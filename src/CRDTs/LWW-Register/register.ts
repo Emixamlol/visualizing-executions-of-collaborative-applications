@@ -52,5 +52,3 @@ export default class LWW_Register implements RegisterInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 }
-
-export const r = new LWW_Register(4, 0);
