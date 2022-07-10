@@ -1,5 +1,5 @@
 // visualization strategy
-enum Strategy {
+export enum Strategy {
   time = 'time',
   replica = 'replica',
 }
