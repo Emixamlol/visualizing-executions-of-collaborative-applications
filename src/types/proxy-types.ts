@@ -1,6 +1,5 @@
-import VectorClock from '../CRDTs/vector-clock';
 import CrdtProxy from '../Proxy/crdt-proxy';
-import { crdt, payload } from './crdt-types';
+import { payload } from './crdt-types';
 
 // State
 // ------------------------------------------------------------------------------
@@ -17,7 +16,7 @@ function* ColorGenerator(): Generator<string, string, string> {
 
 export const colorGenerator = ColorGenerator();
 
-export enum Msg {
+export enum Message {
   initialized = 'initialized',
   update = 'update',
   merge = 'merge',
@@ -25,7 +24,7 @@ export enum Msg {
 
 // the type parameter T is the type of the payload
 interface HistoryInterface {
-  msg: Msg;
+  msg: Message;
   payload: payload;
 }
 
@@ -41,6 +40,8 @@ export interface StateInterface {
 // Proxy
 // ------------------------------------------------------------------------------
 
+export type ID = string;
+
 export enum ProxyMethod {
   new = 'new',
   delete = 'delete',
@@ -49,18 +50,16 @@ export enum ProxyMethod {
   apply = 'apply',
 }
 
-export interface ProxyInterface<T> {
+export interface ProxyInterface {
   id: string;
 
-  query: (...args: string[]) => T; // T is the return type of a crdt query
+  query(...args: string[]): number | string | boolean;
 
-  compare: (other: CrdtProxy<T>) => boolean;
+  merge(other: CrdtProxy): void;
 
-  merge: (other: CrdtProxy<T>) => crdt;
+  apply(fn: string, params: string[]): void;
 
-  apply: (crdtReplica: CrdtProxy<T>) => void;
-
-  replicate: (replicaId: number) => CrdtProxy<T>;
+  replicate(replicaId: ID, pid: number): CrdtProxy;
 }
 
 // ------------------------------------------------------------------------------
