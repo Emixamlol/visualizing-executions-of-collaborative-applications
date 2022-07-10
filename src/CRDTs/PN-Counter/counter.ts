@@ -19,7 +19,7 @@ export default class PN_Counter implements PN_CounterInterface {
   private N: number[]; // decrements
   private pid: number; // id of the process handling the replica
   private timestamp: VectorClock; // vector clock
-  type: CRDTtype.counter;
+  type: CRDTtype = CRDTtype.counter;
 
   constructor(n: number, pid: number) {
     this.pid = pid;

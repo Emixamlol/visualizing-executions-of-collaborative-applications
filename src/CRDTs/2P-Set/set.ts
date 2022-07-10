@@ -19,7 +19,7 @@ export default class TwoPhase_Set implements SetInterface {
   private R: Set<string>;
   private pid: number;
   private timestamp: VectorClock;
-  type: CRDTtype.set;
+  type: CRDTtype = CRDTtype.set;
 
   constructor(maxProcesses: number, pid: number) {
     this.A = new Set([]);

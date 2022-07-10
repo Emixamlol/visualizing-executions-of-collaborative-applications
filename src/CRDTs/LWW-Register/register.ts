@@ -16,7 +16,7 @@ export default class LWW_Register implements RegisterInterface {
   private X: string; // value stored in register
   private pid: number; // id of the process handling the replica
   private timestamp: VectorClock;
-  type: CRDTtype.register;
+  type: CRDTtype = CRDTtype.register;
 
   constructor(maxProcesses: number, pid: number) {
     this.X = undefined;
