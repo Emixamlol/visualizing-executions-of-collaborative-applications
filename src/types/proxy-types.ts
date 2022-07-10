@@ -44,6 +44,7 @@ export type ID = string;
 
 export enum ProxyMethod {
   new = 'new',
+  query = 'query',
   delete = 'delete',
   replicate = 'replicate',
   merge = 'merge',
@@ -53,7 +54,7 @@ export enum ProxyMethod {
 export interface ProxyInterface {
   id: string;
 
-  query(...args: string[]): number | string | boolean;
+  query(args?: string[]): number | string | boolean;
 
   merge(other: CrdtProxy): void;
 
