@@ -1,23 +1,19 @@
-import TwoPhase_Set from '../CRDTs/2P-Set/set';
-import LWW_Register from '../CRDTs/LWW-Register/register';
-import PN_Counter from '../CRDTs/PN-Counter/counter';
-
-export type crdt = PN_Counter | LWW_Register | TwoPhase_Set;
-
 export type payload = [string, number[]];
 
-export enum CRDT {
+export enum CRDTtype {
   counter = 'counter',
   register = 'register',
   set = 'set',
 }
 
-export interface CRDTInterface<C> {
-  type: CRDT; // each CRDT knows its type
+export type CRDTmethodType = 'query' | 'update' | 'merge' | 'specific';
 
-  merge: (crdt: C) => C;
+export interface CRDTInterface {
+  type: CRDTtype; // each CRDT knows its type
 
-  payload: () => payload; // payload returns array with a string (actual payload) and timestamp
+  merge(crdt: CRDTInterface): CRDTInterface;
 
-  getTimestamp: () => number[];
+  payload(): payload; // payload returns array with a string (actual payload) and timestamp
+
+  getTimestamp(): number[];
 }
