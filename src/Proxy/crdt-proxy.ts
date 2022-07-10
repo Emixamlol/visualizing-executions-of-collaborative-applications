@@ -1,26 +1,28 @@
+import { LWW_Register, PN_Counter, TwoPhase_Set } from '../CRDTs';
 import { createCRDT } from '../CRDTs/create-crdt';
-import { CRDT, crdt } from '../types/crdt-types';
+import { CRDTInterface, CRDTtype } from '../types/crdt-types';
 import {
   colorGenerator,
-  Msg,
+  ID,
+  Message,
   ProxyInterface,
   StateInterface,
 } from '../types/proxy-types';
 
-export default class CrdtProxy<T> implements ProxyInterface<T> {
-  readonly id: string; // the id (name) of the local replica
-  protected replicaName: string; // name of the CRDT object the instance represents
-  private crdtReplica: crdt; // instance of CRDT replica the proxy contains
-  private state: StateInterface; // the state of the CRDT replica
+export default class CrdtProxy implements ProxyInterface {
+  readonly id: ID; // the id (name) of the local replica
+  private replicaName: ID; // name of the CRDT object the instance represents
+  private crdtReplica: CRDTInterface; // instance of CRDT replica the proxy contains
+  private state: StateInterface; // the payload history and current payload of the CRDT replica
 
-  constructor(id: string, crdt: CRDT, params: string[]) {
+  constructor(id: ID, crdt: CRDTtype, params: string[]) {
     this.id = id;
     this.replicaName = id;
     this.crdtReplica = createCRDT(crdt, params);
     this.state = {
       history: [
         {
-          msg: Msg.initialized,
+          msg: Message.initialized,
           payload: this.crdtReplica.payload(),
         },
       ],
@@ -29,25 +31,55 @@ export default class CrdtProxy<T> implements ProxyInterface<T> {
     };
   }
 
-  query = (...args: string[]): T => {
-    switch (this.crdtReplica.type) {
-      case CRDT.counter:
-      case CRDT.register:
-        return this.crdtReplica.value() as unknown as T;
+  // private method to update the state
+  private updateState = (msg: Message): void => {
+    const payload = this.crdtReplica.payload(); // get the current payload
+    this.state = {
+      // update the state with the new payload
+      ...this.state,
+      payload,
+      history: this.state.history.concat({ msg, payload }),
+    };
+    // call framework again to visualize update
+  };
 
-      case CRDT.set:
-        return this.crdtReplica.lookup(args[0]) as unknown as T;
+  query = (...args: string[]): number | string | boolean => {
+    switch (this.crdtReplica.type) {
+      case CRDTtype.counter:
+      case CRDTtype.register:
+        return (this.crdtReplica as PN_Counter | LWW_Register).value();
+
+      case CRDTtype.set:
+        return (this.crdtReplica as TwoPhase_Set).lookup(args[0]);
 
       default:
         throw new Error('cannot query invalid crdt');
     }
   };
 
-  compare: (other: CrdtProxy<T>) => boolean;
+  merge = (other: CrdtProxy): void => {
+    if (this.replicaName === other.replicaName) {
+      this.crdtReplica = this.crdtReplica.merge(other.crdtReplica);
+      this.updateState(Message.merge);
+    }
+  };
 
-  merge: (other: CrdtProxy<T>) => crdt;
+  apply = (fn: string, params: string[]): void => {
+    console.log(this);
+    this.crdtReplica[fn].apply(this.crdtReplica, params);
+    this.updateState(Message.update);
+  };
 
-  apply: (crdtReplica: CrdtProxy<T>) => void;
-
-  replicate: (replicaId: number) => CrdtProxy<T>;
+  replicate = (replicaId: ID, pid: number): CrdtProxy => {
+    const maxProcesses = this.crdtReplica.getTimestamp().length;
+    if (pid < maxProcesses) {
+      const newProxy = new CrdtProxy(replicaId, this.crdtReplica.type, [
+        maxProcesses.toString(),
+        pid.toString(),
+      ]);
+      newProxy.replicaName = this.replicaName; // the replicaName is the same for each replica
+      return newProxy;
+    }
+    return null;
+  };
 }
