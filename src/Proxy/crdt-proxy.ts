@@ -11,7 +11,7 @@ import {
 
 export default class CrdtProxy implements ProxyInterface {
   readonly id: ID; // the id (name) of the local replica
-  private replicaName: ID; // name of the CRDT object the instance represents
+  private replicaName: ID; // name of the original CRDT object the instance was replicated from
   private crdtReplica: CRDTInterface; // instance of CRDT replica the proxy contains
   private state: StateInterface; // the payload history and current payload of the CRDT replica
 
@@ -43,7 +43,7 @@ export default class CrdtProxy implements ProxyInterface {
     // call framework again to visualize update
   };
 
-  query = (...args: string[]): number | string | boolean => {
+  query = (args?: string[]): number | string | boolean => {
     switch (this.crdtReplica.type) {
       case CRDTtype.counter:
       case CRDTtype.register:
@@ -78,8 +78,10 @@ export default class CrdtProxy implements ProxyInterface {
         pid.toString(),
       ]);
       newProxy.replicaName = this.replicaName; // the replicaName is the same for each replica
+      newProxy.state = { ...this.state }; // the state is replicated as well
       return newProxy;
     }
+    // in case the maximum number of possible replicas exist, do not replicate and return null
     return null;
   };
 }
