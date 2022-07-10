@@ -1,22 +1,22 @@
-import { CRDT, CRDTInterface } from '../../types/crdt-types';
+import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
-interface RegisterInterface extends CRDTInterface<LWW_Register> {
+interface RegisterInterface extends CRDTInterface {
   // update
-  assign: (w: string) => void;
+  assign(w: string): void;
 
   // query
-  value: () => string;
+  value(): string;
 
   // compare
-  compare: (lwwr: LWW_Register) => boolean;
+  compare(lwwr: LWW_Register): boolean;
 }
 
 export default class LWW_Register implements RegisterInterface {
   private X: string; // value stored in register
   private pid: number; // id of the process handling the replica
   private timestamp: VectorClock;
-  type: CRDT.register;
+  type: CRDTtype.register;
 
   constructor(maxProcesses: number, pid: number) {
     this.X = undefined;
@@ -52,3 +52,5 @@ export default class LWW_Register implements RegisterInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 }
+
+export const r = new LWW_Register(4, 0);

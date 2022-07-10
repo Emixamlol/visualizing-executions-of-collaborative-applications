@@ -1,17 +1,17 @@
-import { CRDT, CRDTInterface } from '../../types/crdt-types';
+import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
-interface SetInterface extends CRDTInterface<TwoPhase_Set> {
+interface SetInterface extends CRDTInterface {
   // updates
-  add: (e: string) => void;
+  add(e: string): void;
 
-  remove: (e: string) => void;
+  remove(e: string): void;
 
   // query
-  lookup: (e: string) => boolean;
+  lookup(e: string): boolean;
 
   // compare
-  compare: (tps: TwoPhase_Set) => boolean;
+  compare(tps: TwoPhase_Set): boolean;
 }
 
 export default class TwoPhase_Set implements SetInterface {
@@ -19,7 +19,7 @@ export default class TwoPhase_Set implements SetInterface {
   private R: Set<string>;
   private pid: number;
   private timestamp: VectorClock;
-  type: CRDT.set;
+  type: CRDTtype.set;
 
   constructor(maxProcesses: number, pid: number) {
     this.A = new Set([]);
@@ -85,3 +85,5 @@ export default class TwoPhase_Set implements SetInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 }
+
+export const s = new TwoPhase_Set(5, 0);
