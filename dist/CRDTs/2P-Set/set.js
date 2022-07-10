@@ -1,6 +1,8 @@
+import { CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 export default class TwoPhase_Set {
     constructor(maxProcesses, pid) {
+        this.type = CRDTtype.set;
         this.add = (e) => {
             this.A.add(e);
             this.timestamp.increase(this.pid);

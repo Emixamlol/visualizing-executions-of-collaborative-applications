@@ -9,18 +9,16 @@ function* ColorGenerator() {
     }
 }
 export const colorGenerator = ColorGenerator();
-export var Msg;
-(function (Msg) {
-    Msg["initialized"] = "initialized";
-    Msg["update"] = "update";
-    Msg["merge"] = "merge";
-})(Msg || (Msg = {}));
-// ------------------------------------------------------------------------------
-// Proxy
-// ------------------------------------------------------------------------------
+export var Message;
+(function (Message) {
+    Message["initialized"] = "initialized";
+    Message["update"] = "update";
+    Message["merge"] = "merge";
+})(Message || (Message = {}));
 export var ProxyMethod;
 (function (ProxyMethod) {
     ProxyMethod["new"] = "new";
+    ProxyMethod["query"] = "query";
     ProxyMethod["delete"] = "delete";
     ProxyMethod["replicate"] = "replicate";
     ProxyMethod["merge"] = "merge";

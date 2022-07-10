@@ -1,6 +1,8 @@
+import { CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 export default class PN_Counter {
     constructor(n, pid) {
+        this.type = CRDTtype.counter;
         this.increment = () => {
             this.P[this.pid]++;
             this.timestamp.increase(this.pid);

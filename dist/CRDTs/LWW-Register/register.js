@@ -1,6 +1,8 @@
+import { CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 export default class LWW_Register {
     constructor(maxProcesses, pid) {
+        this.type = CRDTtype.register;
         this.assign = (w) => {
             this.X = w;
             this.timestamp.increase(this.pid);

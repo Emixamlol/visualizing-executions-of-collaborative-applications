@@ -1,5 +1,5 @@
 // visualization strategy
-var Strategy;
+export var Strategy;
 (function (Strategy) {
     Strategy["time"] = "time";
     Strategy["replica"] = "replica";

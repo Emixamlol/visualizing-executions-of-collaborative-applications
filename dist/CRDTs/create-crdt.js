@@ -1,19 +1,17 @@
-import { CRDT } from '../types/crdt-types';
+import { CRDTtype } from '../types/crdt-types';
 import { PN_Counter, LWW_Register, TwoPhase_Set } from './index';
-/**
- * This file defines the api between proxies and CRDTs, such that the user can call generic functions on a proxy without worrying what CRDT it contains
- */
+// method to instantiate a CRDT
 export const createCRDT = (crdt, params) => {
     switch (crdt) {
-        case CRDT.counter: {
+        case CRDTtype.counter: {
             const [n, pid] = params.map((value) => parseInt(value, 10));
             return new PN_Counter(n, pid);
         }
-        case CRDT.register: {
+        case CRDTtype.register: {
             const [maxProcesses, pid] = params.map((value) => parseInt(value, 10));
             return new LWW_Register(maxProcesses, pid);
         }
-        case CRDT.set: {
+        case CRDTtype.set: {
             const [maxProcesses, pid] = params.map((value) => parseInt(value, 10));
             return new TwoPhase_Set(maxProcesses, pid);
         }

@@ -1,29 +1,41 @@
 import { ProxyMethod } from '../types/proxy-types';
+import { addProxy, applyToProxy, mergeProxy, queryProxy, removeProxy, replicateProxy, } from '../main';
+import { CRDTtype } from '../types/crdt-types';
 export const execute = ({ proc, parameters }) => {
     switch (proc) {
         case ProxyMethod.new: {
             // create a new proxy
-            console.log(`Executing ${proc} with parameters ${parameters}`);
+            const [id, crdt, ...params] = parameters;
+            addProxy(id, CRDTtype[crdt], params);
+            break;
+        }
+        case ProxyMethod.query: {
+            const [id, ...params] = parameters;
+            queryProxy(id, params);
             break;
         }
         case ProxyMethod.delete: {
             // remove a proxy
-            console.log(`Executing ${proc} with parameters ${parameters}`);
+            const [id] = parameters;
+            removeProxy(id);
             break;
         }
         case ProxyMethod.replicate: {
             // replicate a proxy
-            console.log(`Executing ${proc} with parameters ${parameters}`);
+            const [idToReplicate, replicaId] = parameters;
+            replicateProxy(idToReplicate, replicaId);
             break;
         }
         case ProxyMethod.merge: {
             // merge two proxies
-            console.log(`Executing ${proc} with parameters ${parameters}`);
+            const [id, other] = parameters;
+            mergeProxy(id, other);
             break;
         }
         case ProxyMethod.apply: {
             // apply a proxy method to a proxy
-            console.log(`Executing ${proc} with parameters ${parameters}`);
+            const [id, fn, ...params] = parameters;
+            applyToProxy(id, fn, params);
             break;
         }
         default:
