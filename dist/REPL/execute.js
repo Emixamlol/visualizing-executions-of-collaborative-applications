@@ -1,5 +1,5 @@
 import { ProxyMethod } from '../types/proxy-types';
-import { addProxy, applyToProxy, mergeProxy, queryProxy, removeProxy, replicateProxy, } from '../main';
+import { addProxy, applyToProxy, mergeProxy, queryProxy, removeProxy, replicateProxy, } from '../Proxy';
 import { CRDTtype } from '../types/crdt-types';
 export const execute = ({ proc, parameters }) => {
     switch (proc) {

@@ -1,6 +1,7 @@
 import { createCRDT } from '../CRDTs/create-crdt';
 import { CRDTtype } from '../types/crdt-types';
 import { colorGenerator, Message, } from '../types/proxy-types';
+import { sendState } from '../D3-framework';
 export default class CrdtProxy {
     constructor(id, crdt, params) {
         // private method to update the state
@@ -8,6 +9,8 @@ export default class CrdtProxy {
             const payload = this.crdtReplica.payload(); // get the current payload
             this.state = Object.assign(Object.assign({}, this.state), { payload, history: this.state.history.concat({ msg, payload }) });
             // call framework again to visualize update
+            // visualize();
+            sendState(this.id, this.state);
         };
         this.query = (args) => {
             switch (this.crdtReplica.type) {
