@@ -8,6 +8,7 @@ import {
   ProxyInterface,
   StateInterface,
 } from '../types/proxy-types';
+import { visualize, sendState } from '../D3-framework';
 
 export default class CrdtProxy implements ProxyInterface {
   readonly id: ID; // the id (name) of the local replica
@@ -41,6 +42,8 @@ export default class CrdtProxy implements ProxyInterface {
       history: this.state.history.concat({ msg, payload }),
     };
     // call framework again to visualize update
+    // visualize();
+    sendState(this.id, this.state);
   };
 
   query = (args?: string[]): number | string | boolean => {
