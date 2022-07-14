@@ -1,5 +1,5 @@
 import { ParsedCode } from '../types/repl-types';
-import { ID, ProxyMethod } from '../types/proxy-types';
+import { ProxyMethod } from '../types/proxy-types';
 import {
   addProxy,
   applyToProxy,
@@ -7,7 +7,7 @@ import {
   queryProxy,
   removeProxy,
   replicateProxy,
-} from '../main';
+} from '../Proxy';
 import { CRDTtype } from '../types/crdt-types';
 
 export const execute = ({ proc, parameters }: ParsedCode): void => {
