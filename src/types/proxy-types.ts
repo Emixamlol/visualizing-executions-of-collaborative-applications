@@ -22,16 +22,14 @@ export enum Message {
   merge = 'merge',
 }
 
-// the type parameter T is the type of the payload
-interface HistoryInterface {
-  msg: Message;
-  payload: payload;
-}
+type History = { msg: Message; payload: payload };
 
-// the type parameter T is the type of the payload
+type Link = { from: ID; to: ID };
+
 export interface StateInterface {
-  history: HistoryInterface[]; // array of payload history with msg giving information on which update was executed
+  history: Array<History>; // array of payload history with msg giving information on which operation was executed
   payload: payload; // payload of current state
+  merges: Array<Link>; // history of merges which have taken place
   color: string; // color to be used by d3
 }
 
@@ -61,6 +59,8 @@ export interface ProxyInterface {
   apply(fn: string, params: string[]): void;
 
   replicate(replicaId: ID, pid: number): CrdtProxy;
+
+  getState(): StateInterface;
 }
 
 // ------------------------------------------------------------------------------
