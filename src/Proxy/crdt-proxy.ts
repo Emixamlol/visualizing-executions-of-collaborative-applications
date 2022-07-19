@@ -8,7 +8,6 @@ import {
   ProxyInterface,
   StateInterface,
 } from '../types/proxy-types';
-import { visualize, sendState } from '../D3-framework';
 
 export default class CrdtProxy implements ProxyInterface {
   readonly id: ID; // the id (name) of the local replica
@@ -28,6 +27,7 @@ export default class CrdtProxy implements ProxyInterface {
         },
       ],
       payload: this.crdtReplica.payload(),
+      merges: [],
       color: colorGenerator.next().value,
     };
   }
@@ -43,7 +43,7 @@ export default class CrdtProxy implements ProxyInterface {
     };
     // call framework again to visualize update
     // visualize();
-    sendState(this.id, this.state);
+    // sendState(this.id, this.state);
   };
 
   query = (args?: string[]): number | string | boolean => {
@@ -87,4 +87,6 @@ export default class CrdtProxy implements ProxyInterface {
     // in case the maximum number of possible replicas exist, do not replicate and return null
     return null;
   };
+
+  getState = (): StateInterface => Object.assign({}, this.state); // return a copy of the state, not the state itself
 }
