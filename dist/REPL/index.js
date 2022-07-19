@@ -32,7 +32,10 @@ const handleKeyDown = (e) => {
 // handle what has to happen when a key is released
 const handleKeyUp = (e) => {
     textarea.style('height', 'auto');
+    const scHeight = e.target.scrollHeight;
+    textarea.style('height', `${scHeight}px`);
 };
 textarea
     .attr('placeholder', 'add, remove or manipulate existing CRDTs')
-    .on('keydown', handleKeyDown);
+    .on('keydown', handleKeyDown)
+    .on('keyup', handleKeyUp);

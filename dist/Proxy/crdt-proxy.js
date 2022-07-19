@@ -1,7 +1,6 @@
 import { createCRDT } from '../CRDTs/create-crdt';
 import { CRDTtype } from '../types/crdt-types';
 import { colorGenerator, Message, } from '../types/proxy-types';
-import { sendState } from '../D3-framework';
 export default class CrdtProxy {
     constructor(id, crdt, params) {
         // private method to update the state
@@ -10,7 +9,7 @@ export default class CrdtProxy {
             this.state = Object.assign(Object.assign({}, this.state), { payload, history: this.state.history.concat({ msg, payload }) });
             // call framework again to visualize update
             // visualize();
-            sendState(this.id, this.state);
+            // sendState(this.id, this.state);
         };
         this.query = (args) => {
             switch (this.crdtReplica.type) {
@@ -48,6 +47,7 @@ export default class CrdtProxy {
             // in case the maximum number of possible replicas exist, do not replicate and return null
             return null;
         };
+        this.getState = () => Object.assign({}, this.state); // return a copy of the state, not the state itself
         this.id = id;
         this.replicaName = id;
         this.crdtReplica = createCRDT(crdt, params);
@@ -59,6 +59,7 @@ export default class CrdtProxy {
                 },
             ],
             payload: this.crdtReplica.payload(),
+            merges: [],
             color: colorGenerator.next().value,
         };
     }
