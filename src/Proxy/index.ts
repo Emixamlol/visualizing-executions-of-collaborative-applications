@@ -1,6 +1,8 @@
 import CrdtProxy from './crdt-proxy';
 import { ID } from '../types/proxy-types';
 import { CRDTtype } from '../types/crdt-types';
+import { Data } from '../types/d3-framework-types';
+import * as framework from '../D3-framework';
 
 /**
  * map of all proxies: maps the ID of a CRDT to the map of each replica, in which the ID points to the proxy containing said replica
@@ -98,3 +100,22 @@ export const applyToProxy = (id: ID, fn: string, params: string[]): void => {
   const proxy: CrdtProxy = replicas.get(id);
   proxy.apply(fn, params);
 };
+
+const sendToFramework = (): void => {};
+
+addProxy('p', CRDTtype.counter, ['5', '0']);
+
+replicateProxy('p', 'p2');
+
+addProxy('x', CRDTtype.register, ['4', '0']);
+
+const arr: Data = Array.from(proxies).map(([instanceId, replicas]) => [
+  instanceId,
+  Array.from(replicas).map(([replicaId, proxy]) => ({
+    id: replicaId,
+    state: proxy.getState(),
+  })),
+]);
+console.log(arr);
+
+console.log(arr.flat().filter((d) => typeof d !== 'string'));
