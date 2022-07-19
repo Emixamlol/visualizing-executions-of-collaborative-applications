@@ -2,7 +2,7 @@
 
 export type ParsedCode = {
   proc: string;
-  parameters: string[];
+  parameters: Array<string>;
 };
 
 export enum Keyword {

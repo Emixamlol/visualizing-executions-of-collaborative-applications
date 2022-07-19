@@ -15,5 +15,5 @@ export interface CRDTInterface {
 
   payload(): payload; // payload returns array with a string (actual payload) and timestamp
 
-  getTimestamp(): number[];
+  getTimestamp(): Array<number>;
 }
