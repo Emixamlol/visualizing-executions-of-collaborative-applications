@@ -16,34 +16,6 @@ export const drawBasicState = () => {
         const objects = data
             .reduce((accumulator, [id, replicas]) => {
             return accumulator.concat([
-                replicas.map(({ id, state }, i) => {
-                    const length = accumulator.length;
-                    const ry = replicas.length * 50;
-                    const startY = margin.top +
-                        (length
-                            ? accumulator[length - 1][0].startY +
-                                2 * accumulator[length - 1][0].ry
-                            : 0);
-                    const histories = state.history;
-                    const cx = x + ((width - x) / replicas.length) * i;
-                    const cy = startY + 25 + margin.top + 100 * i; // 25 is the radius, to be changed sensical variable name for timeline
-                    const { color, history, merges, payload } = state;
-                    return {
-                        ry,
-                        startY,
-                        text: id,
-                        cx,
-                        cy,
-                    };
-                }),
-            ]);
-        }, [])
-            .flat();
-        console.log('objects in basic-state');
-        console.log(objects);
-        const test = data
-            .reduce((accumulator, [id, replicas]) => {
-            return accumulator.concat([
                 replicas
                     .map(({ id: replicaId, state }, i) => {
                     const length = accumulator.length;
@@ -56,19 +28,20 @@ export const drawBasicState = () => {
                     const cy = startY + 25 + margin.top + 100 * i; // 25 is the radius, to be changed sensical variable name for timeline
                     const { color, history, merges, payload } = state;
                     return history.map(({ msg, payload }, i) => ({
-                        cx: x + margin.left + ((width - x) / replicas.length) * i,
+                        cx: x + margin.left + ((width - x) / history.length) * i,
                         cy,
                         ry,
                         startY,
                         text: replicaId,
+                        title: `operation = ${msg}, \npayload = ${payload[0]}, \ntimestamp = ${JSON.stringify(payload[1])}`,
                     }));
                 })
                     .flat(),
             ]);
         }, [])
             .flat();
-        console.log('test in basic-state');
-        console.log(test);
+        console.log('objects in basic-state');
+        console.log(objects);
         // visualization
         const htmlClass = 'basic-state';
         const g = selection
@@ -77,13 +50,15 @@ export const drawBasicState = () => {
             .join('g')
             .attr('class', htmlClass);
         g.selectAll('circle')
-            .data(test)
+            .data(objects)
             .join('circle')
             .attr('cx', (d) => d.cx)
             .attr('cy', (d) => d.cy)
             .attr('r', radius)
             .attr('fill', 'green')
-            .attr('stroke', 'green');
+            .attr('stroke', 'green')
+            .append('title')
+            .text((d) => d.title);
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;

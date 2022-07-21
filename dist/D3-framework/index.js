@@ -19,18 +19,21 @@ const svg = d3
     .attr('height', height);
 console.log(svg.node());
 const id = 'x';
-const payload = ['payload', [0]];
+const payload = ['payload', [0, 0, 0, 0]];
 const replica = {
     id,
     state: {
-        history: [{ msg: Message.initialized, payload }],
+        history: [
+            { msg: Message.initialized, payload },
+            { msg: Message.update, payload: ['updated-payload', [1, 1, 1, 1]] },
+        ],
         payload,
         merges: [],
         color: 'blue',
     },
 };
 const id2 = 'y';
-const payload2 = ['payload', [0]];
+const payload2 = ['payload', [0, 0, 0, 0]];
 const replica2 = {
     id: id2,
     state: {
