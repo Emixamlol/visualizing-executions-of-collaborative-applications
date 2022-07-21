@@ -11,14 +11,17 @@ import {
 } from '../types/d3-framework-types';
 import { ID, Message, StateInterface } from '../types/proxy-types';
 import { visualization } from './Reusable-blocks';
+import { drawBasicState } from './Reusable-blocks/basic-state';
 import { drawObjectCircle } from './Reusable-blocks/object-circle';
 import { drawObjectEllipse } from './Reusable-blocks/object-ellipse';
+import { drawTimeLine } from './Reusable-blocks/timeline';
 import { strategies } from './Strategies';
 
 // constants
 const width = 960;
-const height = 500;
+const height = 700;
 const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+const radius = 25;
 
 const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
   .select('div.visualization > div.visualization-element')
@@ -26,15 +29,7 @@ const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
   .attr('width', width)
   .attr('height', height);
 
-const vis: ReusablePatternInterface = visualization()
-  .width(width)
-  .height(height);
-
-const num: number = visualization().width();
-
 console.log(svg.node());
-
-svg.call(vis);
 
 const id: ID = 'x';
 const payload: payload = ['payload', [0]];
@@ -61,7 +56,7 @@ const replica2: ReplicaInterface = {
 };
 
 const data: Data = [
-  [id, [replica, replica, replica, replica, replica]],
+  [id, [replica, replica, replica]],
   [id2, [replica2]],
 ];
 
@@ -75,9 +70,43 @@ const objectCircle = drawObjectCircle()
   .width(width)
   .height(height)
   .margin(margin)
+  .data(data)
+  .radius(radius);
+
+const timeLine = drawTimeLine()
+  .width(width)
+  .height(height)
+  .margin(margin)
   .data(data);
 
-svg.call(objectEllipse).call(objectCircle);
+const basicState = drawBasicState()
+  .width(width)
+  .height(height)
+  .margin(margin)
+  .data(data)
+  .radius(radius / 5);
+
+svg.call(objectEllipse).call(objectCircle).call(timeLine).call(basicState);
+
+setTimeout(() => {
+  const newData: Data = data.map(([id, replicas]) => [
+    id,
+    replicas.concat(replica),
+  ]);
+  svg
+    .call(objectEllipse.data(newData))
+    .call(objectCircle.data(newData))
+    .call(timeLine.data(newData))
+    .call(basicState.data(newData));
+
+  setTimeout(() => {
+    svg
+      .call(objectEllipse.data(data))
+      .call(objectCircle.data(data))
+      .call(timeLine.data(data))
+      .call(basicState.data(data));
+  }, 3000);
+}, 2000);
 
 // Framework
 export const main = () => {
