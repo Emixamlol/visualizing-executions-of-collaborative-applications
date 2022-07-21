@@ -4,48 +4,62 @@ export const drawObjectCircle = () => {
     let height;
     let margin;
     let data;
+    let radius;
     const my = (selection) => {
         // set x and y scales
-        const x = d3
-            .scaleLinear()
-            .domain([0, 1])
-            .range([margin.left, margin.left * 2]);
+        const x = margin.left * 2 + 50;
         const y = d3
             .scaleLinear()
             .domain([0, data.length])
             .range([margin.top, height - margin.bottom]);
         // process data
-        const objects = data.map(([id, replicas], i) => ({
-            y: (height / data.length) * (i + 1) + margin.top,
-            text: id,
-        }));
-        // const replicas = data.ma
+        const objects = data.reduce((accumulator, [id, replicas]) => accumulator.concat([
+            replicas.map((replica, i) => {
+                const length = accumulator.length;
+                const ry = replicas.length * 50;
+                const startY = margin.top +
+                    (length
+                        ? accumulator[length - 1][0].startY +
+                            2 * accumulator[length - 1][0].ry
+                        : 0);
+                const y = startY + radius + margin.top + 100 * i;
+                return {
+                    ry,
+                    startY,
+                    y,
+                    text: replica.id,
+                };
+            }),
+        ]), []);
+        console.log('objects in object-circle');
         console.log(objects);
         // visualization
         const htmlClass = 'object-circle';
-        console.log(x(1));
-        // selection
-        //   .selectAll(`circle.${htmlClass}`)
-        //   .data(objects)
-        //   .join('circle')
-        //   .attr('class', htmlClass)
-        //   .attr('cx', x(0))
-        //   .attr('cy', (d) => d.y)
-        //   .attr('fill', 'black')
-        //   .text((d) => d.text);
-        selection
+        const g = selection
             .selectAll(`g.${htmlClass}`)
-            .data(data)
+            .data([null])
             .join('g')
-            .attr('class', htmlClass)
-            .selectAll(`circle.${htmlClass}`)
-            .data((d) => (console.log('reassigning data'), console.log(d[1]), d[1]))
+            .attr('class', htmlClass);
+        g.selectAll('g')
+            .data(objects)
+            .join('g')
+            .selectAll('circle')
+            .data((d) => (console.log('reassigning data'), console.log(d), d))
             .join('circle')
-            .attr('cx', (d, i) => (console.log(d, i), i * x(0)))
-            .attr('cy', (d, i) => i * x(0))
-            .attr('r', 10)
-            .attr('fill', 'blue')
+            .attr('cx', x)
+            .attr('cy', (d) => d.y)
+            .attr('r', radius)
+            .attr('fill', 'none')
             .attr('stroke', 'blue');
+        g.selectAll('g')
+            .data(objects)
+            .join('g')
+            .selectAll('text')
+            .data((d) => (console.log('reassigning data'), console.log(d), d))
+            .join('text')
+            .attr('x', (d) => x)
+            .attr('y', (d) => d.y)
+            .text((d) => d.text);
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;
@@ -58,6 +72,9 @@ export const drawObjectCircle = () => {
     };
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : height;
+    };
+    my.radius = function (_) {
+        return arguments.length ? ((radius = _), my) : radius;
     };
     return my;
 };
