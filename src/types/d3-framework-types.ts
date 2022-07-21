@@ -44,22 +44,36 @@ export type margin = {
  *
  */
 
-export interface ReusablePatternInterface {
+export interface ReusablePatternInterface<T> {
   (selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>): void;
 
   width(): number;
-  width(value: number): ReusablePatternInterface;
+  width(value: number): T;
 
   height(): number;
-  height(value: number): ReusablePatternInterface;
+  height(value: number): T;
 
   margin(): margin;
-  margin(value: margin): ReusablePatternInterface;
+  margin(value: margin): T;
 
   data(): Data;
-  data(value: Data): ReusablePatternInterface;
+  data(value: Data): T;
 }
 
-export interface ReusableObjectEllipse extends ReusablePatternInterface {}
+export interface ReusableObjectEllipse
+  extends ReusablePatternInterface<ReusableObjectEllipse> {}
 
-export interface ReusableObjectCircle extends ReusablePatternInterface {}
+export interface ReusableObjectCircle
+  extends ReusablePatternInterface<ReusableObjectCircle> {
+  radius(): number;
+  radius(value: number): ReusableObjectCircle;
+}
+
+export interface ReusableBasicState
+  extends ReusablePatternInterface<ReusableBasicState> {
+  radius(): number;
+  radius(value: number): ReusableObjectCircle;
+}
+
+export interface ReusableTimeLine
+  extends ReusablePatternInterface<ReusableTimeLine> {}
