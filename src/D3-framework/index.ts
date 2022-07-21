@@ -32,11 +32,14 @@ const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
 console.log(svg.node());
 
 const id: ID = 'x';
-const payload: payload = ['payload', [0]];
+const payload: payload = ['payload', [0, 0, 0, 0]];
 const replica: ReplicaInterface = {
   id,
   state: {
-    history: [{ msg: Message.initialized, payload }],
+    history: [
+      { msg: Message.initialized, payload },
+      { msg: Message.update, payload: ['updated-payload', [1, 1, 1, 1]] },
+    ],
     payload,
     merges: [],
     color: 'blue',
@@ -44,7 +47,7 @@ const replica: ReplicaInterface = {
 };
 
 const id2: ID = 'y';
-const payload2: payload = ['payload', [0]];
+const payload2: payload = ['payload', [0, 0, 0, 0]];
 const replica2: ReplicaInterface = {
   id: id2,
   state: {
