@@ -5,7 +5,7 @@ import {
   ReusableObjectEllipse,
 } from '../../types/d3-framework-types';
 
-export const drawObjectEllipse = () => {
+export const drawObjectEllipse = (): ReusableObjectEllipse => {
   let width: number;
   let height: number;
   let margin: margin;
@@ -26,45 +26,62 @@ export const drawObjectEllipse = () => {
       .range([margin.top, height - margin.bottom]);
 
     // process data
-    const objects = data.map(([id, replicas], i) => ({
-      y: (height / data.length) * (i + 1) + margin.top,
-      text: id,
-    }));
-
-    // const replicas = data.ma
+    const objects = data.reduce(
+      (accumulator, [id, replicas]) =>
+        accumulator.concat({
+          text: id,
+          rx: 50,
+          ry: replicas.length * 50,
+          y:
+            margin.top +
+            replicas.length * 50 +
+            (accumulator.length
+              ? accumulator[accumulator.length - 1].ry +
+                accumulator[accumulator.length - 1].y
+              : 0),
+        }),
+      []
+    );
 
     console.log(objects);
+
+    const replicas = data.map(([id, replicas]) => replicas).flat();
+
+    console.log(replicas);
 
     // visualization
     const htmlClass = 'object-ellipse';
 
     console.log(x(1));
 
-    selection
-      .selectAll(`text.${htmlClass}`)
+    const g = selection
+      .selectAll(`g.${htmlClass}`)
+      .data([null])
+      .join('g')
+      .attr('class', htmlClass);
+
+    g.selectAll('text')
       .data(objects)
       .join('text')
-      .attr('class', htmlClass)
       .attr('x', x(0))
       .attr('y', (d) => d.y)
       .attr('fill', 'black')
       .text((d) => d.text);
 
-    selection
-      .selectAll(`path.${htmlClass}`)
+    g.selectAll('path')
       .data(objects)
       .join('path')
-      .attr('class', htmlClass)
       .attr('transform', `translate(0, 0)`)
       .attr('stroke', 'black')
       .attr('fill', 'none')
       .attr('stroke-dasharray', '10 10')
       .attr(
         'd',
-        (d) =>
-          `M ${x(1)} ${d.y} A 50 200 0 0 1 ${x(1) + 100} ${
+        (d) => {
+          return `M ${x(1)} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1) + 100} ${
             d.y
-          } A 50 200 0 0 1 ${x(1)} ${d.y}` // `M 30 200 A 50 100 0 0 1 130 200 A 50 100 0 0 1 30 200`
+          } A ${d.rx} ${d.ry} 0 0 1 ${x(1)} ${d.y}`;
+        } // `M 30 200 A 50 100 0 0 1 130 200 A 50 100 0 0 1 30 200`
       );
   };
 
