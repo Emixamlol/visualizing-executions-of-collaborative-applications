@@ -4,12 +4,13 @@ import {
   margin,
   ReusableBasicState,
 } from '../../types/d3-framework-types';
+import { ID } from '../../types/proxy-types';
 
 export const drawBasicState = (): ReusableBasicState => {
   let width: number;
   let height: number;
   let margin: margin;
-  let data: Data;
+  let data: Data = [];
   let radius: number;
 
   const my: ReusableBasicState = (
@@ -18,10 +19,10 @@ export const drawBasicState = (): ReusableBasicState => {
     // set scales
     const x = margin.left * 9;
 
-    const y = d3
+    const xScale = d3
       .scaleLinear()
-      .domain([0, data.length])
-      .range([margin.top, height - margin.bottom]);
+      .domain([0, history.length])
+      .range([x, x + history.length * 125]);
 
     const replicas = data
       .map(([id, replicas]) => replicas.map((replica) => replica.id))
@@ -36,15 +37,70 @@ export const drawBasicState = (): ReusableBasicState => {
 
     // process data
 
-    const objects: Array<{
+    // calculate the y position a new crdt object starts at
+    const StartYs: Array<number> = data
+      .reduce(
+        (accumulator: Array<{ ry: number; startY: number }>, [, replicas]) => {
+          console.log(accumulator);
+          const ry = replicas.length * 50;
+          const startY =
+            margin.top +
+            (accumulator.length
+              ? accumulator[accumulator.length - 1].startY +
+                2 * accumulator[accumulator.length - 1].ry
+              : 0);
+          return accumulator.concat({ ry, startY });
+        },
+        []
+      )
+      .map(({ ry, startY }) => startY);
+
+    console.log('startYs in basic-state');
+    console.log(StartYs);
+
+    const getCircleCoordinates = (
+      data: Data,
+      index: number
+    ): Array<{
+      replicaId: ID;
+      coordinates: Array<{ cx: number; cy: number }>;
+    }> => {
+      const [, replicas] = data[index];
+      return replicas.map(({ id, state }, replicaIndex) => {
+        const startY = StartYs[index];
+        const coordinates = state.history.map(
+          ({ msg, payload }, historyIndex) => ({
+            cx: xScale(historyIndex),
+            cy: startY + margin.top + 25 + 100 * replicaIndex,
+          })
+        );
+        return {
+          replicaId: id,
+          coordinates,
+        };
+      });
+    };
+
+    // if (data.length !== 0 && data !== undefined) {
+    //   console.log('getCoordinates');
+    //   console.log(getCircleCoordinates(data, 0));
+    // }
+    data.forEach((d, i) => {
+      console.log(`circle coordinates for index ${i}`);
+      console.log(getCircleCoordinates(data, i));
+    });
+
+    type processedData = Array<{
       ry: number;
       startY: number;
       id: string;
       cx: number;
       cy: number;
       title: string;
-    }> = data
-      .reduce((accumulator, [id, replicas]) => {
+    }>;
+
+    const objects: processedData = data
+      .reduce((accumulator: processedData[], [, replicas]) => {
         return accumulator.concat([
           replicas
             .map(({ id: replicaId, state }, i) => {
@@ -56,13 +112,8 @@ export const drawBasicState = (): ReusableBasicState => {
                   ? accumulator[length - 1][0].startY +
                     2 * accumulator[length - 1][0].ry
                   : 0);
-              const cy = startY + 25 + margin.top + 100 * i; // 25 is the radius, to be changed sensical variable name for timeline
-              const { color, history, merges } = state;
-
-              const xScale = d3
-                .scaleLinear()
-                .domain([0, history.length])
-                .range([x, x + history.length * 125]);
+              const cy = startY + 25 + margin.top + 100 * i; // y(i);  // 25 is the radius, to be changed sensical variable name for timeline
+              const { history, merges } = state;
               return history.map(({ msg, payload }, i) => ({
                 cx: xScale(i),
                 cy,
@@ -91,29 +142,6 @@ export const drawBasicState = (): ReusableBasicState => {
       .join('g')
       .attr('class', htmlClass);
 
-    // g.selectAll('circle')
-    //   .data(objects)
-    //   .join(
-    //     (enter) =>
-    //       enter
-    //         .append('circle')
-    //         .attr('cx', (d) => d.cx)
-    //         .attr('cy', (d) => d.cy)
-    //         .attr('r', radius)
-    //         .attr('fill', (d) => colorScale(d.id) as string)
-    //         .attr('stroke', (d) => colorScale(d.id) as string)
-    //         .append('title')
-    //         .text((d) => d.title),
-    //     (update) =>
-    //       update
-    //         .attr('cx', (d) => d.cx)
-    //         .attr('cy', (d) => d.cy)
-    //         .attr('r', radius)
-    //         .attr('fill', (d) => colorScale(d.id) as string)
-    //         .attr('stroke', (d) => colorScale(d.id) as string)
-    //         .select('title')
-    //         .text((d) => d.title)
-    //   );
     g.selectAll('circle')
       .data(objects)
       .join(
