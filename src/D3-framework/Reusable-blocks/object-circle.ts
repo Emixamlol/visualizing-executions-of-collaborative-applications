@@ -15,7 +15,7 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
   const my: ReusableObjectCircle = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
   ) => {
-    // set x and y scales
+    // set scales
     const x = margin.left * 2 + 50;
 
     const y = d3
@@ -23,9 +23,20 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
       .domain([0, data.length])
       .range([margin.top, height - margin.bottom]);
 
+    const replicas = data
+      .map(([id, replicas]) => replicas.map((replica) => replica.id))
+      .flat();
+
+    const colorScale = d3
+      .scaleOrdinal()
+      .domain(replicas)
+      .range(d3.schemePaired);
+
+    const t = d3.transition().duration(1000);
+
     // process data
     const objects: Array<
-      Array<{ ry: number; startY: number; y: number; text: string }>
+      Array<{ ry: number; startY: number; y: number; id: string }>
     > = data.reduce(
       (accumulator, [id, replicas]) =>
         accumulator.concat([
@@ -43,7 +54,7 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
               ry,
               startY,
               y,
-              text: replica.id,
+              id: replica.id,
             };
           }),
         ]),
@@ -66,23 +77,50 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
       .data(objects)
       .join('g')
       .selectAll('circle')
-      .data((d) => (console.log('reassigning data'), console.log(d), d))
-      .join('circle')
-      .attr('cx', x)
-      .attr('cy', (d) => d.y)
-      .attr('r', radius)
-      .attr('fill', 'none')
-      .attr('stroke', 'blue');
+      .data((d) => d)
+      .join(
+        (enter) =>
+          enter
+            .append('circle')
+            .attr('cx', x)
+            .attr('cy', (d) => d.y)
+            .attr('fill', 'none')
+            .attr('stroke', (d) => colorScale(d.id) as string)
+            .call((enter) => enter.transition(t).attr('r', radius)),
+        (update) =>
+          update
+            .transition(t)
+            .attr('cx', x)
+            .attr('cy', (d) => d.y)
+            .attr('r', radius)
+            .attr('stroke', (d) => colorScale(d.id) as string)
+      );
 
     g.selectAll('g')
       .data(objects)
       .join('g')
       .selectAll('text')
-      .data((d) => (console.log('reassigning data'), console.log(d), d))
-      .join('text')
-      .attr('x', (d) => x)
-      .attr('y', (d) => d.y)
-      .text((d) => d.text);
+      .data((d) => d)
+      .join(
+        (enter) =>
+          enter
+            .append('text')
+            .attr('x', x)
+            .attr('y', (d) => d.y)
+            .attr('fill', 'white')
+            .text((d) => d.id)
+            .call((enter) =>
+              enter
+                .transition(t)
+                .attr('fill', (d) => colorScale(d.id) as string)
+            ),
+        (update) =>
+          update
+            .transition(t)
+            .attr('x', x)
+            .attr('y', (d) => d.y)
+            .attr('fill', (d) => colorScale(d.id) as string)
+      );
   };
 
   my.width = function (_?: number): any {
