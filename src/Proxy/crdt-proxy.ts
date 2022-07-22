@@ -2,7 +2,6 @@ import { LWW_Register, PN_Counter, TwoPhase_Set } from '../CRDTs';
 import { createCRDT } from '../CRDTs/create-crdt';
 import { CRDTInterface, CRDTtype } from '../types/crdt-types';
 import {
-  colorGenerator,
   ID,
   Message,
   ProxyInterface,
@@ -28,7 +27,6 @@ export default class CrdtProxy implements ProxyInterface {
       ],
       payload: this.crdtReplica.payload(),
       merges: [],
-      color: colorGenerator.next().value,
     };
   }
 
@@ -41,9 +39,6 @@ export default class CrdtProxy implements ProxyInterface {
       payload,
       history: this.state.history.concat({ msg, payload }),
     };
-    // call framework again to visualize update
-    // visualize();
-    // sendState(this.id, this.state);
   };
 
   query = (args?: string[]): number | string | boolean => {
@@ -63,6 +58,16 @@ export default class CrdtProxy implements ProxyInterface {
   merge = (other: CrdtProxy): void => {
     if (this.replicaName === other.replicaName) {
       this.crdtReplica = this.crdtReplica.merge(other.crdtReplica);
+      this.state = {
+        ...this.state,
+        merges: this.state.merges.concat({
+          from: {
+            other_id: other.id,
+            history_index: other.getState().history.length,
+          },
+          to: this.state.history.length,
+        }),
+      };
       this.updateState(Message.merge);
     }
   };
