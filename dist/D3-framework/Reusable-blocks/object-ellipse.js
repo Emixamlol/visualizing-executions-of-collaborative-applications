@@ -5,7 +5,7 @@ export const drawObjectEllipse = () => {
     let margin;
     let data;
     const my = (selection) => {
-        // set x and y scales
+        // set scales
         const x = d3
             .scaleLinear()
             .domain([0, 1])
@@ -14,9 +14,10 @@ export const drawObjectEllipse = () => {
             .scaleLinear()
             .domain([0, data.length])
             .range([margin.top, height - margin.bottom]);
+        const t = d3.transition().duration(1000);
         // process data
         const objects = data.reduce((accumulator, [id, replicas]) => accumulator.concat({
-            text: id,
+            id,
             rx: 50,
             ry: replicas.length * 50,
             y: margin.top +
@@ -39,22 +40,33 @@ export const drawObjectEllipse = () => {
             .attr('class', htmlClass);
         g.selectAll('text')
             .data(objects)
-            .join('text')
+            .join((enter) => enter
+            .append('text')
             .attr('x', x(0))
             .attr('y', (d) => d.y)
-            .attr('fill', 'black')
-            .text((d) => d.text);
+            .attr('fill', 'white')
+            .text((d) => d.id)
+            .call((enter) => enter.transition(t).attr('fill', 'black')), (update) => update
+            .transition(t)
+            .attr('x', x(0))
+            .attr('y', (d) => d.y)
+            .attr('fill', 'black'));
         g.selectAll('path')
             .data(objects)
-            .join('path')
+            .join((enter) => enter
+            .append('path')
             .attr('transform', `translate(0, 0)`)
             .attr('stroke', 'black')
             .attr('fill', 'none')
             .attr('stroke-dasharray', '10 10')
-            .attr('d', (d) => {
+            .attr('d', (d) => `M ${x(1)} ${d.y} A 0 0 0 0 1 ${x(1)} ${d.y} A 0 0 0 0 1 ${x(1)} ${d.y}`)
+            .call((enter) => enter.transition(t).attr('d', (d) => {
             return `M ${x(1)} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1) + 100} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1)} ${d.y}`;
         } // `M 30 200 A 50 100 0 0 1 130 200 A 50 100 0 0 1 30 200`
-        );
+        )), (update) => update.transition(t).attr('d', (d) => {
+            return `M ${x(1)} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1) + 100} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1)} ${d.y}`;
+        } // `M 30 200 A 50 100 0 0 1 130 200 A 50 100 0 0 1 30 200`
+        ));
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;

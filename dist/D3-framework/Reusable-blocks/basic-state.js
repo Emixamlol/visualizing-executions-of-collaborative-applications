@@ -6,12 +6,20 @@ export const drawBasicState = () => {
     let data;
     let radius;
     const my = (selection) => {
-        // set x and y scales
+        // set scales
         const x = margin.left * 9;
         const y = d3
             .scaleLinear()
             .domain([0, data.length])
             .range([margin.top, height - margin.bottom]);
+        const replicas = data
+            .map(([id, replicas]) => replicas.map((replica) => replica.id))
+            .flat();
+        const colorScale = d3
+            .scaleOrdinal()
+            .domain(replicas)
+            .range(d3.schemePaired);
+        const t = d3.transition().duration(1000);
         // process data
         const objects = data
             .reduce((accumulator, [id, replicas]) => {
@@ -26,14 +34,20 @@ export const drawBasicState = () => {
                                 2 * accumulator[length - 1][0].ry
                             : 0);
                     const cy = startY + 25 + margin.top + 100 * i; // 25 is the radius, to be changed sensical variable name for timeline
-                    const { color, history, merges, payload } = state;
+                    const { color, history, merges } = state;
+                    const xScale = d3
+                        .scaleLinear()
+                        .domain([0, history.length])
+                        .range([x, x + history.length * 125]);
                     return history.map(({ msg, payload }, i) => ({
-                        cx: x + margin.left + ((width - x) / history.length) * i,
+                        cx: xScale(i),
                         cy,
                         ry,
                         startY,
-                        text: replicaId,
-                        title: `operation = ${msg}, \npayload = ${payload[0]}, \ntimestamp = ${JSON.stringify(payload[1])}`,
+                        id: replicaId,
+                        title: `operation = ${msg},
+                 \npayload = ${payload[0]}, 
+                 \ntimestamp = ${JSON.stringify(payload[1])}`,
                     }));
                 })
                     .flat(),
@@ -49,16 +63,50 @@ export const drawBasicState = () => {
             .data([null])
             .join('g')
             .attr('class', htmlClass);
+        // g.selectAll('circle')
+        //   .data(objects)
+        //   .join(
+        //     (enter) =>
+        //       enter
+        //         .append('circle')
+        //         .attr('cx', (d) => d.cx)
+        //         .attr('cy', (d) => d.cy)
+        //         .attr('r', radius)
+        //         .attr('fill', (d) => colorScale(d.id) as string)
+        //         .attr('stroke', (d) => colorScale(d.id) as string)
+        //         .append('title')
+        //         .text((d) => d.title),
+        //     (update) =>
+        //       update
+        //         .attr('cx', (d) => d.cx)
+        //         .attr('cy', (d) => d.cy)
+        //         .attr('r', radius)
+        //         .attr('fill', (d) => colorScale(d.id) as string)
+        //         .attr('stroke', (d) => colorScale(d.id) as string)
+        //         .select('title')
+        //         .text((d) => d.title)
+        //   );
         g.selectAll('circle')
             .data(objects)
-            .join('circle')
+            .join((enter) => enter
+            .append('circle')
+            .attr('cx', (d) => d.cx)
+            .attr('cy', (d) => d.cy)
+            .attr('r', 0)
+            .call((enter) => enter
+            .transition(t)
+            .attr('r', radius)
+            .attr('fill', (d) => colorScale(d.id))
+            .attr('stroke', (d) => colorScale(d.id)))
+            .append('title')
+            .text((d) => d.title), (update) => update
             .attr('cx', (d) => d.cx)
             .attr('cy', (d) => d.cy)
             .attr('r', radius)
-            .attr('fill', 'green')
-            .attr('stroke', 'green')
-            .append('title')
-            .text((d) => d.title);
+            .attr('fill', (d) => colorScale(d.id))
+            .attr('stroke', (d) => colorScale(d.id))
+            .select('title')
+            .text((d) => d.title));
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;

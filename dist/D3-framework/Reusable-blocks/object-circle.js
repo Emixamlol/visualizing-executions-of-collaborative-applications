@@ -6,12 +6,20 @@ export const drawObjectCircle = () => {
     let data;
     let radius;
     const my = (selection) => {
-        // set x and y scales
+        // set scales
         const x = margin.left * 2 + 50;
         const y = d3
             .scaleLinear()
             .domain([0, data.length])
             .range([margin.top, height - margin.bottom]);
+        const replicas = data
+            .map(([id, replicas]) => replicas.map((replica) => replica.id))
+            .flat();
+        const colorScale = d3
+            .scaleOrdinal()
+            .domain(replicas)
+            .range(d3.schemePaired);
+        const t = d3.transition().duration(1000);
         // process data
         const objects = data.reduce((accumulator, [id, replicas]) => accumulator.concat([
             replicas.map((replica, i) => {
@@ -27,7 +35,7 @@ export const drawObjectCircle = () => {
                     ry,
                     startY,
                     y,
-                    text: replica.id,
+                    id: replica.id,
                 };
             }),
         ]), []);
@@ -44,22 +52,37 @@ export const drawObjectCircle = () => {
             .data(objects)
             .join('g')
             .selectAll('circle')
-            .data((d) => (console.log('reassigning data'), console.log(d), d))
-            .join('circle')
+            .data((d) => d)
+            .join((enter) => enter
+            .append('circle')
+            .attr('cx', x)
+            .attr('cy', (d) => d.y)
+            .attr('fill', 'none')
+            .attr('stroke', (d) => colorScale(d.id))
+            .call((enter) => enter.transition(t).attr('r', radius)), (update) => update
+            .transition(t)
             .attr('cx', x)
             .attr('cy', (d) => d.y)
             .attr('r', radius)
-            .attr('fill', 'none')
-            .attr('stroke', 'blue');
+            .attr('stroke', (d) => colorScale(d.id)));
         g.selectAll('g')
             .data(objects)
             .join('g')
             .selectAll('text')
-            .data((d) => (console.log('reassigning data'), console.log(d), d))
-            .join('text')
-            .attr('x', (d) => x)
+            .data((d) => d)
+            .join((enter) => enter
+            .append('text')
+            .attr('x', x)
             .attr('y', (d) => d.y)
-            .text((d) => d.text);
+            .attr('fill', 'white')
+            .text((d) => d.id)
+            .call((enter) => enter
+            .transition(t)
+            .attr('fill', (d) => colorScale(d.id))), (update) => update
+            .transition(t)
+            .attr('x', x)
+            .attr('y', (d) => d.y)
+            .attr('fill', (d) => colorScale(d.id)));
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;

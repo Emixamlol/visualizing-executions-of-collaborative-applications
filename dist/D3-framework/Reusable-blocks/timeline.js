@@ -5,12 +5,20 @@ export const drawTimeLine = () => {
     let margin;
     let data;
     const my = (selection) => {
-        // set x and y scales
+        // set scales
         const x = margin.left * 9;
         const y = d3
             .scaleLinear()
             .domain([0, data.length])
             .range([margin.top, height - margin.bottom]);
+        const replicas = data
+            .map(([id, replicas]) => replicas.map((replica) => replica.id))
+            .flat();
+        const colorScale = d3
+            .scaleOrdinal()
+            .domain(replicas)
+            .range(d3.schemePaired);
+        const t = d3.transition().duration(1000);
         // process data
         const objects = data.reduce((accumulator, [id, replicas]) => accumulator.concat([
             replicas.map((replica, i) => {
@@ -22,11 +30,13 @@ export const drawTimeLine = () => {
                             2 * accumulator[length - 1][0].ry
                         : 0);
                 const y = startY + 25 + margin.top + 100 * i; // 25 is the radius, to be changed sensical variable name for timeline
+                const lineLength = replica.state.history.length * 125;
                 return {
                     ry,
                     startY,
                     y,
-                    text: replica.id,
+                    id: replica.id,
+                    lineLength,
                 };
             }),
         ]), []);
@@ -42,12 +52,19 @@ export const drawTimeLine = () => {
             .join('g')
             .selectAll('path')
             .data((d) => d)
-            .join('path')
+            .join((enter) => enter
+            .append('path')
             .attr('transform', `translate(0, 0)`)
-            .attr('stroke', 'blue')
-            .attr('d', (d) => {
-            return `M ${x} ${d.y} l ${width - x} 0`;
-        });
+            .attr('stroke', (d) => colorScale(d.id))
+            .attr('d', (d) => `M ${x} ${d.y} l 0 0`)
+            .call((enter) => enter.transition(t).attr('d', (d) => {
+            return `M ${x} ${d.y} l ${d.lineLength} 0`;
+        })), (update) => update
+            .attr('transform', `translate(0, 0)`)
+            .attr('stroke', (d) => colorScale(d.id))
+            .call((enter) => enter.transition(t).attr('d', (d) => {
+            return `M ${x} ${d.y} l ${d.lineLength} 0`;
+        })));
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;

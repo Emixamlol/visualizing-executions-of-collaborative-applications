@@ -1,5 +1,6 @@
 import CrdtProxy from './crdt-proxy';
 import { CRDTtype } from '../types/crdt-types';
+import * as framework from '../D3-framework';
 /**
  * map of all proxies: maps the ID of a CRDT to the map of each replica, in which the ID points to the proxy containing said replica
  */
@@ -8,6 +9,19 @@ const proxies = new Map();
  * map of CRDT replicas mapping to the name of the original replica
  */
 const replicaNames = new Map();
+/**
+ * Sends the proxies to the d3 framework (in the correct Data format)
+ */
+const sendToFramework = () => {
+    const data = Array.from(proxies).map(([objectId, replicas]) => [
+        objectId,
+        Array.from(replicas).map(([replicaId, proxy]) => ({
+            id: replicaId,
+            state: proxy.getState(),
+        })),
+    ]);
+    framework.update(data);
+};
 /**
  * Adds a completely new CRDT instance (contained within a proxy) to the global map of proxies.
  * Every other replica of an already existing CRDT instance will be added with the replicateProxy method
@@ -24,9 +38,11 @@ export const addProxy = (id, crdt, params) => {
         replicaNames.set(id, id);
     }
     console.log(proxies);
+    sendToFramework();
 };
 export const removeProxy = (id) => {
     proxies.delete(id);
+    sendToFramework();
 };
 export const queryProxy = (id, params) => {
     const originalId = replicaNames.get(id);
@@ -55,6 +71,7 @@ export const replicateProxy = (idToReplicate, replicaId) => {
         }
     }
     console.log(proxies);
+    sendToFramework();
 };
 /**
  * Merges the CRDT replica of the first proxy with the one of the second proxy. The merged replica is stored in the first proxy, the second proxy's replica
@@ -72,6 +89,7 @@ export const mergeProxy = (id, other) => {
     ];
     p1.merge(p2);
     console.log(proxies);
+    sendToFramework();
 };
 /**
  * Applies a method to a CRDT replica contained within one of the proxies
@@ -86,8 +104,8 @@ export const applyToProxy = (id, fn, params) => {
     const replicas = proxies.get(originalId);
     const proxy = replicas.get(id);
     proxy.apply(fn, params);
+    sendToFramework();
 };
-const sendToFramework = () => { };
 addProxy('p', CRDTtype.counter, ['5', '0']);
 replicateProxy('p', 'p2');
 addProxy('x', CRDTtype.register, ['4', '0']);
@@ -99,4 +117,9 @@ const arr = Array.from(proxies).map(([instanceId, replicas]) => [
     })),
 ]);
 console.log(arr);
+console.log('arr.flat.filter....');
 console.log(arr.flat().filter((d) => typeof d !== 'string'));
+const replicas = Array.from(proxies)
+    .map(([objectId, replicas]) => Array.from(replicas).map(([replicaId]) => replicaId))
+    .flat();
+console.log(replicas);
