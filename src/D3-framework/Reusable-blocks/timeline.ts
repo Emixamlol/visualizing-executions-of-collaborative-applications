@@ -13,11 +13,6 @@ export const drawTimeLine = (): ReusableTimeLine => {
     // set scales
     const x = margin.left * 9;
 
-    const y = d3
-      .scaleLinear()
-      .domain([0, data.length])
-      .range([margin.top, height - margin.bottom]);
-
     const replicas = data
       .map(([id, replicas]) => replicas.map((replica) => replica.id))
       .flat();
@@ -30,7 +25,7 @@ export const drawTimeLine = (): ReusableTimeLine => {
     const t = d3.transition().duration(1000);
 
     // process data
-    const objects: Array<
+    type processData = Array<
       Array<{
         ry: number;
         startY: number;
@@ -38,7 +33,9 @@ export const drawTimeLine = (): ReusableTimeLine => {
         id: string;
         lineLength: number;
       }>
-    > = data.reduce(
+    >;
+
+    const objects: processData = data.reduce(
       (accumulator, [id, replicas]) =>
         accumulator.concat([
           replicas.map((replica, i) => {

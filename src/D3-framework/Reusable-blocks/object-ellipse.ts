@@ -20,42 +20,35 @@ export const drawObjectEllipse = (): ReusableObjectEllipse => {
       .domain([0, 1])
       .range([margin.left, margin.left * 2]);
 
-    const y = d3
-      .scaleLinear()
-      .domain([0, data.length])
-      .range([margin.top, height - margin.bottom]);
-
     const t = d3.transition().duration(1000);
 
     // process data
-    const objects: Array<{ id: string; rx: number; ry: number; y: number }> =
-      data.reduce(
-        (accumulator, [id, replicas]) =>
-          accumulator.concat({
-            id,
-            rx: 50,
-            ry: replicas.length * 50,
-            y:
-              margin.top +
-              replicas.length * 50 +
-              (accumulator.length
-                ? accumulator[accumulator.length - 1].ry +
-                  accumulator[accumulator.length - 1].y
-                : 0),
-          }),
-        []
-      );
+    type processedData = Array<{
+      id: string;
+      rx: number;
+      ry: number;
+      y: number;
+    }>;
 
-    console.log(objects);
-
-    const replicas = data.map(([id, replicas]) => replicas).flat();
-
-    console.log(replicas);
+    const objects: processedData = data.reduce(
+      (accumulator: processedData, [id, replicas]) =>
+        accumulator.concat({
+          id,
+          rx: 50,
+          ry: replicas.length * 50,
+          y:
+            margin.top +
+            replicas.length * 50 +
+            (accumulator.length
+              ? accumulator[accumulator.length - 1].ry +
+                accumulator[accumulator.length - 1].y
+              : 0),
+        }),
+      []
+    );
 
     // visualization
     const htmlClass = 'object-ellipse';
-
-    console.log(x(1));
 
     const g = selection
       .selectAll(`g.${htmlClass}`)
