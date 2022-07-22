@@ -4,18 +4,6 @@ import { payload } from './crdt-types';
 // State
 // ------------------------------------------------------------------------------
 
-function* ColorGenerator(): Generator<string, string, string> {
-  const colors = ['DarkMagenta', 'blue', 'brown', 'DarkGoldenRod', 'green'];
-
-  let i = 0;
-  while (true) {
-    yield colors[i];
-    i = i < colors.length - 2 ? i + 1 : 0;
-  }
-}
-
-export const colorGenerator = ColorGenerator();
-
 export enum Message {
   initialized = 'initialized',
   update = 'update',
@@ -24,13 +12,12 @@ export enum Message {
 
 type History = { msg: Message; payload: payload };
 
-type Link = { from: ID; to: ID };
+type Merge = { from: { other_id: ID; history_index: number }; to: number };
 
 export interface StateInterface {
   history: Array<History>; // array of payload history with msg giving information on which operation was executed
   payload: payload; // payload of current state
-  merges: Array<Link>; // history of merges which have taken place
-  color: string; // color to be used by d3
+  merges: Array<Merge>; // history of merges which have taken place
 }
 
 // ------------------------------------------------------------------------------

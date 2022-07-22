@@ -23,9 +23,11 @@ export interface ReplicaInterface {
 export type Data = Array<[ID, Array<ReplicaInterface>]>; // type of the entire data to be sent to the d3 framework
 
 // different kinds of processed data for different visualization parts
-export type ProcessedData = {
-  objects: Array<ID>;
+export type subData = {
+  objectIds: Array<ID>;
   replicas: Array<ReplicaInterface>;
+  replicaIds: Array<ID>;
+  states: Array<StateInterface>;
 };
 
 export type margin = {
