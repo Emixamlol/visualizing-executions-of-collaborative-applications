@@ -5,17 +5,14 @@ import { payload } from '../types/crdt-types';
 import {
   Data,
   Strategy,
-  ReusablePatternInterface,
   VisualizationInterface,
   ReplicaInterface,
 } from '../types/d3-framework-types';
 import { ID, Message, StateInterface } from '../types/proxy-types';
-import { visualization } from './Reusable-blocks';
 import { drawBasicState } from './Reusable-blocks/basic-state';
 import { drawObjectCircle } from './Reusable-blocks/object-circle';
 import { drawObjectEllipse } from './Reusable-blocks/object-ellipse';
 import { drawTimeLine } from './Reusable-blocks/timeline';
-import { strategies } from './Strategies';
 
 // constants
 const width = 960;
@@ -29,39 +26,38 @@ const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
   .attr('width', width)
   .attr('height', height);
 
-console.log(svg.node());
+// const id: ID = 'x';
+// const payload: payload = ['payload', [0, 0, 0, 0]];
+// const replica: ReplicaInterface = {
+//   id,
+//   state: {
+//     history: [
+//       { msg: Message.initialized, payload },
+//       { msg: Message.update, payload: ['updated-payload', [1, 1, 1, 1]] },
+//     ],
+//     payload,
+//     merges: [],
+//     color: 'blue',
+//   },
+// };
 
-const id: ID = 'x';
-const payload: payload = ['payload', [0, 0, 0, 0]];
-const replica: ReplicaInterface = {
-  id,
-  state: {
-    history: [
-      { msg: Message.initialized, payload },
-      { msg: Message.update, payload: ['updated-payload', [1, 1, 1, 1]] },
-    ],
-    payload,
-    merges: [],
-    color: 'blue',
-  },
-};
+// const id2: ID = 'y';
+// const payload2: payload = ['payload', [0, 0, 0, 0]];
+// const replica2: ReplicaInterface = {
+//   id: id2,
+//   state: {
+//     history: [{ msg: Message.initialized, payload }],
+//     payload,
+//     merges: [],
+//     color: 'green',
+//   },
+// };
 
-const id2: ID = 'y';
-const payload2: payload = ['payload', [0, 0, 0, 0]];
-const replica2: ReplicaInterface = {
-  id: id2,
-  state: {
-    history: [{ msg: Message.initialized, payload }],
-    payload,
-    merges: [],
-    color: 'green',
-  },
-};
-
-const data: Data = [
-  [id, [replica, replica, replica]],
-  [id2, [replica2]],
-];
+// const data: Data = [
+//   [id, [replica, replica, replica]],
+//   [id2, [replica2]],
+// ];
+const data: Data = [];
 
 const objectEllipse = drawObjectEllipse()
   .width(width)
@@ -91,31 +87,31 @@ const basicState = drawBasicState()
 
 svg.call(objectEllipse).call(objectCircle).call(timeLine).call(basicState);
 
-setTimeout(() => {
-  const newData: Data = data.map(([id, replicas]) => [
-    id,
-    replicas.concat(replica),
-  ]);
-  svg
-    .call(objectEllipse.data(newData))
-    .call(objectCircle.data(newData))
-    .call(timeLine.data(newData))
-    .call(basicState.data(newData));
+// setTimeout(() => {
+//   const newData: Data = data.map(([id, replicas]) => [
+//     id,
+//     replicas.concat(replica),
+//   ]);
+//   svg
+//     .call(objectEllipse.data(newData))
+//     .call(objectCircle.data(newData))
+//     .call(timeLine.data(newData))
+//     .call(basicState.data(newData));
 
-  setTimeout(() => {
-    svg
-      .call(objectEllipse.data(data))
-      .call(objectCircle.data(data))
-      .call(timeLine.data(data))
-      .call(basicState.data(data));
-  }, 3000);
-}, 2000);
+//   setTimeout(() => {
+//     svg
+//       .call(objectEllipse.data(data))
+//       .call(objectCircle.data(data))
+//       .call(timeLine.data(data))
+//       .call(basicState.data(data));
+//   }, 3000);
+// }, 2000);
 
 // Framework
-export const main = () => {
-  const data: Data = [];
-
-  let visualizer: VisualizationInterface = strategies.get(Strategy.time); // visualizes the data
-
-  const color = d3.scaleOrdinal(d3.schemeCategory10);
+export const update = (data: Data): void => {
+  svg
+    .call(objectEllipse.data(data))
+    .call(objectCircle.data(data))
+    .call(timeLine.data(data))
+    .call(basicState.data(data));
 };

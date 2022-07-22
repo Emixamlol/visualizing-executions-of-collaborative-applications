@@ -15,6 +15,20 @@ const proxies: Map<ID, Map<ID, CrdtProxy>> = new Map();
 const replicaNames: Map<ID, ID> = new Map();
 
 /**
+ * Sends the proxies to the d3 framework (in the correct Data format)
+ */
+const sendToFramework = (): void => {
+  const data: Data = Array.from(proxies).map(([objectId, replicas]) => [
+    objectId,
+    Array.from(replicas).map(([replicaId, proxy]) => ({
+      id: replicaId,
+      state: proxy.getState(),
+    })),
+  ]);
+  framework.update(data);
+};
+
+/**
  * Adds a completely new CRDT instance (contained within a proxy) to the global map of proxies.
  * Every other replica of an already existing CRDT instance will be added with the replicateProxy method
  *
@@ -30,10 +44,12 @@ export const addProxy = (id: ID, crdt: CRDTtype, params: string[]): void => {
     replicaNames.set(id, id);
   }
   console.log(proxies);
+  sendToFramework();
 };
 
 export const removeProxy = (id: ID): void => {
   proxies.delete(id);
+  sendToFramework();
 };
 
 export const queryProxy = (id: ID, params: string[]): void => {
@@ -66,6 +82,7 @@ export const replicateProxy = (idToReplicate: ID, replicaId: ID): void => {
     }
   }
   console.log(proxies);
+  sendToFramework();
 };
 
 /**
@@ -84,6 +101,7 @@ export const mergeProxy = (id: ID, other: ID): void => {
   ];
   p1.merge(p2);
   console.log(proxies);
+  sendToFramework();
 };
 
 /**
@@ -99,9 +117,8 @@ export const applyToProxy = (id: ID, fn: string, params: string[]): void => {
   const replicas: Map<ID, CrdtProxy> = proxies.get(originalId);
   const proxy: CrdtProxy = replicas.get(id);
   proxy.apply(fn, params);
+  sendToFramework();
 };
-
-const sendToFramework = (): void => {};
 
 addProxy('p', CRDTtype.counter, ['5', '0']);
 
@@ -117,5 +134,14 @@ const arr: Data = Array.from(proxies).map(([instanceId, replicas]) => [
   })),
 ]);
 console.log(arr);
+console.log('arr.flat.filter....');
 
 console.log(arr.flat().filter((d) => typeof d !== 'string'));
+
+const replicas = Array.from(proxies)
+  .map(([objectId, replicas]) =>
+    Array.from(replicas).map(([replicaId]) => replicaId)
+  )
+  .flat();
+
+console.log(replicas);
