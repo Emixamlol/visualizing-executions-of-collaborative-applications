@@ -20,6 +20,7 @@ const sendToFramework = () => {
             state: proxy.getState(),
         })),
     ]);
+    console.log(data);
     framework.update(data);
 };
 /**
@@ -109,6 +110,8 @@ export const applyToProxy = (id, fn, params) => {
 addProxy('p', CRDTtype.counter, ['5', '0']);
 replicateProxy('p', 'p2');
 addProxy('x', CRDTtype.register, ['4', '0']);
+applyToProxy('p', 'increment', []);
+mergeProxy('p2', 'p');
 const arr = Array.from(proxies).map(([instanceId, replicas]) => [
     instanceId,
     Array.from(replicas).map(([replicaId, proxy]) => ({

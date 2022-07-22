@@ -3,15 +3,15 @@ export const drawBasicState = () => {
     let width;
     let height;
     let margin;
-    let data;
+    let data = [];
     let radius;
     const my = (selection) => {
         // set scales
         const x = margin.left * 9;
-        const y = d3
+        const xScale = d3
             .scaleLinear()
-            .domain([0, data.length])
-            .range([margin.top, height - margin.bottom]);
+            .domain([0, history.length])
+            .range([x, x + history.length * 125]);
         const replicas = data
             .map(([id, replicas]) => replicas.map((replica) => replica.id))
             .flat();
@@ -21,8 +21,45 @@ export const drawBasicState = () => {
             .range(d3.schemePaired);
         const t = d3.transition().duration(1000);
         // process data
+        // calculate the y position a new crdt object starts at
+        const StartYs = data
+            .reduce((accumulator, [, replicas]) => {
+            console.log(accumulator);
+            const ry = replicas.length * 50;
+            const startY = margin.top +
+                (accumulator.length
+                    ? accumulator[accumulator.length - 1].startY +
+                        2 * accumulator[accumulator.length - 1].ry
+                    : 0);
+            return accumulator.concat({ ry, startY });
+        }, [])
+            .map(({ ry, startY }) => startY);
+        console.log('startYs in basic-state');
+        console.log(StartYs);
+        const getCircleCoordinates = (data, index) => {
+            const [, replicas] = data[index];
+            return replicas.map(({ id, state }, replicaIndex) => {
+                const startY = StartYs[index];
+                const coordinates = state.history.map(({ msg, payload }, historyIndex) => ({
+                    cx: xScale(historyIndex),
+                    cy: startY + margin.top + 25 + 100 * replicaIndex,
+                }));
+                return {
+                    replicaId: id,
+                    coordinates,
+                };
+            });
+        };
+        // if (data.length !== 0 && data !== undefined) {
+        //   console.log('getCoordinates');
+        //   console.log(getCircleCoordinates(data, 0));
+        // }
+        data.forEach((d, i) => {
+            console.log(`circle coordinates for index ${i}`);
+            console.log(getCircleCoordinates(data, i));
+        });
         const objects = data
-            .reduce((accumulator, [id, replicas]) => {
+            .reduce((accumulator, [, replicas]) => {
             return accumulator.concat([
                 replicas
                     .map(({ id: replicaId, state }, i) => {
@@ -33,12 +70,8 @@ export const drawBasicState = () => {
                             ? accumulator[length - 1][0].startY +
                                 2 * accumulator[length - 1][0].ry
                             : 0);
-                    const cy = startY + 25 + margin.top + 100 * i; // 25 is the radius, to be changed sensical variable name for timeline
-                    const { color, history, merges } = state;
-                    const xScale = d3
-                        .scaleLinear()
-                        .domain([0, history.length])
-                        .range([x, x + history.length * 125]);
+                    const cy = startY + 25 + margin.top + 100 * i; // y(i);  // 25 is the radius, to be changed sensical variable name for timeline
+                    const { history, merges } = state;
                     return history.map(({ msg, payload }, i) => ({
                         cx: xScale(i),
                         cy,
@@ -63,29 +96,6 @@ export const drawBasicState = () => {
             .data([null])
             .join('g')
             .attr('class', htmlClass);
-        // g.selectAll('circle')
-        //   .data(objects)
-        //   .join(
-        //     (enter) =>
-        //       enter
-        //         .append('circle')
-        //         .attr('cx', (d) => d.cx)
-        //         .attr('cy', (d) => d.cy)
-        //         .attr('r', radius)
-        //         .attr('fill', (d) => colorScale(d.id) as string)
-        //         .attr('stroke', (d) => colorScale(d.id) as string)
-        //         .append('title')
-        //         .text((d) => d.title),
-        //     (update) =>
-        //       update
-        //         .attr('cx', (d) => d.cx)
-        //         .attr('cy', (d) => d.cy)
-        //         .attr('r', radius)
-        //         .attr('fill', (d) => colorScale(d.id) as string)
-        //         .attr('stroke', (d) => colorScale(d.id) as string)
-        //         .select('title')
-        //         .text((d) => d.title)
-        //   );
         g.selectAll('circle')
             .data(objects)
             .join((enter) => enter

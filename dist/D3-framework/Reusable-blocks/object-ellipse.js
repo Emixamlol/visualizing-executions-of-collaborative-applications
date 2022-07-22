@@ -10,12 +10,7 @@ export const drawObjectEllipse = () => {
             .scaleLinear()
             .domain([0, 1])
             .range([margin.left, margin.left * 2]);
-        const y = d3
-            .scaleLinear()
-            .domain([0, data.length])
-            .range([margin.top, height - margin.bottom]);
         const t = d3.transition().duration(1000);
-        // process data
         const objects = data.reduce((accumulator, [id, replicas]) => accumulator.concat({
             id,
             rx: 50,
@@ -27,12 +22,8 @@ export const drawObjectEllipse = () => {
                         accumulator[accumulator.length - 1].y
                     : 0),
         }), []);
-        console.log(objects);
-        const replicas = data.map(([id, replicas]) => replicas).flat();
-        console.log(replicas);
         // visualization
         const htmlClass = 'object-ellipse';
-        console.log(x(1));
         const g = selection
             .selectAll(`g.${htmlClass}`)
             .data([null])

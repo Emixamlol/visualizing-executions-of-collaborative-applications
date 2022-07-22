@@ -8,10 +8,6 @@ export const drawObjectCircle = () => {
     const my = (selection) => {
         // set scales
         const x = margin.left * 2 + 50;
-        const y = d3
-            .scaleLinear()
-            .domain([0, data.length])
-            .range([margin.top, height - margin.bottom]);
         const replicas = data
             .map(([id, replicas]) => replicas.map((replica) => replica.id))
             .flat();
@@ -20,7 +16,6 @@ export const drawObjectCircle = () => {
             .domain(replicas)
             .range(d3.schemePaired);
         const t = d3.transition().duration(1000);
-        // process data
         const objects = data.reduce((accumulator, [id, replicas]) => accumulator.concat([
             replicas.map((replica, i) => {
                 const length = accumulator.length;
@@ -39,8 +34,6 @@ export const drawObjectCircle = () => {
                 };
             }),
         ]), []);
-        console.log('objects in object-circle');
-        console.log(objects);
         // visualization
         const htmlClass = 'object-circle';
         const g = selection

@@ -7,10 +7,6 @@ export const drawTimeLine = () => {
     const my = (selection) => {
         // set scales
         const x = margin.left * 9;
-        const y = d3
-            .scaleLinear()
-            .domain([0, data.length])
-            .range([margin.top, height - margin.bottom]);
         const replicas = data
             .map(([id, replicas]) => replicas.map((replica) => replica.id))
             .flat();
@@ -19,7 +15,6 @@ export const drawTimeLine = () => {
             .domain(replicas)
             .range(d3.schemePaired);
         const t = d3.transition().duration(1000);
-        // process data
         const objects = data.reduce((accumulator, [id, replicas]) => accumulator.concat([
             replicas.map((replica, i) => {
                 const length = accumulator.length;

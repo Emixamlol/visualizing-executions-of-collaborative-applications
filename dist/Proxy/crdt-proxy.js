@@ -1,15 +1,12 @@
 import { createCRDT } from '../CRDTs/create-crdt';
 import { CRDTtype } from '../types/crdt-types';
-import { colorGenerator, Message, } from '../types/proxy-types';
+import { Message, } from '../types/proxy-types';
 export default class CrdtProxy {
     constructor(id, crdt, params) {
         // private method to update the state
         this.updateState = (msg) => {
             const payload = this.crdtReplica.payload(); // get the current payload
             this.state = Object.assign(Object.assign({}, this.state), { payload, history: this.state.history.concat({ msg, payload }) });
-            // call framework again to visualize update
-            // visualize();
-            // sendState(this.id, this.state);
         };
         this.query = (args) => {
             switch (this.crdtReplica.type) {
@@ -25,6 +22,13 @@ export default class CrdtProxy {
         this.merge = (other) => {
             if (this.replicaName === other.replicaName) {
                 this.crdtReplica = this.crdtReplica.merge(other.crdtReplica);
+                this.state = Object.assign(Object.assign({}, this.state), { merges: this.state.merges.concat({
+                        from: {
+                            other_id: other.id,
+                            history_index: other.getState().history.length,
+                        },
+                        to: this.state.history.length,
+                    }) });
                 this.updateState(Message.merge);
             }
         };
@@ -60,7 +64,6 @@ export default class CrdtProxy {
             ],
             payload: this.crdtReplica.payload(),
             merges: [],
-            color: colorGenerator.next().value,
         };
     }
 }
