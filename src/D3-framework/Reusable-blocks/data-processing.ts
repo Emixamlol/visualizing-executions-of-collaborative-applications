@@ -1,18 +1,28 @@
 // process the entire data into different sets of data needed for the d3 api
 
-import { Data, ProcessedData } from '../../types/d3-framework-types';
+import { Data, subData } from '../../types/d3-framework-types';
 import { ID, Message, StateInterface } from '../../types/proxy-types';
 
-export const processData = <T extends keyof ProcessedData>(
+export const processData = <T extends keyof subData>(
   data: Data,
   key: T
-): ProcessedData[T] => {
+): subData[T] => {
   switch (key) {
-    case 'objects':
-      return data.map(([id, replicas]) => id) as ProcessedData[T];
+    case 'objectIds':
+      return data.map(([id]) => id) as subData[T];
 
     case 'replicas':
-      break;
+      return data.map(([, replicas]) => replicas) as unknown as subData[T];
+
+    case 'replicaIds':
+      return data
+        .map(([, replicas]) => replicas.map(({ id }) => id))
+        .flat() as subData[T];
+
+    case 'states':
+      return data
+        .map(([, replicas]) => replicas.map(({ state }) => state))
+        .flat() as subData[T];
 
     default:
       const assertUnreachable = (x: never): never => {
