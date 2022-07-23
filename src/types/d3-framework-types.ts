@@ -37,6 +37,11 @@ export type margin = {
   left: number;
 };
 
+export type stateCoordinates = Array<{
+  replicaId: ID;
+  coordinates: Array<{ cx: number; cy: number; title: string }>;
+}>;
+
 /** ---------------------------------------------------------------------------------------------------------------------
  *
  * Reusable Visualization Components
