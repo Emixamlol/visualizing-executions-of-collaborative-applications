@@ -63,7 +63,7 @@ export default class CrdtProxy implements ProxyInterface {
         merges: this.state.merges.concat({
           from: {
             other_id: other.id,
-            history_index: other.getState().history.length,
+            history_index: other.getState().history.length - 1,
           },
           to: this.state.history.length,
         }),
