@@ -3,8 +3,9 @@ import {
   Data,
   margin,
   ReusableBasicState,
+  stateCoordinates,
 } from '../../types/d3-framework-types';
-import { ID } from '../../types/proxy-types';
+import { ID, StateInterface } from '../../types/proxy-types';
 
 export const drawBasicState = (): ReusableBasicState => {
   let width: number;
@@ -38,40 +39,99 @@ export const drawBasicState = (): ReusableBasicState => {
     // process data
 
     // calculate the y position a new crdt object starts at
-    const StartYs: Array<number> = data
-      .reduce(
-        (accumulator: Array<{ ry: number; startY: number }>, [, replicas]) => {
-          console.log(accumulator);
-          const ry = replicas.length * 50;
-          const startY =
-            margin.top +
-            (accumulator.length
-              ? accumulator[accumulator.length - 1].startY +
-                2 * accumulator[accumulator.length - 1].ry
-              : 0);
-          return accumulator.concat({ ry, startY });
-        },
-        []
-      )
-      .map(({ ry, startY }) => startY);
+    const getStartYs = (): Array<number> =>
+      data
+        .reduce(
+          (
+            accumulator: Array<{ ry: number; startY: number }>,
+            [, replicas]
+          ) => {
+            const len = accumulator.length;
+            const ry = replicas.length * 50;
+            const startY =
+              margin.top +
+              (len
+                ? accumulator[len - 1].startY + 2 * accumulator[len - 1].ry
+                : 0);
+            return accumulator.concat({ ry, startY });
+          },
+          []
+        )
+        .map(({ startY }) => startY);
 
+    const startYs = getStartYs();
     console.log('startYs in basic-state');
-    console.log(StartYs);
+    console.log(startYs);
 
-    const getCircleCoordinates = (
+    // method to get all the merges which took place between the replicas of one conceptual CRDT object
+    const getMerges = (
       data: Data,
       index: number
-    ): Array<{
-      replicaId: ID;
-      coordinates: Array<{ cx: number; cy: number }>;
-    }> => {
+    ): Array<StateInterface['merges']> => {
       const [, replicas] = data[index];
-      return replicas.map(({ id, state }, replicaIndex) => {
-        const startY = StartYs[index];
+      return replicas.map(({ state }) => state.merges);
+    };
+
+    const correctCoordinates = (
+      rawCoordinates: stateCoordinates,
+      index: number
+    ): stateCoordinates => {
+      const merges = getMerges(data, index);
+
+      merges.forEach((replica, mergeIndex) => {
+        replica.forEach(({ from, to }) => {
+          // find {x_from, y_from}
+          const { other_id, history_index } = from;
+          const fromCoordinates = rawCoordinates.find(
+            ({ replicaId }) => replicaId === other_id
+          );
+          const { cx: x_from, cy: y_from } =
+            fromCoordinates.coordinates[history_index];
+
+          // find {x_to, y_to}
+          const { replicaId, coordinates } = rawCoordinates[mergeIndex];
+          const { cx: x_to, cy: y_to, title } = coordinates[to];
+
+          // correct coordinates
+          if (history_index >= to && x_to <= x_from) {
+            const { replicaId, coordinates } = rawCoordinates[mergeIndex];
+            rawCoordinates.splice(mergeIndex, 1, {
+              replicaId,
+              coordinates: coordinates.map(({ cx, cy, title }, i) => ({
+                cx: i >= to ? x_from + 125 * i : cx,
+                cy,
+                title,
+              })),
+            });
+          }
+        });
+      });
+
+      return rawCoordinates;
+    };
+
+    /**
+     * Get the (x, y) coordinates for visualizing the replicas' states of one conceptual CRDT object, without differentiating between locally updated states and states which resulted from a merge with another replica
+     *
+     * @param data  The information about every conceptual CRDT object with their respective replicas
+     * @param index Position of the conceptual CRDT object
+     *
+     * @returns An array with the (x, y) coordinates, id and payload - computed for every state, of every replica, of the conceptual CRDT object specified by the index
+     */
+    const getStateCoordinates = (
+      data: Data,
+      index: number
+    ): stateCoordinates => {
+      const [, replicas] = data[index];
+      const rawCoordinates = replicas.map(({ id, state }, replicaIndex) => {
+        const startY = startYs[index];
         const coordinates = state.history.map(
           ({ msg, payload }, historyIndex) => ({
             cx: xScale(historyIndex),
             cy: startY + margin.top + 25 + 100 * replicaIndex,
+            title: `operation = ${msg},
+             \npayload = ${payload[0]}, 
+             \ntimestamp = ${JSON.stringify(payload[1])}`,
           })
         );
         return {
@@ -79,15 +139,122 @@ export const drawBasicState = (): ReusableBasicState => {
           coordinates,
         };
       });
+      return correctCoordinates(rawCoordinates, index);
     };
 
-    // if (data.length !== 0 && data !== undefined) {
-    //   console.log('getCoordinates');
-    //   console.log(getCircleCoordinates(data, 0));
-    // }
+    // method to get the (x1, y1, x2, y2) line coordinates for visualizing merge messages
+    const getLineCoordinates = (
+      data: Data
+    ): Array<{
+      x_1: number;
+      y_1: number;
+      x_2: number;
+      y_2: number;
+      replicaId: string;
+      title: string;
+    }> => {
+      const lineCoordinates: Array<{
+        x_1: number;
+        y_1: number;
+        x_2: number;
+        y_2: number;
+        replicaId: string;
+        title: string;
+      }> = [];
+
+      data.forEach((d, dataIndex) => {
+        const stateCoordinates = getStateCoordinates(data, dataIndex);
+        const merges = getMerges(data, dataIndex);
+
+        merges.forEach((replica, mergeIndex) => {
+          replica.forEach(({ from, to }) => {
+            // find {x_from, y_from}
+            const { other_id, history_index } = from;
+            const fromCoordinates = stateCoordinates.find(
+              ({ replicaId }) => replicaId === other_id
+            );
+            const { cx: x_from, cy: y_from } =
+              fromCoordinates.coordinates[history_index];
+
+            // find {x_to, y_to}
+            const { replicaId, coordinates } = stateCoordinates[mergeIndex];
+            const { cx: x_to, cy: y_to, title } = coordinates[to];
+
+            // add to lineCoordinates by adjusting x_to, to ensure x_to > x_from
+            lineCoordinates.push({
+              x_1: x_from,
+              y_1: y_from,
+              x_2: x_to, //x_to <= x_from ? x_from + 125 : x_to,
+              y_2: y_to,
+              replicaId,
+              title,
+            });
+          });
+        });
+      });
+      return lineCoordinates;
+    };
+
+    // method to get the (x, y) symbol coordinates for visualizing merged states
+    const getSymbolCoordinates = (
+      data: Data
+    ): Array<{ x: number; y: number; replicaId: string; title: string }> => {
+      const lineCoordinates = getLineCoordinates(data);
+      return lineCoordinates.map(({ x_2, y_2, replicaId, title }) => ({
+        x: x_2,
+        y: y_2,
+        replicaId,
+        title,
+      }));
+    };
+
+    // method to get the (x, y) circle coordinates for visualizing states resulting from local replica updates
+    const getCircleCoordinates = (
+      data: Data
+    ): Array<{ cx: number; cy: number; replicaId: string; title: string }> => {
+      const circlecoordinates: Array<
+        Array<{ cx: number; cy: number; replicaId: string; title: string }>
+      > = [];
+
+      data.forEach((d, dataIndex) => {
+        const stateCoordinates = getStateCoordinates(data, dataIndex);
+        const merges = getMerges(data, dataIndex);
+
+        // filter stateCoordinates for every merge
+        stateCoordinates.forEach(({ coordinates }, stateIndex) => {
+          merges[stateIndex].forEach(({ to }) => {
+            const len = coordinates.length;
+            coordinates.splice(to, 1);
+            const updatedCoordinates = coordinates
+              .slice(to, len)
+              .map(({ cx, cy, title }) => ({ cx: cx + 125, cy, title }));
+            coordinates.splice(to, len - to, ...updatedCoordinates);
+          });
+        });
+
+        // return adjusted stateCoordinates
+        circlecoordinates.push(
+          stateCoordinates
+            .map(({ replicaId, coordinates }) =>
+              coordinates.map((d) => ({ replicaId, ...d }))
+            )
+            .flat()
+        );
+      });
+      return circlecoordinates.flat();
+    };
+
     data.forEach((d, i) => {
-      console.log(`circle coordinates for index ${i}`);
-      console.log(getCircleCoordinates(data, i));
+      console.log(`state coordinates for index ${i}`);
+      console.log(getStateCoordinates(data, i));
+      console.log(`merges for index ${i}`);
+      console.log(getMerges(data, i));
+      console.log('line coordinates');
+      console.log(getLineCoordinates(data));
+      console.log('symbol coordinates');
+      console.log(getSymbolCoordinates(data));
+      console.log('circle coordinates');
+      console.log(getCircleCoordinates(data));
     });
 
     type processedData = Array<{
@@ -112,7 +279,7 @@ export const drawBasicState = (): ReusableBasicState => {
                   ? accumulator[length - 1][0].startY +
                     2 * accumulator[length - 1][0].ry
                   : 0);
-              const cy = startY + 25 + margin.top + 100 * i; // y(i);  // 25 is the radius, to be changed sensical variable name for timeline
+              const cy = startY + 25 + margin.top + 100 * i; // 25 is the radius, to be changed sensical variable name for timeline
               const { history, merges } = state;
               return history.map(({ msg, payload }, i) => ({
                 cx: xScale(i),
@@ -143,7 +310,7 @@ export const drawBasicState = (): ReusableBasicState => {
       .attr('class', htmlClass);
 
     g.selectAll('circle')
-      .data(objects)
+      .data(getCircleCoordinates(data))
       .join(
         (enter) =>
           enter
@@ -155,8 +322,8 @@ export const drawBasicState = (): ReusableBasicState => {
               enter
                 .transition(t)
                 .attr('r', radius)
-                .attr('fill', (d) => colorScale(d.id) as string)
-                .attr('stroke', (d) => colorScale(d.id) as string)
+                .attr('fill', (d) => colorScale(d.replicaId) as string)
+                .attr('stroke', (d) => colorScale(d.replicaId) as string)
             )
             .append('title')
             .text((d) => d.title),
@@ -165,10 +332,60 @@ export const drawBasicState = (): ReusableBasicState => {
             .attr('cx', (d) => d.cx)
             .attr('cy', (d) => d.cy)
             .attr('r', radius)
-            .attr('fill', (d) => colorScale(d.id) as string)
-            .attr('stroke', (d) => colorScale(d.id) as string)
+            .attr('fill', (d) => colorScale(d.replicaId) as string)
+            .attr('stroke', (d) => colorScale(d.replicaId) as string)
             .select('title')
             .text((d) => d.title)
+      );
+
+    g.selectAll('path')
+      .data(getSymbolCoordinates(data))
+      .join(
+        (enter) =>
+          enter
+            .append('path')
+            .attr('transform', (d) => `translate(${d.x}, ${d.y})`)
+            .attr('fill', 'white')
+            .attr('d', d3.symbol(d3.symbolsFill[4], 150)())
+            .call((enter) =>
+              enter
+                .transition(t)
+                .attr('fill', (d) => colorScale(d.replicaId) as string)
+                .attr('stroke', (d) => colorScale(d.replicaId) as string)
+            )
+            .append('title')
+            .text((d) => d.title),
+        (update) =>
+          update
+            .attr('transform', (d) => `translate(${d.x}, ${d.y})`)
+            .attr('fill', 'white')
+            .attr('d', d3.symbol(d3.symbolsFill[4], 150)())
+            .attr('fill', (d) => colorScale(d.replicaId) as string)
+            .attr('stroke', (d) => colorScale(d.replicaId) as string)
+            .select('title')
+            .text((d) => d.title)
+      );
+
+    g.selectAll('line')
+      .data(getLineCoordinates(data))
+      .join(
+        (enter) =>
+          enter
+            .append('line')
+            .attr('stroke', 'black')
+            .attr('x1', (d) => d.x_1)
+            .attr('y1', (d) => d.y_1)
+            .attr('x2', (d) => d.x_1)
+            .attr('y2', (d) => d.y_1)
+            .transition(t)
+            .attr('x2', (d) => d.x_2)
+            .attr('y2', (d) => d.y_2),
+        (update) =>
+          update
+            .attr('x1', (d) => d.x_1)
+            .attr('y1', (d) => d.y_1)
+            .attr('x2', (d) => d.x_2)
+            .attr('y2', (d) => d.y_2)
       );
   };
 
