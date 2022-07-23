@@ -25,7 +25,7 @@ export default class CrdtProxy {
                 this.state = Object.assign(Object.assign({}, this.state), { merges: this.state.merges.concat({
                         from: {
                             other_id: other.id,
-                            history_index: other.getState().history.length,
+                            history_index: other.getState().history.length - 1,
                         },
                         to: this.state.history.length,
                     }) });
