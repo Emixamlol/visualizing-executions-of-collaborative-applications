@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { Data, margin, ReusableTimeLine } from '../../types/d3-framework-types';
+import { getStartYs, getTimelineCoordinates } from './data-processing';
 
 export const drawTimeLine = (): ReusableTimeLine => {
   let width: number;
@@ -25,41 +26,9 @@ export const drawTimeLine = (): ReusableTimeLine => {
     const t = d3.transition().duration(1000);
 
     // process data
-    type processData = Array<
-      Array<{
-        ry: number;
-        startY: number;
-        y: number;
-        id: string;
-        lineLength: number;
-      }>
-    >;
+    const startYs = getStartYs(data, margin);
 
-    const objects: processData = data.reduce(
-      (accumulator, [id, replicas]) =>
-        accumulator.concat([
-          replicas.map((replica, i) => {
-            const length = accumulator.length;
-            const ry = replicas.length * 50;
-            const startY =
-              margin.top +
-              (length
-                ? accumulator[length - 1][0].startY +
-                  2 * accumulator[length - 1][0].ry
-                : 0);
-            const y = startY + 25 + margin.top + 100 * i; // 25 is the radius, to be changed sensical variable name for timeline
-            const lineLength = replica.state.history.length * 125;
-            return {
-              ry,
-              startY,
-              y,
-              id: replica.id,
-              lineLength,
-            };
-          }),
-        ]),
-      []
-    );
+    const timelineCoordinates = getTimelineCoordinates(data, startYs, margin);
 
     // visualization
     const htmlClass = 'timeline';
@@ -70,11 +39,8 @@ export const drawTimeLine = (): ReusableTimeLine => {
       .join('g')
       .attr('class', htmlClass);
 
-    g.selectAll('g')
-      .data(objects)
-      .join('g')
-      .selectAll('path')
-      .data((d) => d)
+    g.selectAll('path')
+      .data(timelineCoordinates)
       .join(
         (enter) =>
           enter
