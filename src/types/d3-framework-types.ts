@@ -22,14 +22,6 @@ export interface ReplicaInterface {
 
 export type Data = Array<[ID, Array<ReplicaInterface>]>; // type of the entire data to be sent to the d3 framework
 
-// different kinds of processed data for different visualization parts
-export type subData = {
-  objectIds: Array<ID>;
-  replicas: Array<ReplicaInterface>;
-  replicaIds: Array<ID>;
-  states: Array<StateInterface>;
-};
-
 export type margin = {
   top: number;
   right: number;
@@ -40,6 +32,35 @@ export type margin = {
 export type stateCoordinates = Array<{
   replicaId: ID;
   coordinates: Array<{ cx: number; cy: number; title: string }>;
+}>;
+
+export type lineCoordinates = Array<{
+  x_1: number;
+  y_1: number;
+  x_2: number;
+  y_2: number;
+  replicaId: string;
+  title: string;
+}>;
+
+export type symbolCoordinates = Array<{
+  x: number;
+  y: number;
+  replicaId: string;
+  title: string;
+}>;
+
+export type circleCoordinates = Array<{
+  cx: number;
+  cy: number;
+  replicaId: string;
+  title: string;
+}>;
+
+export type timelineCoordinates = Array<{
+  id: ID;
+  y: number;
+  lineLength: number;
 }>;
 
 /** ---------------------------------------------------------------------------------------------------------------------
