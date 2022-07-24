@@ -1,11 +1,6 @@
-import * as d3 from 'd3';
 // import './Proxy';
 import './REPL';
 import './D3-framework';
-
-export const arc = d3.arc();
-
-console.log(arc);
 
 // addProxy('x', CRDTtype.counter, ['5', '0']);
 // replicateProxy('x', 'x1');
