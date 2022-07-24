@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { getStartYs, getTimelineCoordinates } from './data-processing';
 export const drawTimeLine = () => {
     let width;
     let height;
@@ -15,26 +16,9 @@ export const drawTimeLine = () => {
             .domain(replicas)
             .range(d3.schemePaired);
         const t = d3.transition().duration(1000);
-        const objects = data.reduce((accumulator, [id, replicas]) => accumulator.concat([
-            replicas.map((replica, i) => {
-                const length = accumulator.length;
-                const ry = replicas.length * 50;
-                const startY = margin.top +
-                    (length
-                        ? accumulator[length - 1][0].startY +
-                            2 * accumulator[length - 1][0].ry
-                        : 0);
-                const y = startY + 25 + margin.top + 100 * i; // 25 is the radius, to be changed sensical variable name for timeline
-                const lineLength = replica.state.history.length * 125;
-                return {
-                    ry,
-                    startY,
-                    y,
-                    id: replica.id,
-                    lineLength,
-                };
-            }),
-        ]), []);
+        // process data
+        const startYs = getStartYs(data, margin);
+        const timelineCoordinates = getTimelineCoordinates(data, startYs, margin);
         // visualization
         const htmlClass = 'timeline';
         const g = selection
@@ -42,11 +26,8 @@ export const drawTimeLine = () => {
             .data([null])
             .join('g')
             .attr('class', htmlClass);
-        g.selectAll('g')
-            .data(objects)
-            .join('g')
-            .selectAll('path')
-            .data((d) => d)
+        g.selectAll('path')
+            .data(timelineCoordinates)
             .join((enter) => enter
             .append('path')
             .attr('transform', `translate(0, 0)`)
