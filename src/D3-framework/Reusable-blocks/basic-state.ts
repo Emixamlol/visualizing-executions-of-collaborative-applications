@@ -9,7 +9,7 @@ import {
   getLineCoordinates,
   getStartYs,
   getSymbolCoordinates,
-} from './data-processing';
+} from '../data-processing';
 
 export const drawBasicState = (): ReusableBasicState => {
   let width: number;
@@ -30,13 +30,22 @@ export const drawBasicState = (): ReusableBasicState => {
       .range([x, x + history.length * 125]);
 
     const replicas = data
-      .map(([, replicas]) => replicas.map((replica) => replica.id))
+      .map(([, replicas]) => replicas.map(({ id }) => id))
       .flat();
+
+    console.log(replicas);
 
     const colorScale = d3
       .scaleOrdinal()
       .domain(replicas)
-      .range(d3.schemePaired);
+      .range(d3.schemePaired.slice(0, replicas.length));
+
+    replicas.forEach((id) => {
+      console.log(colorScale(id));
+    });
+
+    console.log(colorScale.domain());
+    console.log(colorScale.range());
 
     const t = d3.transition().duration(1000);
 

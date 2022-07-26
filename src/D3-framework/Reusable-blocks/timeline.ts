@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { Data, margin, ReusableTimeLine } from '../../types/d3-framework-types';
-import { getStartYs, getTimelineCoordinates } from './data-processing';
+import { getStartYs, getTimelineCoordinates } from '../data-processing';
 
 export const drawTimeLine = (): ReusableTimeLine => {
   let width: number;
