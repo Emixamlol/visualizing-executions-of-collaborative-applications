@@ -72,7 +72,7 @@ export type timelineCoordinates = Array<{
  *
  */
 
-export interface ReusablePatternInterface<T> {
+interface FrameworkReusableInterface<T> {
   (selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>): void;
 
   width(): number;
@@ -89,19 +89,19 @@ export interface ReusablePatternInterface<T> {
 }
 
 export interface ReusableObjectEllipse
-  extends ReusablePatternInterface<ReusableObjectEllipse> {}
+  extends FrameworkReusableInterface<ReusableObjectEllipse> {}
 
 export interface ReusableObjectCircle
-  extends ReusablePatternInterface<ReusableObjectCircle> {
+  extends FrameworkReusableInterface<ReusableObjectCircle> {
   radius(): number;
   radius(value: number): ReusableObjectCircle;
 }
 
 export interface ReusableBasicState
-  extends ReusablePatternInterface<ReusableBasicState> {
+  extends FrameworkReusableInterface<ReusableBasicState> {
   radius(): number;
   radius(value: number): ReusableObjectCircle;
 }
 
 export interface ReusableTimeLine
-  extends ReusablePatternInterface<ReusableTimeLine> {}
+  extends FrameworkReusableInterface<ReusableTimeLine> {}
