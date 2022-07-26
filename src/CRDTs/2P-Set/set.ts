@@ -73,6 +73,7 @@ export default class TwoPhase_Set implements SetInterface {
     rs.R = this.union(this.R, tps.R);
     rs.pid = this.pid;
     rs.timestamp = this.timestamp.merge(tps.timestamp);
+    rs.timestamp.increase(this.pid);
     return rs;
   };
 

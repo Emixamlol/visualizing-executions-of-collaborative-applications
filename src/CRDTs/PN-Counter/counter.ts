@@ -63,7 +63,7 @@ export default class PN_Counter implements PN_CounterInterface {
       rc.N[i] = Math.max(this.N[i], pnc.N[i]);
     }
     rc.timestamp = this.timestamp.merge(pnc.timestamp);
-    console.log(rc);
+    rc.timestamp.increase(this.pid);
     return rc;
   };
 

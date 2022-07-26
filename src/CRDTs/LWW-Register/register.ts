@@ -45,6 +45,7 @@ export default class LWW_Register implements RegisterInterface {
     }
     rr.pid = this.pid;
     rr.timestamp = this.timestamp.merge(lwwr.timestamp);
+    rr.timestamp.increase(this.pid);
     return rr;
   };
 
