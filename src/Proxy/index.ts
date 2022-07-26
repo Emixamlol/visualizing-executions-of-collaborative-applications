@@ -3,6 +3,7 @@ import { ID } from '../types/proxy-types';
 import { CRDTtype } from '../types/crdt-types';
 import { Data } from '../types/d3-framework-types';
 import * as framework from '../D3-framework';
+import * as gui from '../GUI';
 
 /**
  * map of all proxies: maps the ID of a CRDT to the map of each replica, in which the ID points to the proxy containing said replica
@@ -31,6 +32,22 @@ const sendToFramework = (): void => {
 };
 
 /**
+ * Sends the proxies information to the GUI
+ */
+const sendToGui = (): void => {
+  const data: Data = Array.from(proxies).map(([objectId, replicas]) => [
+    objectId,
+    Array.from(replicas).map(([replicaId, proxy]) => ({
+      id: replicaId,
+      state: proxy.getState(),
+    })),
+  ]);
+  console.log(data);
+
+  gui.update(data);
+};
+
+/**
  * Adds a completely new CRDT instance (contained within a proxy) to the global map of proxies.
  * Every other replica of an already existing CRDT instance will be added with the replicateProxy method
  *
@@ -47,11 +64,13 @@ export const addProxy = (id: ID, crdt: CRDTtype, params: string[]): void => {
   }
   console.log(proxies);
   sendToFramework();
+  sendToGui();
 };
 
 export const removeProxy = (id: ID): void => {
   proxies.delete(id);
   sendToFramework();
+  sendToGui();
 };
 
 export const queryProxy = (id: ID, params: string[]): void => {
@@ -85,6 +104,7 @@ export const replicateProxy = (idToReplicate: ID, replicaId: ID): void => {
   }
   console.log(proxies);
   sendToFramework();
+  sendToGui();
 };
 
 /**
@@ -120,6 +140,7 @@ export const applyToProxy = (id: ID, fn: string, params: string[]): void => {
   const proxy: CrdtProxy = replicas.get(id);
   proxy.apply(fn, params);
   sendToFramework();
+  sendToGui();
 };
 
 addProxy('p', CRDTtype.counter, ['5', '0']);
