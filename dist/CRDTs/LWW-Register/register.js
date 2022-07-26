@@ -21,6 +21,7 @@ export default class LWW_Register {
             }
             rr.pid = this.pid;
             rr.timestamp = this.timestamp.merge(lwwr.timestamp);
+            rr.timestamp.increase(this.pid);
             return rr;
         };
         this.payload = () => [this.X, this.getTimestamp()];

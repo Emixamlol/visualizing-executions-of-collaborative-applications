@@ -1,6 +1,7 @@
 import CrdtProxy from './crdt-proxy';
 import { CRDTtype } from '../types/crdt-types';
 import * as framework from '../D3-framework';
+import * as gui from '../GUI';
 /**
  * map of all proxies: maps the ID of a CRDT to the map of each replica, in which the ID points to the proxy containing said replica
  */
@@ -24,6 +25,20 @@ const sendToFramework = () => {
     framework.update(data);
 };
 /**
+ * Sends the proxies information to the GUI
+ */
+const sendToGui = () => {
+    const data = Array.from(proxies).map(([objectId, replicas]) => [
+        objectId,
+        Array.from(replicas).map(([replicaId, proxy]) => ({
+            id: replicaId,
+            state: proxy.getState(),
+        })),
+    ]);
+    console.log(data);
+    gui.update(data);
+};
+/**
  * Adds a completely new CRDT instance (contained within a proxy) to the global map of proxies.
  * Every other replica of an already existing CRDT instance will be added with the replicateProxy method
  *
@@ -40,10 +55,12 @@ export const addProxy = (id, crdt, params) => {
     }
     console.log(proxies);
     sendToFramework();
+    sendToGui();
 };
 export const removeProxy = (id) => {
     proxies.delete(id);
     sendToFramework();
+    sendToGui();
 };
 export const queryProxy = (id, params) => {
     const originalId = replicaNames.get(id);
@@ -73,6 +90,7 @@ export const replicateProxy = (idToReplicate, replicaId) => {
     }
     console.log(proxies);
     sendToFramework();
+    sendToGui();
 };
 /**
  * Merges the CRDT replica of the first proxy with the one of the second proxy. The merged replica is stored in the first proxy, the second proxy's replica
@@ -106,6 +124,7 @@ export const applyToProxy = (id, fn, params) => {
     const proxy = replicas.get(id);
     proxy.apply(fn, params);
     sendToFramework();
+    sendToGui();
 };
 addProxy('p', CRDTtype.counter, ['5', '0']);
 replicateProxy('p', 'p2');

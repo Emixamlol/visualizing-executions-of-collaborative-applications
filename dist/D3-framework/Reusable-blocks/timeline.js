@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { getStartYs, getTimelineCoordinates } from './data-processing';
+import { getStartYs, getTimelineCoordinates } from '../data-processing';
 export const drawTimeLine = () => {
     let width;
     let height;

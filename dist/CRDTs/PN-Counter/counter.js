@@ -35,7 +35,7 @@ export default class PN_Counter {
                 rc.N[i] = Math.max(this.N[i], pnc.N[i]);
             }
             rc.timestamp = this.timestamp.merge(pnc.timestamp);
-            console.log(rc);
+            rc.timestamp.increase(this.pid);
             return rc;
         };
         this.payload = () => [

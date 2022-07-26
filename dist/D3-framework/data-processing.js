@@ -1,4 +1,4 @@
-import { Message } from '../../types/proxy-types';
+import { Message } from '../types/proxy-types';
 /**
  * Calculate the y position a new conceptual CRDT object's visualization starts at.
  *
