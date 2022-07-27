@@ -52,6 +52,7 @@ export default class CrdtProxy {
             return null;
         };
         this.getState = () => Object.assign({}, this.state); // return a copy of the state, not the state itself
+        this.getType = () => this.crdtReplica.type;
         this.id = id;
         this.replicaName = id;
         this.crdtReplica = createCRDT(crdt, params);

@@ -1,14 +1,14 @@
 import * as d3 from 'd3';
-import { getAllReplicas } from '../data-processing';
 export const menu = () => {
     let id;
     let labelText;
     let data;
+    let filterReplicas;
     let currentSelection;
     const listeners = d3.dispatch('change');
     const my = (selection) => {
         // process data
-        const allReplicas = getAllReplicas(data);
+        const replicas = filterReplicas(data);
         // visualization
         const htmlClass = 'replica-selection';
         selection
@@ -26,9 +26,10 @@ export const menu = () => {
             .attr('id', id)
             .on('change', (event) => {
             currentSelection = event.target.value;
+            listeners.call('change', null, currentSelection);
         })
             .selectAll('option')
-            .data(allReplicas)
+            .data(replicas)
             .join('option')
             .attr('value', (d) => d.id)
             .text((d) => d.id);
@@ -44,6 +45,9 @@ export const menu = () => {
     };
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : data;
+    };
+    my.filterReplicas = function (_) {
+        return arguments.length ? ((filterReplicas = _), my) : filterReplicas;
     };
     my.currentSelection = function (_) {
         return arguments.length ? ((currentSelection = _), my) : currentSelection;

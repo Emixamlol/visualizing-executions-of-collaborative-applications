@@ -2,7 +2,6 @@ import * as d3 from 'd3';
 export const updateButton = () => {
     let id;
     let methods;
-    let data;
     const listeners = d3.dispatch('click');
     const my = (selection) => {
         const htmlClass = 'crdt-update-methods';
@@ -42,12 +41,14 @@ export const updateButton = () => {
             .attr('class', htmlClass)
             .attr('type', 'text')
             .attr('id', (d) => d.fn);
+        // remove labels that were there before
+        divs
+            .filter((d) => !d.args)
+            .selectAll(`input.${htmlClass}`)
+            .remove();
     };
     my.methods = function (_) {
         return arguments.length ? ((methods = _), my) : methods;
-    };
-    my.data = function (_) {
-        return arguments.length ? ((data = _), my) : data;
     };
     my.on = function () {
         const value = listeners.on.apply(listeners, arguments);
