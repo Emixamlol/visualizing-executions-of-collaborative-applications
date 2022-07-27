@@ -8,7 +8,7 @@ import {
   circleCoordinates,
   timelineCoordinates,
 } from '../types/d3-framework-types';
-import { ID, Message, StateInterface } from '../types/proxy-types';
+import { Message, StateInterface } from '../types/proxy-types';
 
 /**
  * Calculate the y position a new conceptual CRDT object's visualization starts at.
