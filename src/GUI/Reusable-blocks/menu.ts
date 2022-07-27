@@ -1,12 +1,14 @@
 import * as d3 from 'd3';
 import { Data } from '../../types/d3-framework-types';
 import { ReusableMenu } from '../../types/gui-types';
+import { ID } from '../../types/proxy-types';
 import { getAllReplicas } from '../data-processing';
 
 export const menu = (): ReusableMenu => {
   let id: string;
   let labelText: string;
   let data: Data;
+  let filterReplicas: (data: Data) => Array<{ id: ID }>;
   let currentSelection: string;
 
   const listeners = d3.dispatch('change');
@@ -15,7 +17,7 @@ export const menu = (): ReusableMenu => {
     selection: d3.Selection<HTMLDivElement, unknown, HTMLElement, any>
   ) => {
     // process data
-    const allReplicas = getAllReplicas(data);
+    const replicas = filterReplicas(data);
 
     // visualization
     const htmlClass = 'replica-selection';
@@ -36,9 +38,11 @@ export const menu = (): ReusableMenu => {
       .attr('id', id)
       .on('change', (event) => {
         currentSelection = event.target.value;
+
+        listeners.call('change', null, currentSelection);
       })
       .selectAll('option')
-      .data(allReplicas)
+      .data(replicas)
       .join('option')
       .attr('value', (d) => d.id)
       .text((d) => d.id);
@@ -58,6 +62,10 @@ export const menu = (): ReusableMenu => {
 
   my.data = function (_?: Data): any {
     return arguments.length ? ((data = _), my) : data;
+  };
+
+  my.filterReplicas = function (_?: (data: Data) => Array<{ id: ID }>): any {
+    return arguments.length ? ((filterReplicas = _), my) : filterReplicas;
   };
 
   my.currentSelection = function (_?: string): any {
