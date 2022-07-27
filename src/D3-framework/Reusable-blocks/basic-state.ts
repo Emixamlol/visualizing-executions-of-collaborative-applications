@@ -22,30 +22,14 @@ export const drawBasicState = (): ReusableBasicState => {
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
   ) => {
     // set scales
-    const x = margin.left * 9;
-
-    const xScale = d3
-      .scaleLinear()
-      .domain([0, history.length])
-      .range([x, x + history.length * 125]);
-
     const replicas = data
       .map(([, replicas]) => replicas.map(({ id }) => id))
       .flat();
 
-    console.log(replicas);
-
     const colorScale = d3
       .scaleOrdinal()
       .domain(replicas)
-      .range(d3.schemePaired.slice(0, replicas.length));
-
-    replicas.forEach((id) => {
-      console.log(colorScale(id));
-    });
-
-    console.log(colorScale.domain());
-    console.log(colorScale.range());
+      .range(d3.schemePaired);
 
     const t = d3.transition().duration(1000);
 
@@ -76,8 +60,8 @@ export const drawBasicState = (): ReusableBasicState => {
     const colorCircles = (circles) => {
       circles
         .attr('r', radius)
-        .attr('fill', (d) => colorScale(d.replicaId) as string)
-        .attr('stroke', (d) => colorScale(d.replicaId) as string);
+        .attr('fill', (d) => colorScale(d.replicaId))
+        .attr('stroke', (d) => colorScale(d.replicaId));
     };
 
     g.selectAll('circle')
