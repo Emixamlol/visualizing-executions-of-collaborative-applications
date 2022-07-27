@@ -11,21 +11,27 @@ import * as gui from '../GUI';
 const proxies: Map<ID, Map<ID, CrdtProxy>> = new Map();
 
 /**
- * map of CRDT replicas mapping to the name of the original replica
+ * map of CRDT replicas mapping to the name of the conceptual CRDT object they represent, as well as its CRDT type
  */
-const replicaNames: Map<ID, ID> = new Map();
+const conceptualCRDTNames: Map<ID, { id: ID; type: CRDTtype }> = new Map();
 
 /**
- * Sends the proxies to the d3 framework (in the correct Data format)
+ * Converts the information in the proxies map to data required by the d3 framework and the gui
  */
-const sendToFramework = (): void => {
-  const data: Data = Array.from(proxies).map(([objectId, replicas]) => [
+const convertToData = (): Data =>
+  Array.from(proxies).map(([objectId, replicas]) => [
     objectId,
     Array.from(replicas).map(([replicaId, proxy]) => ({
       id: replicaId,
       state: proxy.getState(),
     })),
   ]);
+
+/**
+ * Sends the proxies information to the d3 framework (in the correct Data format)
+ */
+const sendToFramework = (): void => {
+  const data: Data = convertToData();
   console.log(data);
 
   framework.update(data);
@@ -35,24 +41,23 @@ const sendToFramework = (): void => {
  * Sends the proxies information to the GUI
  */
 const sendToGui = (): void => {
-  const data: Data = Array.from(proxies).map(([objectId, replicas]) => [
-    objectId,
-    Array.from(replicas).map(([replicaId, proxy]) => ({
-      id: replicaId,
-      state: proxy.getState(),
-    })),
-  ]);
+  const data: Data = convertToData();
   console.log(data);
 
   gui.update(data);
 };
 
 /**
- * Adds a completely new CRDT instance (contained within a proxy) to the global map of proxies.
+ * Get the CRDT type of a CRDT replica
+ */
+export const getType = (id: ID): CRDTtype => conceptualCRDTNames.get(id).type;
+
+/**
+ * Adds a completely new CRDT object (contained within a proxy) to the global map of proxies.
  * Every other replica of an already existing CRDT instance will be added with the replicateProxy method
  *
- * @param id        id of the original CRDT instance and id of the replica
- * @param crdt      CRDT type of the CRDT instance contained within the proxy
+ * @param id        id of the original, conceptual CRDT object and id of the replica
+ * @param crdt      CRDT type of the CRDT object contained within the proxy
  * @param params    parameters necessary for the CRDT instantiation
  */
 export const addProxy = (id: ID, crdt: CRDTtype, params: string[]): void => {
@@ -60,7 +65,8 @@ export const addProxy = (id: ID, crdt: CRDTtype, params: string[]): void => {
   if (!proxies.has(id)) {
     const proxy: CrdtProxy = new CrdtProxy(id, crdt, [...params, '0']);
     proxies.set(id, new Map([[id, proxy]]));
-    replicaNames.set(id, id);
+    const type = proxy.getType();
+    conceptualCRDTNames.set(id, { id, type });
   }
   console.log(proxies);
   sendToFramework();
@@ -74,8 +80,8 @@ export const removeProxy = (id: ID): void => {
 };
 
 export const queryProxy = (id: ID, params: string[]): void => {
-  const originalId = replicaNames.get(id);
-  const replicas = proxies.get(originalId);
+  const { id: conceptualId } = conceptualCRDTNames.get(id);
+  const replicas = proxies.get(conceptualId);
   const proxy = replicas.get(id);
   console.log(proxy.query(params));
   console.log(proxies);
@@ -88,17 +94,28 @@ export const queryProxy = (id: ID, params: string[]): void => {
  * @param replicaId     id of the replicated CRDT object
  */
 export const replicateProxy = (idToReplicate: ID, replicaId: ID): void => {
-  const replicas: Map<ID, CrdtProxy> = proxies.get(idToReplicate);
+  let replicaIdAvailable = true;
+  checkAvailability: for (const replicas of proxies.values()) {
+    if (replicas.has(replicaId)) {
+      replicaIdAvailable = false;
+      break checkAvailability;
+    }
+  }
   if (
     proxies.has(idToReplicate) &&
     !proxies.has(replicaId) &&
-    !replicas.has(replicaId)
+    replicaIdAvailable
   ) {
+    const replicas: Map<ID, CrdtProxy> = proxies.get(idToReplicate);
     const originalProxy: CrdtProxy = replicas.get(idToReplicate);
     const pid = replicas.size;
     const replica: CrdtProxy = originalProxy.replicate(replicaId, pid);
     if (replica) {
-      replicaNames.set(replicaId, idToReplicate); // map the id of the replica to the id of the original replica it was replicated from
+      // map the id of the replica to the id of the original replica it was replicated from
+      conceptualCRDTNames.set(replicaId, {
+        id: idToReplicate,
+        type: replica.getType(),
+      });
       proxies.set(idToReplicate, replicas.set(replicaId, replica)); // save the replica in proxies
     }
   }
@@ -115,8 +132,8 @@ export const replicateProxy = (idToReplicate: ID, replicaId: ID): void => {
  * @param other id of the second proxy, containing the CRDT replica which will NOT be replaced
  */
 export const mergeProxy = (id: ID, other: ID): void => {
-  const originalId = replicaNames.get(id);
-  const replicas: Map<ID, CrdtProxy> = proxies.get(originalId);
+  const { id: conceptualId } = conceptualCRDTNames.get(id);
+  const replicas: Map<ID, CrdtProxy> = proxies.get(conceptualId);
   const [p1, p2]: [CrdtProxy, CrdtProxy] = [
     replicas.get(id),
     replicas.get(other),
@@ -134,41 +151,29 @@ export const mergeProxy = (id: ID, other: ID): void => {
  * @param params    parameters the method takes
  */
 export const applyToProxy = (id: ID, fn: string, params: string[]): void => {
-  const originalId = replicaNames.get(id); // get the id of the original CRDT instance the proxy is a replica from
-  console.log(originalId);
-  const replicas: Map<ID, CrdtProxy> = proxies.get(originalId);
+  const { id: conceptualId } = conceptualCRDTNames.get(id); // get the id of the conceptual CRDT object the proxy is a replica from
+  console.log(conceptualId);
+  const replicas: Map<ID, CrdtProxy> = proxies.get(conceptualId);
   const proxy: CrdtProxy = replicas.get(id);
   proxy.apply(fn, params);
   sendToFramework();
   sendToGui();
 };
 
-addProxy('p', CRDTtype.counter, ['5', '0']);
+const delay = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
-replicateProxy('p', 'p2');
+const demo = async () => {
+  addProxy('p', CRDTtype.counter, ['5', '0']);
+  await delay(1000);
+  replicateProxy('p', 'p2');
+  await delay(1000);
+  addProxy('x', CRDTtype.register, ['4', '0']);
+  await delay(1000);
+  applyToProxy('p', 'increment', []);
+  await delay(1000);
+  mergeProxy('p2', 'p');
+};
 
-addProxy('x', CRDTtype.register, ['4', '0']);
-
-applyToProxy('p', 'increment', []);
-
-mergeProxy('p2', 'p');
-
-const arr: Data = Array.from(proxies).map(([instanceId, replicas]) => [
-  instanceId,
-  Array.from(replicas).map(([replicaId, proxy]) => ({
-    id: replicaId,
-    state: proxy.getState(),
-  })),
-]);
-console.log(arr);
-console.log('arr.flat.filter....');
-
-console.log(arr.flat().filter((d) => typeof d !== 'string'));
-
-const replicas = Array.from(proxies)
-  .map(([objectId, replicas]) =>
-    Array.from(replicas).map(([replicaId]) => replicaId)
-  )
-  .flat();
-
-console.log(replicas);
+demo();
