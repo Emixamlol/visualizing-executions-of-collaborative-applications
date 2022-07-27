@@ -94,4 +94,6 @@ export default class CrdtProxy implements ProxyInterface {
   };
 
   getState = (): StateInterface => Object.assign({}, this.state); // return a copy of the state, not the state itself
+
+  getType = (): CRDTtype => this.crdtReplica.type;
 }
