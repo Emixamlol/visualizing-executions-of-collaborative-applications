@@ -1,8 +1,13 @@
 import * as d3 from 'd3';
-import { applyToProxy } from '../Proxy';
+import * as proxies from '../Proxy';
 import { Data, margin } from '../types/d3-framework-types';
 import { updateButtons } from '../types/gui-types';
 import { ID } from '../types/proxy-types';
+import {
+  getAllReplicas,
+  getMethods,
+  getSiblingReplicas,
+} from './data-processing';
 import { menu } from './Reusable-blocks/menu';
 import { updateButton } from './Reusable-blocks/update-button';
 
@@ -15,43 +20,88 @@ const guiContainer: d3.Selection<HTMLDivElement, unknown, HTMLElement, any> = d3
   .attr('class', 'gui-container repl-element');
 
 // div containing the menu to select the replica
-const allReplicasMenu: d3.Selection<HTMLDivElement, unknown, HTMLElement, any> =
-  guiContainer.append('div');
+const allReplicasContainer: d3.Selection<
+  HTMLDivElement,
+  unknown,
+  HTMLElement,
+  any
+> = guiContainer.append('div');
 
 // div containing the update methods which can be applied to the selected replica
-const updateMethods: d3.Selection<HTMLDivElement, unknown, HTMLElement, any> =
-  guiContainer.append('div');
+const updateButtonsContainer: d3.Selection<
+  HTMLDivElement,
+  unknown,
+  HTMLElement,
+  any
+> = guiContainer.append('div');
 
-const counterButtons: updateButtons = [
-  { fn: 'increment', args: true },
-  { fn: 'decrement', args: false },
-];
+// div containing the menu to select which replica to merge with
+const siblingReplicasContainer: d3.Selection<
+  HTMLDivElement,
+  unknown,
+  HTMLElement,
+  any
+> = guiContainer.append('div');
 
 const data: Data = [];
 
-const replicaMenu = menu()
+const allReplicasMenu = menu()
   .id('all-replicas-menu')
   .labelText('replicas: ')
-  .data(data);
-
-const buttons = updateButton()
-  .methods(counterButtons)
   .data(data)
-  .on('click', ([fn, params]) => {
-    const id = replicaMenu.currentSelection();
-    console.log('onclick in GUI/index.ts');
-    console.log(id);
-    console.log(fn);
-    console.log(params);
+  .filterReplicas(getAllReplicas)
+  .on('change', (id: ID) => {
+    const type = proxies.getType(id);
+    const methods = getMethods(type);
 
-    applyToProxy(id, fn, params);
+    updateButtonsContainer.call(updateButtons.methods(methods));
+    siblingReplicasContainer.call(
+      siblingReplicasMenu.filterReplicas((data: Data) =>
+        getSiblingReplicas(data, id)
+      )
+    );
   });
 
-allReplicasMenu.call(replicaMenu);
+const updateButtons = updateButton()
+  .methods([])
+  .on('click', ([fn, params]) => {
+    const id = allReplicasMenu.currentSelection();
 
-updateMethods.call(buttons);
+    proxies.applyToProxy(id, fn, params);
+  });
+
+const siblingReplicasMenu = menu()
+  .id('sibling-replicas-menu')
+  .labelText('')
+  .data(data)
+  .filterReplicas((data: Data) => {
+    const id = allReplicasMenu.currentSelection();
+    return getSiblingReplicas(data, id);
+  });
+
+const mergeButton = updateButton()
+  .methods([{ fn: 'merge', args: false }])
+  .on('click', ([fn, params]) => {
+    const id = allReplicasMenu.currentSelection();
+    const other = siblingReplicasMenu.currentSelection();
+
+    proxies.mergeProxy(id, other);
+  });
+
+// initialize containers
+allReplicasContainer.call(allReplicasMenu);
+updateButtonsContainer.call(updateButtons);
+siblingReplicasContainer.call(siblingReplicasMenu).call(mergeButton);
 
 export const update = (data: Data): void => {
-  allReplicasMenu.call(replicaMenu.data(data));
-  updateMethods.call(buttons.data(data));
+  allReplicasContainer.call(allReplicasMenu.data(data));
+  const id = allReplicasMenu.currentSelection();
+  const type = proxies.getType(id);
+  const methods = getMethods(type);
+  updateButtonsContainer.call(updateButtons.methods(methods));
+  siblingReplicasContainer.call(
+    siblingReplicasMenu.data(data).filterReplicas((data: Data) => {
+      return getSiblingReplicas(data, id);
+    })
+  );
 };
