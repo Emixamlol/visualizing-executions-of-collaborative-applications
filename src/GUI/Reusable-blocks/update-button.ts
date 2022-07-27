@@ -5,7 +5,6 @@ import { ReusableButton, updateButtons } from '../../types/gui-types';
 export const updateButton = (): ReusableButton => {
   let id: string;
   let methods: updateButtons;
-  let data: Data;
 
   const listeners = d3.dispatch('click');
 
@@ -55,14 +54,16 @@ export const updateButton = (): ReusableButton => {
       .attr('class', htmlClass)
       .attr('type', 'text')
       .attr('id', (d) => d.fn);
+
+    // remove labels that were there before
+    divs
+      .filter((d) => !d.args)
+      .selectAll(`input.${htmlClass}`)
+      .remove();
   };
 
   my.methods = function (_?: updateButtons): any {
     return arguments.length ? ((methods = _), my) : methods;
-  };
-
-  my.data = function (_?: Data): any {
-    return arguments.length ? ((data = _), my) : data;
   };
 
   my.on = function () {
