@@ -1,5 +1,5 @@
 import CrdtProxy from '../Proxy/crdt-proxy';
-import { payload } from './crdt-types';
+import { CRDTtype, payload } from './crdt-types';
 
 // State
 // ------------------------------------------------------------------------------
@@ -48,6 +48,8 @@ export interface ProxyInterface {
   replicate(replicaId: ID, pid: number): CrdtProxy;
 
   getState(): StateInterface;
+
+  getType(): CRDTtype;
 }
 
 // ------------------------------------------------------------------------------
