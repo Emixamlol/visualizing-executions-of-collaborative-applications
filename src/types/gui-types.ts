@@ -1,4 +1,5 @@
 import { Data } from './d3-framework-types';
+import { ID } from './proxy-types';
 
 export type updateButtons = Array<{ fn: string; args: boolean }>;
 
@@ -12,9 +13,6 @@ export type updateButtons = Array<{ fn: string; args: boolean }>;
  */
 interface GuiReusableInterface<T> {
   (selection: d3.Selection<HTMLDivElement, unknown, HTMLElement, any>): void;
-
-  data(): Data;
-  data(value: Data): T;
 }
 
 export interface ReusableMenu extends GuiReusableInterface<ReusableMenu> {
@@ -24,8 +22,14 @@ export interface ReusableMenu extends GuiReusableInterface<ReusableMenu> {
   labelText(): string;
   labelText(value: string): ReusableMenu;
 
+  filterReplicas(): (data: Data) => Array<{ id: ID }>;
+  filterReplicas(value: (data: Data) => Array<{ id: ID }>): ReusableMenu;
+
   currentSelection(): string;
   currentSelection(value: string): ReusableMenu;
+
+  data(): Data;
+  data(value: Data): ReusableMenu;
 
   on(...args): ReusableMenu;
   on(...args): any;
