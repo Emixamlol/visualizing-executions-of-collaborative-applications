@@ -73,6 +73,7 @@ export const drawObjectEllipse = (): ReusableObjectEllipse => {
             .attr('x', x(0))
             .attr('y', (d) => d.y)
             .attr('fill', 'black')
+            .text((d) => d.id)
       );
 
     g.selectAll('path')

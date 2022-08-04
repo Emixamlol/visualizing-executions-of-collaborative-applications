@@ -113,6 +113,7 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
             .transition(t)
             .attr('x', x)
             .attr('y', (d) => d.y)
+            .text((d) => d.id)
             .attr('fill', (d) => colorScale(d.id) as string)
       );
   };
