@@ -12,6 +12,7 @@ import { menu } from './Reusable-blocks/menu';
 import { updateButton } from './Reusable-blocks/update-button';
 
 // constants
+const data: Data = [];
 const margin: margin = { top: 20, right: 20, bottom: 20, left: 20 };
 
 const guiContainer: d3.Selection<HTMLDivElement, unknown, HTMLElement, any> = d3
@@ -25,7 +26,7 @@ const allReplicasContainer: d3.Selection<
   unknown,
   HTMLElement,
   any
-> = guiContainer.append('div');
+> = guiContainer.append('div').attr('class', 'grid-header');
 
 // div containing the update methods which can be applied to the selected replica
 const updateButtonsContainer: d3.Selection<
@@ -33,7 +34,7 @@ const updateButtonsContainer: d3.Selection<
   unknown,
   HTMLElement,
   any
-> = guiContainer.append('div');
+> = guiContainer.append('div').attr('class', 'grid-buttons');
 
 // div containing the menu to select which replica to merge with
 const siblingReplicasContainer: d3.Selection<
@@ -41,9 +42,7 @@ const siblingReplicasContainer: d3.Selection<
   unknown,
   HTMLElement,
   any
-> = guiContainer.append('div');
-
-const data: Data = [];
+> = guiContainer.append('div').attr('class', 'grid-merge');
 
 const allReplicasMenu = menu()
   .id('all-replicas-menu')
