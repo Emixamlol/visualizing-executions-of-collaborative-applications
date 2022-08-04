@@ -4,18 +4,18 @@ import { getAllReplicas, getMethods, getSiblingReplicas, } from './data-processi
 import { menu } from './Reusable-blocks/menu';
 import { updateButton } from './Reusable-blocks/update-button';
 // constants
+const data = [];
 const margin = { top: 20, right: 20, bottom: 20, left: 20 };
 const guiContainer = d3
     .select('#repl')
     .append('div')
     .attr('class', 'gui-container repl-element');
 // div containing the menu to select the replica
-const allReplicasContainer = guiContainer.append('div');
+const allReplicasContainer = guiContainer.append('div').attr('class', 'grid-header');
 // div containing the update methods which can be applied to the selected replica
-const updateButtonsContainer = guiContainer.append('div');
+const updateButtonsContainer = guiContainer.append('div').attr('class', 'grid-buttons');
 // div containing the menu to select which replica to merge with
-const siblingReplicasContainer = guiContainer.append('div');
-const data = [];
+const siblingReplicasContainer = guiContainer.append('div').attr('class', 'grid-merge');
 const allReplicasMenu = menu()
     .id('all-replicas-menu')
     .labelText('replicas: ')
