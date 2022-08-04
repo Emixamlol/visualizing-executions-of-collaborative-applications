@@ -6,7 +6,7 @@
 
 .flexbox-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 #repl textarea {
@@ -22,4 +22,22 @@ textarea::-webkit-scrollbar {
 
 #repl button {
   display: block;
+}
+
+.gui-container {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-areas: 'header header';
+  grid-auto-rows: minmax(0px, auto);
+  grid-auto-columns: minmax(500px, auto);
+  justify-content: left;
+}
+
+.grid-header {
+  grid-area: header;
+  grid-column: 1 / -1;
+}
+
+.grid-buttons {
+  grid-column: span 6;
 }
