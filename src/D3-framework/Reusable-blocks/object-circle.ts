@@ -4,6 +4,7 @@ import {
   margin,
   ReusableObjectCircle,
 } from '../../types/d3-framework-types';
+import { getStartYs } from '../data-processing';
 
 export const drawObjectCircle = (): ReusableObjectCircle => {
   let width: number;
@@ -11,6 +12,8 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
   let margin: margin;
   let data: Data;
   let radius: number;
+
+  const listeners = d3.dispatch('click');
 
   const my: ReusableObjectCircle = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -30,32 +33,16 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
     const t = d3.transition().duration(1000);
 
     // process data
-    type processedData = Array<
-      Array<{ ry: number; startY: number; y: number; id: string }>
-    >;
+    const startYs = getStartYs(data, margin);
 
-    const objects: processedData = data.reduce(
-      (accumulator, [id, replicas]) =>
-        accumulator.concat([
-          replicas.map((replica, i) => {
-            const length = accumulator.length;
-            const ry = replicas.length * 50;
-            const startY =
-              margin.top +
-              (length
-                ? accumulator[length - 1][0].startY +
-                  2 * accumulator[length - 1][0].ry
-                : 0);
-            const y = startY + radius + margin.top + 100 * i;
-            return {
-              ry,
-              startY,
-              y,
-              id: replica.id,
-            };
-          }),
-        ]),
-      []
+    type processedData = Array<Array<{ ry: number; y: number; id: string }>>;
+
+    const objects: processedData = data.map(([, replicas], dataIndex) =>
+      replicas.map(({ id, state }, replicaIndex) => ({
+        ry: replicas.length * 50,
+        y: startYs[dataIndex] + radius + margin.top + 100 * replicaIndex,
+        id,
+      }))
     );
 
     // visualization
@@ -136,6 +123,11 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
 
   my.radius = function (_?: number): any {
     return arguments.length ? ((radius = _), my) : radius;
+  };
+
+  my.on = function () {
+    const value = listeners.on.apply(listeners, arguments);
+    return value === listeners ? my : value;
   };
 
   return my;
