@@ -29,6 +29,8 @@ export type margin = {
   left: number;
 };
 
+// ------------------------------------------- processed data types -------------------------------------------
+
 export type stateCoordinates = Array<{
   replicaId: ID;
   coordinates: Array<{ cx: number; cy: number; title: string }>;
@@ -95,6 +97,9 @@ export interface ReusableObjectCircle
   extends FrameworkReusableInterface<ReusableObjectCircle> {
   radius(): number;
   radius(value: number): ReusableObjectCircle;
+
+  on(...args): ReusableObjectCircle;
+  on(...args): any;
 }
 
 export interface ReusableBasicState
