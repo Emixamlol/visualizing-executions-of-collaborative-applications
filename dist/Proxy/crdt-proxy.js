@@ -45,7 +45,6 @@ export default class CrdtProxy {
                     pid.toString(),
                 ]);
                 newProxy.replicaName = this.replicaName; // the replicaName is the same for each replica
-                newProxy.state = Object.assign({}, this.state); // the state is replicated as well
                 return newProxy;
             }
             // in case the maximum number of possible replicas exist, do not replicate and return null

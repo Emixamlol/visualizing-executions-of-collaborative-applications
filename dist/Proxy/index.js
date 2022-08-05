@@ -36,6 +36,7 @@ const sendToFramework = () => {
     const data = convertToData();
     console.log(data);
     framework.update(data);
+    framework.drawSpecificCircles(data);
 };
 /**
  * Sends the proxies information to the GUI
@@ -164,3 +165,40 @@ const demo = () => __awaiter(void 0, void 0, void 0, function* () {
     mergeProxy('p2', 'p');
 });
 demo();
+/* const firstElement = <Type>(arr: Type[]): Type | undefined => {
+  return arr[0];
+};
+
+console.log('object keys');
+
+console.log(Object.values(firstElement));
+
+const c = new PN_Counter(5, 0);
+
+console.log(Object.entries(Object.getOwnPropertyDescriptors(c)));
+console.log(Object.entries(Object.getOwnPropertyDescriptor(c, 'compare')));
+
+console.log(Object.getOwnPropertyDescriptors(c).compare.value.length);
+
+console.log(Object.getOwnPropertyNames(c));
+
+const rc = new RevisitedCounter(5, 0);
+
+console.log(Object.entries(Object.getOwnPropertyDescriptors(rc)));
+console.log(Object.entries(Object.getOwnPropertyDescriptor(rc, 'compare')));
+
+console.log(
+  Object.getOwnPropertyDescriptors(rc)['update']['value']['increment']
+);
+console.log(Object.entries(Object.getOwnPropertyDescriptors(rc).update.value));
+
+console.log(Object.getOwnPropertyNames(rc));
+
+console.log('rc2');
+
+const rc2 = revisitedCreateCRDT(CRDTtype.counter, ['5', '1']);
+console.log(
+  Object.entries(Object.getOwnPropertyDescriptors(rc2).update.value).map(
+    ([name, fn]) => (fn as any).length
+  )
+); */

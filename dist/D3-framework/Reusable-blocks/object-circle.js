@@ -1,10 +1,12 @@
 import * as d3 from 'd3';
+import { getStartYs } from '../data-processing';
 export const drawObjectCircle = () => {
     let width;
     let height;
     let margin;
     let data;
     let radius;
+    const listeners = d3.dispatch('click');
     const my = (selection) => {
         // set scales
         const x = margin.left * 2 + 50;
@@ -16,24 +18,13 @@ export const drawObjectCircle = () => {
             .domain(replicas)
             .range(d3.schemePaired);
         const t = d3.transition().duration(1000);
-        const objects = data.reduce((accumulator, [id, replicas]) => accumulator.concat([
-            replicas.map((replica, i) => {
-                const length = accumulator.length;
-                const ry = replicas.length * 50;
-                const startY = margin.top +
-                    (length
-                        ? accumulator[length - 1][0].startY +
-                            2 * accumulator[length - 1][0].ry
-                        : 0);
-                const y = startY + radius + margin.top + 100 * i;
-                return {
-                    ry,
-                    startY,
-                    y,
-                    id: replica.id,
-                };
-            }),
-        ]), []);
+        // process data
+        const startYs = getStartYs(data, margin);
+        const objects = data.map(([, replicas], dataIndex) => replicas.map(({ id, state }, replicaIndex) => ({
+            ry: replicas.length * 50,
+            y: startYs[dataIndex] + radius + margin.top + 100 * replicaIndex,
+            id,
+        })));
         // visualization
         const htmlClass = 'object-circle';
         const g = selection
@@ -75,6 +66,7 @@ export const drawObjectCircle = () => {
             .transition(t)
             .attr('x', x)
             .attr('y', (d) => d.y)
+            .text((d) => d.id)
             .attr('fill', (d) => colorScale(d.id)));
     };
     my.width = function (_) {
@@ -91,6 +83,10 @@ export const drawObjectCircle = () => {
     };
     my.radius = function (_) {
         return arguments.length ? ((radius = _), my) : radius;
+    };
+    my.on = function () {
+        const value = listeners.on.apply(listeners, arguments);
+        return value === listeners ? my : value;
     };
     return my;
 };

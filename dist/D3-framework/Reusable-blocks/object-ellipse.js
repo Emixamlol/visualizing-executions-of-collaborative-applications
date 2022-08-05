@@ -41,7 +41,8 @@ export const drawObjectEllipse = () => {
             .transition(t)
             .attr('x', x(0))
             .attr('y', (d) => d.y)
-            .attr('fill', 'black'));
+            .attr('fill', 'black')
+            .text((d) => d.id));
         g.selectAll('path')
             .data(objects)
             .join((enter) => enter

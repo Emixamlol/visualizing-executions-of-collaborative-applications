@@ -1,5 +1,6 @@
-import { CRDTtype } from '../types/crdt-types';
+import { CRDTtype, } from '../types/crdt-types';
 import { PN_Counter, LWW_Register, TwoPhase_Set } from './index';
+import RevisitedCounter from './PN-Counter/revisited-counter';
 // method to instantiate a CRDT
 export const createCRDT = (crdt, params) => {
     switch (crdt) {
@@ -17,5 +18,22 @@ export const createCRDT = (crdt, params) => {
         }
         default:
             throw new Error('this CRDT does not exist');
+    }
+};
+// revisited
+export const revisitedCreateCRDT = (type, params) => {
+    switch (type) {
+        case CRDTtype.counter:
+            const [n, pid] = params.map((value) => parseInt(value, 10));
+            return new RevisitedCounter(n, pid);
+        case CRDTtype.register:
+            throw Error('revisited register not implemented');
+        case CRDTtype.set:
+            throw Error('revisited set not implemented');
+        default:
+            const assertUnreachable = (x) => {
+                throw new Error('CRDT type does not exist');
+            };
+            assertUnreachable(type);
     }
 };

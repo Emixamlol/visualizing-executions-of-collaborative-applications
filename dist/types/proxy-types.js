@@ -15,4 +15,3 @@ export var ProxyMethod;
     ProxyMethod["merge"] = "merge";
     ProxyMethod["apply"] = "apply";
 })(ProxyMethod || (ProxyMethod = {}));
-// ------------------------------------------------------------------------------
