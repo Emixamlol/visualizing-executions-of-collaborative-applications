@@ -1,4 +1,5 @@
 import CrdtProxy from '../Proxy/crdt-proxy';
+import RevisitedCrdtProxy from '../Proxy/revisited-crdt-proxy';
 import { CRDTtype, payload } from './crdt-types';
 
 // State
@@ -53,3 +54,18 @@ export interface ProxyInterface {
 }
 
 // ------------------------------------------------------------------------------
+
+// ------------------------------------------ revisited ------------------------------------------
+export interface RevisitedProxyInterface {
+  id: string;
+
+  apply(op: 'query' | 'update', fn: string, params: string[]): void;
+
+  merge(other: RevisitedCrdtProxy): void;
+
+  replicate(replicaId: ID, pid: number): RevisitedCrdtProxy;
+
+  getState(): StateInterface;
+
+  // getUpdates()
+}
