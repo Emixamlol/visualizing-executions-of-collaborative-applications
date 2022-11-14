@@ -54,11 +54,9 @@ export const drawObjectEllipse = () => {
             .attr('d', (d) => `M ${x(1)} ${d.y} A 0 0 0 0 1 ${x(1)} ${d.y} A 0 0 0 0 1 ${x(1)} ${d.y}`)
             .call((enter) => enter.transition(t).attr('d', (d) => {
             return `M ${x(1)} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1) + 100} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1)} ${d.y}`;
-        } // `M 30 200 A 50 100 0 0 1 130 200 A 50 100 0 0 1 30 200`
-        )), (update) => update.transition(t).attr('d', (d) => {
+        })), (update) => update.transition(t).attr('d', (d) => {
             return `M ${x(1)} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1) + 100} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1)} ${d.y}`;
-        } // `M 30 200 A 50 100 0 0 1 130 200 A 50 100 0 0 1 30 200`
-        ));
+        }));
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;
