@@ -74,7 +74,7 @@ export type timelineCoordinates = Array<{
  *
  */
 
-interface FrameworkReusableInterface<T> {
+interface ReusablePatternInterface<T> {
   (selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>): void;
 
   width(): number;
@@ -85,7 +85,24 @@ interface FrameworkReusableInterface<T> {
 
   margin(): margin;
   margin(value: margin): T;
+}
 
+// interface FrameworkReusableInterface<T> {
+//   (selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>): void;
+
+//   width(): number;
+//   width(value: number): T;
+
+//   height(): number;
+//   height(value: number): T;
+
+//   margin(): margin;
+//   margin(value: margin): T;
+
+//   data(): Data;
+//   data(value: Data): T;
+// }
+interface FrameworkReusableInterface<T> extends ReusablePatternInterface<T> {
   data(): Data;
   data(value: Data): T;
 }
@@ -110,3 +127,11 @@ export interface ReusableBasicState
 
 export interface ReusableTimeLine
   extends FrameworkReusableInterface<ReusableTimeLine> {}
+
+export interface ReusableFlag extends ReusablePatternInterface<ReusableFlag> {}
+
+export interface ReusableValuePair
+  extends ReusablePatternInterface<ReusableValuePair> {}
+
+export interface ReusableTombstone
+  extends ReusablePatternInterface<ReusableTombstone> {}
