@@ -1,6 +1,6 @@
 // import './Proxy';
 import './REPL';
-import './D3-framework';
+// import './D3-framework';
 import './GUI';
 
 // addProxy('x', CRDTtype.counter, ['5', '0']);
