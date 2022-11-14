@@ -94,24 +94,18 @@ export const drawObjectEllipse = (): ReusableObjectEllipse => {
                 )} ${d.y}`
             )
             .call((enter) =>
-              enter.transition(t).attr(
-                'd',
-                (d) => {
-                  return `M ${x(1)} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${
-                    x(1) + 100
-                  } ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1)} ${d.y}`;
-                } // `M 30 200 A 50 100 0 0 1 130 200 A 50 100 0 0 1 30 200`
-              )
+              enter.transition(t).attr('d', (d) => {
+                return `M ${x(1)} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${
+                  x(1) + 100
+                } ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1)} ${d.y}`;
+              })
             ),
         (update) =>
-          update.transition(t).attr(
-            'd',
-            (d) => {
-              return `M ${x(1)} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1) + 100} ${
-                d.y
-              } A ${d.rx} ${d.ry} 0 0 1 ${x(1)} ${d.y}`;
-            } // `M 30 200 A 50 100 0 0 1 130 200 A 50 100 0 0 1 30 200`
-          )
+          update.transition(t).attr('d', (d) => {
+            return `M ${x(1)} ${d.y} A ${d.rx} ${d.ry} 0 0 1 ${x(1) + 100} ${
+              d.y
+            } A ${d.rx} ${d.ry} 0 0 1 ${x(1)} ${d.y}`;
+          })
       );
   };
 
