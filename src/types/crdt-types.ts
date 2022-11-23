@@ -4,6 +4,8 @@ import VectorClock from '../CRDTs/vector-clock';
 export type payload = [string, Array<number>];
 
 export enum CRDTtype {
+  flag = 'flag',
+  inc_counter = 'inc_counter',
   counter = 'counter',
   register = 'register',
   set = 'set',
@@ -35,9 +37,25 @@ export interface StateBasedInterface<
 
   update: UpdateInterface;
 
-  compare(other: PayloadInterface): boolean;
+  // compare(other: PayloadInterface): boolean;
 
-  merge(other: [PayloadInterface, VectorClock]): PayloadInterface;
+  // merge(other: [PayloadInterface, VectorClock]): PayloadInterface;
+
+  compare(
+    other: StateBasedInterface<
+      PayloadInterface,
+      QueryInterface,
+      UpdateInterface
+    >
+  ): boolean;
+
+  merge(
+    other: StateBasedInterface<
+      PayloadInterface,
+      QueryInterface,
+      UpdateInterface
+    >
+  ): PayloadInterface;
 
   getPayload(): [PayloadInterface, VectorClock];
 }

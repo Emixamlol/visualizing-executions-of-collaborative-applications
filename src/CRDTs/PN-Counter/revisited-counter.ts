@@ -56,18 +56,21 @@ export default class RevisitedCounter
     },
   };
 
-  compare = (other: PayloadInterface): boolean => {
+  compare = (other: RevisitedCounter): boolean => {
     for (let i = 0; i < this.payload.P.length; i++) {
-      if (this.payload.P[i] > other.P[i] || this.payload.N[i] > other.N[i])
+      if (
+        this.payload.P[i] > other.payload.P[i] ||
+        this.payload.N[i] > other.payload.N[i]
+      )
         return false;
     }
     return true;
   };
 
-  merge = (other: [PayloadInterface, VectorClock]): PayloadInterface => {
+  merge = (other: RevisitedCounter): PayloadInterface => {
     const n = this.payload.P.length;
     const rp = Object.assign({}, this.payload);
-    const [op, ot] = other;
+    const [op, ot] = other.getPayload();
     for (let i = 0; i < n; i++) {
       rp.P[i] = Math.max(this.payload.P[i], op.P[i]);
       rp.N[i] = Math.max(this.payload.N[i], op.N[i]);
@@ -77,6 +80,28 @@ export default class RevisitedCounter
     this.payload = rp;
     return rp;
   };
+
+  // compare = (other: PayloadInterface): boolean => {
+  //   for (let i = 0; i < this.payload.P.length; i++) {
+  //     if (this.payload.P[i] > other.P[i] || this.payload.N[i] > other.N[i])
+  //       return false;
+  //   }
+  //   return true;
+  // };
+
+  // merge = (other: [PayloadInterface, VectorClock]): PayloadInterface => {
+  //   const n = this.payload.P.length;
+  //   const rp = Object.assign({}, this.payload);
+  //   const [op, ot] = other;
+  //   for (let i = 0; i < n; i++) {
+  //     rp.P[i] = Math.max(this.payload.P[i], op.P[i]);
+  //     rp.N[i] = Math.max(this.payload.N[i], op.N[i]);
+  //   }
+  //   this.timestamp = this.timestamp.merge(ot);
+  //   this.timestamp.increase(this.pid);
+  //   this.payload = rp;
+  //   return rp;
+  // };
 
   getPayload = (): [PayloadInterface, VectorClock] => [
     Object.assign({}, this.payload),

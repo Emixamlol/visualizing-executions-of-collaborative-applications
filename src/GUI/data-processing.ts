@@ -32,6 +32,17 @@ export const getSiblingReplicas = (data: Data, id: ID): Array<{ id: ID }> =>
  */
 export const getMethods = (type: CRDTtype): updateButtons => {
   switch (type) {
+    case CRDTtype.flag: {
+      return [
+        { fn: 'enable', args: false },
+        { fn: 'disable', args: false },
+      ];
+    }
+
+    case CRDTtype.inc_counter: {
+      return [{ fn: 'increment', args: false }];
+    }
+
     case CRDTtype.counter:
       return [
         { fn: 'increment', args: false },
