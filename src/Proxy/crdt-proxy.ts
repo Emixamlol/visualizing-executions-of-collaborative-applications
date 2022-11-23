@@ -1,6 +1,10 @@
 import { LWW_Register, PN_Counter, TwoPhase_Set } from '../CRDTs';
-import { createCRDT } from '../CRDTs/create-crdt';
-import { CRDTInterface, CRDTtype } from '../types/crdt-types';
+import { createCRDT, revisitedCreateCRDT } from '../CRDTs/create-crdt';
+import {
+  CRDTInterface,
+  CRDTtype,
+  StateBasedInterface,
+} from '../types/crdt-types';
 import {
   ID,
   Message,
@@ -12,12 +16,14 @@ export default class CrdtProxy implements ProxyInterface {
   readonly id: ID; // the id (name) of the local replica
   private replicaName: ID; // name of the conceptual CRDT object the instance was replicated from
   private crdtReplica: CRDTInterface; // instance of CRDT replica the proxy contains
+  // private crdtReplica: StateBasedInterface<any, any, any>; // instance of CRDT replica the proxy contains
   private state: StateInterface; // the payload history and current payload of the CRDT replica
 
   constructor(id: ID, crdt: CRDTtype, params: string[]) {
     this.id = id;
     this.replicaName = id;
     this.crdtReplica = createCRDT(crdt, params);
+    // this.crdtReplica = revisitedCreateCRDT(crdt, params);
     this.state = {
       history: [
         {

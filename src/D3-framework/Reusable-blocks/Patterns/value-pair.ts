@@ -8,7 +8,9 @@ export const valuePair = (): ReusableValuePair => {
 
   const my: ReusableValuePair = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
-  ) => {};
+  ) => {
+    const htmlClass = 'crdt-value-pair';
+  };
 
   my.width = function (_?: number): any {
     arguments.length ? ((width = _), my) : width;

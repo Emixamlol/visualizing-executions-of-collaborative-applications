@@ -36,13 +36,7 @@ export default class LWW_Register implements RegisterInterface {
 
   merge = (lwwr: LWW_Register): LWW_Register => {
     const rr = new LWW_Register(this.timestamp.length, this.pid);
-    if (this.compare(lwwr)) {
-      rr.X = lwwr.X;
-      rr.timestamp = lwwr.timestamp;
-    } else {
-      rr.X = this.X;
-      rr.timestamp = this.timestamp;
-    }
+    this.compare(lwwr) ? (rr.X = lwwr.X) : (rr.X = this.X);
     rr.pid = this.pid;
     rr.timestamp = this.timestamp.merge(lwwr.timestamp);
     rr.timestamp.increase(this.pid);

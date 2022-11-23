@@ -57,7 +57,7 @@ export default class RevisitedCrdtProxy implements RevisitedProxyInterface {
 
   merge = (other: RevisitedCrdtProxy): void => {
     if (this.replicaName === other.replicaName) {
-      this.crdtReplica.merge(other.crdtReplica.getPayload());
+      this.crdtReplica.merge(other.crdtReplica);
       this.state = {
         ...this.state,
         merges: this.state.merges.concat({
@@ -89,4 +89,6 @@ export default class RevisitedCrdtProxy implements RevisitedProxyInterface {
   };
 
   getState = (): StateInterface => Object.assign({}, this.state);
+
+  getType = (): CRDTtype => this.crdtReplica.type;
 }

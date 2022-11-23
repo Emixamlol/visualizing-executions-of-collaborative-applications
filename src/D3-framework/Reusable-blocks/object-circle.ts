@@ -13,7 +13,7 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
   let data: Data;
   let radius: number;
 
-  const listeners = d3.dispatch('click');
+  const listeners = d3.dispatch('mouseenter', 'mouseout');
 
   const my: ReusableObjectCircle = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -63,10 +63,23 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
         (enter) =>
           enter
             .append('circle')
+            .attr('id', (d) => `${htmlClass + d.id}`)
             .attr('cx', x)
             .attr('cy', (d) => d.y)
             .attr('fill', 'none')
             .attr('stroke', (d) => colorScale(d.id) as string)
+            .on('mouseenter', (event, { id }) => {
+              const circle = enter.select(`#${htmlClass + id}`);
+              circle.attr('visibility', 'hidden');
+              listeners.call('mouseenter', null, id);
+            })
+            .on('mouseout', (event, { id }) => {
+              const circle = enter.select(`#${htmlClass + id}`);
+              setTimeout(() => {
+                circle.attr('visibility', 'visible');
+                listeners.call('mouseout', null, id);
+              }, 3000);
+            })
             .call((enter) => enter.transition(t).attr('r', radius)),
         (update) =>
           update

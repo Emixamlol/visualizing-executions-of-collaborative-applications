@@ -8,7 +8,9 @@ export const tombstone = (): ReusableTombstone => {
 
   const my: ReusableTombstone = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
-  ) => {};
+  ) => {
+    const htmlClass = 'crdt-tombstone';
+  };
 
   my.width = function (_?: number): any {
     return arguments.length ? ((width = _), my) : width;

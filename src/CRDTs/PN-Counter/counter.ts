@@ -15,6 +15,7 @@ interface PN_CounterInterface extends CRDTInterface {
 }
 
 export default class PN_Counter implements PN_CounterInterface {
+  // TODO P and N become grow only counter
   private P: number[]; // increments
   private N: number[]; // decrements
   private pid: number; // id of the process handling the replica
