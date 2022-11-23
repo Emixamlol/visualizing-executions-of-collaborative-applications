@@ -11,14 +11,7 @@ export default class LWW_Register {
         this.compare = (lwwr) => this.timestamp.lessOrEqual(lwwr.timestamp);
         this.merge = (lwwr) => {
             const rr = new LWW_Register(this.timestamp.length, this.pid);
-            if (this.compare(lwwr)) {
-                rr.X = lwwr.X;
-                rr.timestamp = lwwr.timestamp;
-            }
-            else {
-                rr.X = this.X;
-                rr.timestamp = this.timestamp;
-            }
+            this.compare(lwwr) ? (rr.X = lwwr.X) : (rr.X = this.X);
             rr.pid = this.pid;
             rr.timestamp = this.timestamp.merge(lwwr.timestamp);
             rr.timestamp.increase(this.pid);

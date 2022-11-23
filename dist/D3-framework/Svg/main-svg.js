@@ -24,7 +24,13 @@ const objectCircle = drawObjectCircle()
     .height(height)
     .margin(margin)
     .data(data)
-    .radius(radius);
+    .radius(radius)
+    .on('mouseenter', (id) => {
+    console.log(`entered circle ${id}`);
+})
+    .on('mouseout', (id) => {
+    console.log(`exited circle ${id}`);
+});
 const timeLine = drawTimeLine()
     .width(width)
     .height(height)

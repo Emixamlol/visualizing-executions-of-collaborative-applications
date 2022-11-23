@@ -6,7 +6,7 @@ export const drawObjectCircle = () => {
     let margin;
     let data;
     let radius;
-    const listeners = d3.dispatch('click');
+    const listeners = d3.dispatch('mouseenter', 'mouseout');
     const my = (selection) => {
         // set scales
         const x = margin.left * 2 + 50;
@@ -39,10 +39,23 @@ export const drawObjectCircle = () => {
             .data((d) => d)
             .join((enter) => enter
             .append('circle')
+            .attr('id', (d) => `${htmlClass + d.id}`)
             .attr('cx', x)
             .attr('cy', (d) => d.y)
             .attr('fill', 'none')
             .attr('stroke', (d) => colorScale(d.id))
+            .on('mouseenter', (event, { id }) => {
+            const circle = enter.select(`#${htmlClass + id}`);
+            circle.attr('visibility', 'hidden');
+            listeners.call('mouseenter', null, id);
+        })
+            .on('mouseout', (event, { id }) => {
+            const circle = enter.select(`#${htmlClass + id}`);
+            setTimeout(() => {
+                circle.attr('visibility', 'visible');
+                listeners.call('mouseout', null, id);
+            }, 3000);
+        })
             .call((enter) => enter.transition(t).attr('r', radius)), (update) => update
             .transition(t)
             .attr('cx', x)

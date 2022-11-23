@@ -2,7 +2,9 @@ export const valuePair = () => {
     let width;
     let height;
     let margin;
-    const my = (selection) => { };
+    const my = (selection) => {
+        const htmlClass = 'crdt-value-pair';
+    };
     my.width = function (_) {
         arguments.length ? ((width = _), my) : width;
     };

@@ -13,7 +13,7 @@ export default class RevisitedCrdtProxy {
         };
         this.merge = (other) => {
             if (this.replicaName === other.replicaName) {
-                this.crdtReplica.merge(other.crdtReplica.getPayload());
+                this.crdtReplica.merge(other.crdtReplica);
                 this.state = Object.assign(Object.assign({}, this.state), { merges: this.state.merges.concat({
                         from: {
                             other_id: other.id,
@@ -36,6 +36,7 @@ export default class RevisitedCrdtProxy {
             return null;
         };
         this.getState = () => Object.assign({}, this.state);
+        this.getType = () => this.crdtReplica.type;
         this.id = id;
         this.replicaName = id;
         this.crdtReplica = revisitedCreateCRDT(type, params);

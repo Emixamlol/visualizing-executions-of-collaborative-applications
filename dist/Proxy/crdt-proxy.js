@@ -1,5 +1,5 @@
 import { createCRDT } from '../CRDTs/create-crdt';
-import { CRDTtype } from '../types/crdt-types';
+import { CRDTtype, } from '../types/crdt-types';
 import { Message, } from '../types/proxy-types';
 export default class CrdtProxy {
     constructor(id, crdt, params) {
@@ -55,6 +55,7 @@ export default class CrdtProxy {
         this.id = id;
         this.replicaName = id;
         this.crdtReplica = createCRDT(crdt, params);
+        // this.crdtReplica = revisitedCreateCRDT(crdt, params);
         this.state = {
             history: [
                 {
