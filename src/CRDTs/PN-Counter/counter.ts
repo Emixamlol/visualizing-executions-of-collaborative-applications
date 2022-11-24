@@ -1,4 +1,5 @@
 import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
+import Inc_Counter from '../Base-CRDTs/inc-counter';
 import VectorClock from '../vector-clock';
 
 interface PN_CounterInterface extends CRDTInterface {
@@ -15,9 +16,8 @@ interface PN_CounterInterface extends CRDTInterface {
 }
 
 export default class PN_Counter implements PN_CounterInterface {
-  // TODO P and N become grow only counter
-  private P: number[]; // increments
-  private N: number[]; // decrements
+  private P: Inc_Counter; // increments
+  private N: Inc_Counter; // decrements
   private pid: number; // id of the process handling the replica
   private timestamp: VectorClock; // vector clock
   type: CRDTtype = CRDTtype.counter;
@@ -25,44 +25,30 @@ export default class PN_Counter implements PN_CounterInterface {
   constructor(n: number, pid: number) {
     this.pid = pid;
     this.timestamp = new VectorClock(n);
-    this.P = new Array(n).fill(0);
-    this.N = new Array(n).fill(0);
+    this.P = new Inc_Counter(n, pid);
+    this.N = new Inc_Counter(n, pid);
   }
 
   increment = (): void => {
-    this.P[this.pid]++;
+    this.P.increment();
     this.timestamp.increase(this.pid);
   };
 
   decrement = (): void => {
-    this.N[this.pid]++;
+    this.N.increment();
     this.timestamp.increase(this.pid);
   };
 
-  value = (): number => {
-    let incSum = 0;
-    let decSum = 0;
-    for (let i = 0; i < this.P.length; i++) {
-      incSum += this.P[i];
-      decSum += this.N[i];
-    }
-    return incSum - decSum;
-  };
+  value = (): number => this.P.value() - this.N.value();
 
-  compare = (pnc: PN_Counter): boolean => {
-    for (let i = 0; i < this.P.length; i++) {
-      if (this.P[i] > pnc.P[i] || this.N[i] > pnc.N[i]) return false;
-    }
-    return true;
-  };
+  compare = (pnc: PN_Counter): boolean =>
+    this.P.compare(pnc.P) && this.N.compare(pnc.N);
 
   merge = (pnc: PN_Counter): PN_Counter => {
-    const n = this.P.length;
+    const n = this.timestamp.length;
     const rc = new PN_Counter(n, this.pid);
-    for (let i = 0; i < n; i++) {
-      rc.P[i] = Math.max(this.P[i], pnc.P[i]);
-      rc.N[i] = Math.max(this.N[i], pnc.N[i]);
-    }
+    rc.P = this.P.merge(pnc.P);
+    rc.N = this.N.merge(pnc.N);
     rc.timestamp = this.timestamp.merge(pnc.timestamp);
     rc.timestamp.increase(this.pid);
     return rc;
@@ -77,8 +63,8 @@ export default class PN_Counter implements PN_CounterInterface {
 
   specificState = (): (number | number[])[] => [
     this.value(),
-    this.P.slice(),
-    this.N.slice(),
+    this.P.getTimestamp(),
+    this.N.getTimestamp(),
     this.pid,
     this.timestamp.getVector(),
   ];

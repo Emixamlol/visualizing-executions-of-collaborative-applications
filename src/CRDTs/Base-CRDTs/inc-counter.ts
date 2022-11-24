@@ -45,11 +45,10 @@ export default class Inc_Counter implements Inc_CounterInterface {
     return rc;
   };
 
-  payload(): payload {
-    throw new Error('Method not implemented.');
-  }
+  payload = (): [string, number[]] => [
+    this.value().toString(),
+    this.getTimestamp(),
+  ];
 
-  getTimestamp(): number[] {
-    throw new Error('Method not implemented.');
-  }
+  getTimestamp = (): number[] => this.timestamp.getVector();
 }
