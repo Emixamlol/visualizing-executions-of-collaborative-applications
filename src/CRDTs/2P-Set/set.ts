@@ -1,4 +1,5 @@
 import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
+import GrowOnly_Set from '../Base-CRDTs/grow-set';
 import VectorClock from '../vector-clock';
 
 interface SetInterface extends CRDTInterface {
@@ -15,15 +16,15 @@ interface SetInterface extends CRDTInterface {
 }
 
 export default class TwoPhase_Set implements SetInterface {
-  private A: Set<string>;
-  private R: Set<string>;
+  private A: GrowOnly_Set;
+  private R: GrowOnly_Set;
   private pid: number;
   private timestamp: VectorClock;
   type: CRDTtype = CRDTtype.set;
 
   constructor(maxProcesses: number, pid: number) {
-    this.A = new Set([]);
-    this.R = new Set([]);
+    this.A = new GrowOnly_Set(maxProcesses, pid);
+    this.R = new GrowOnly_Set(maxProcesses, pid);
     this.pid = pid;
     this.timestamp = new VectorClock(maxProcesses);
   }
@@ -38,50 +39,29 @@ export default class TwoPhase_Set implements SetInterface {
     this.timestamp.increase(this.pid);
   };
 
-  lookup = (e: string): boolean => this.A.has(e) && !this.R.has(e);
-
-  private subset = (A: Set<string>, B: Set<string>): boolean => {
-    if (A.size <= B.size) {
-      A.forEach((e) => {
-        if (!B.has(e)) return false;
-      });
-      return true;
-    }
-    return false;
-  };
+  lookup = (e: string): boolean => this.A.lookup(e) && !this.R.lookup(e);
 
   compare = (tps: TwoPhase_Set): boolean =>
-    this.subset(this.A, tps.A) || this.subset(this.R, tps.R);
-
-  private union = (A: Set<string>, B: Set<string>): Set<string> => {
-    if (A.size <= B.size) {
-      A.forEach((e) => {
-        B.add(e);
-      });
-      return B;
-    } else {
-      B.forEach((e) => {
-        A.add(e);
-      });
-      return A;
-    }
-  };
+    this.A.compare(tps.A) || this.R.compare(tps.R);
 
   merge = (tps: TwoPhase_Set): TwoPhase_Set => {
     const rs = new TwoPhase_Set(this.timestamp.length, this.pid); // the resulting set to be returned
-    rs.A = this.union(this.A, tps.A);
-    rs.R = this.union(this.R, tps.R);
+    rs.A = this.A.merge(tps.A);
+    rs.R = this.R.merge(tps.R);
     rs.pid = this.pid;
     rs.timestamp = this.timestamp.merge(tps.timestamp);
     rs.timestamp.increase(this.pid);
     return rs;
   };
 
-  // gives the payload of this replia
+  // gives the payload of this replica
   payload = (): [string, number[]] => {
-    const result = new Set(Array.from(this.A));
-    this.R.forEach((e) => result.delete(e));
-    return [Array.from(result).toString(), this.getTimestamp()];
+    const ASet: Array<String> = this.A.payload()[0].split(',');
+    const RSet: Array<String> = this.R.payload()[0].split(',');
+    return [
+      ASet.filter((e) => !RSet.includes(e)).toString(),
+      this.getTimestamp(),
+    ];
   };
 
   getTimestamp = (): number[] => this.timestamp.getVector();

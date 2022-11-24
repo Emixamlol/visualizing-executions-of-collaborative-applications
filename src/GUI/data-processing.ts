@@ -43,6 +43,10 @@ export const getMethods = (type: CRDTtype): updateButtons => {
       return [{ fn: 'increment', args: false }];
     }
 
+    case CRDTtype.grow_set: {
+      return [{ fn: 'add', args: true }];
+    }
+
     case CRDTtype.counter:
       return [
         { fn: 'increment', args: false },

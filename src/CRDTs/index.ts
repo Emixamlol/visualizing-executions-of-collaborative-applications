@@ -5,5 +5,13 @@ import LWW_Register from './LWW-Register/register';
 import PN_Counter from './PN-Counter/counter';
 import LWW_Flag from './Base-CRDTs/flag';
 import Inc_Counter from './Base-CRDTs/inc-counter';
+import GrowOnly_Set from './Base-CRDTs/grow-set';
 
-export { TwoPhase_Set, LWW_Register, PN_Counter, Inc_Counter, LWW_Flag };
+export {
+  TwoPhase_Set,
+  LWW_Register,
+  PN_Counter,
+  Inc_Counter,
+  LWW_Flag,
+  GrowOnly_Set,
+};

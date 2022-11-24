@@ -6,6 +6,7 @@ export type payload = [string, Array<number>];
 export enum CRDTtype {
   flag = 'flag',
   inc_counter = 'inc_counter',
+  grow_set = 'grow_set',
   counter = 'counter',
   register = 'register',
   set = 'set',
