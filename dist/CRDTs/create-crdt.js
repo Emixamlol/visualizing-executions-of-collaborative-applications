@@ -1,5 +1,5 @@
 import { CRDTtype, } from '../types/crdt-types';
-import { PN_Counter, LWW_Register, TwoPhase_Set, LWW_Flag, Inc_Counter, } from './index';
+import { PN_Counter, LWW_Register, TwoPhase_Set, LWW_Flag, Inc_Counter, GrowOnly_Set, } from './index';
 import RevisitedCounter from './PN-Counter/revisited-counter';
 // method to instantiate a CRDT
 export const createCRDT = (crdt, params) => {
@@ -11,6 +11,10 @@ export const createCRDT = (crdt, params) => {
         case CRDTtype.inc_counter: {
             const [n, pid] = params.map((value) => parseInt(value, 10));
             return new Inc_Counter(n, pid);
+        }
+        case CRDTtype.grow_set: {
+            const [maxProcesses, pid] = params.map((value) => parseInt(value, 10));
+            return new GrowOnly_Set(maxProcesses, pid);
         }
         case CRDTtype.counter: {
             const [n, pid] = params.map((value) => parseInt(value, 10));
@@ -34,6 +38,8 @@ export const revisitedCreateCRDT = (type, params) => {
         case CRDTtype.flag: {
         }
         case CRDTtype.inc_counter: {
+        }
+        case CRDTtype.grow_set: {
         }
         case CRDTtype.counter:
             const [n, pid] = params.map((value) => parseInt(value, 10));

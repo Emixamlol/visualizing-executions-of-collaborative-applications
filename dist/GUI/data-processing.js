@@ -33,6 +33,9 @@ export const getMethods = (type) => {
         case CRDTtype.inc_counter: {
             return [{ fn: 'increment', args: false }];
         }
+        case CRDTtype.grow_set: {
+            return [{ fn: 'add', args: true }];
+        }
         case CRDTtype.counter:
             return [
                 { fn: 'increment', args: false },

@@ -19,14 +19,13 @@ export default class Inc_Counter {
             rc.timestamp.increase(this.pid);
             return rc;
         };
+        this.payload = () => [
+            this.value().toString(),
+            this.getTimestamp(),
+        ];
+        this.getTimestamp = () => this.timestamp.getVector();
         this.pid = pid;
         this.timestamp = new VectorClock(n);
         this.P = new Array(n).fill(0);
-    }
-    payload() {
-        throw new Error('Method not implemented.');
-    }
-    getTimestamp() {
-        throw new Error('Method not implemented.');
     }
 }
