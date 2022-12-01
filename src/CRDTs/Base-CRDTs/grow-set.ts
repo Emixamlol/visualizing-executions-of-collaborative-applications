@@ -72,4 +72,6 @@ export default class GrowOnly_Set implements SetInterface {
   };
 
   getTimestamp = (): number[] => this.timestamp.getVector();
+
+  visualize = (): void => {};
 }

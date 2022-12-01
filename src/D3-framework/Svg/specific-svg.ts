@@ -1,10 +1,8 @@
 import * as d3 from 'd3';
 
 import { Data } from '../../types/d3-framework-types';
-import { drawBasicState } from './../Reusable-blocks/basic-state';
-import { drawObjectCircle } from './../Reusable-blocks/object-circle';
-import { drawObjectEllipse } from './../Reusable-blocks/object-ellipse';
-import { drawTimeLine } from './../Reusable-blocks/timeline';
+import { ID } from '../../types/proxy-types';
+import { flag } from '../Reusable-blocks/Patterns/flag';
 
 // constants
 const width = 500;
@@ -19,16 +17,17 @@ const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
   .attr('width', width)
   .attr('height', height);
 
-const objectCircle = drawObjectCircle()
-  .width(width)
-  .height(height)
-  .margin(margin)
-  .data(data)
-  .radius(radius);
+// TODO refactor: methods to be exported
+const drawFlag = (enabled: boolean) => {
+  const Flag = flag()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .enabled(enabled);
 
-svg.call(objectCircle);
-console.log(svg.node().getClientRects());
+  console.log('svg calling Flag');
 
-export const drawSpecificCircles = (data: Data): void => {
-  svg.call(objectCircle.data(data));
+  svg.call(Flag);
 };
+
+export { drawFlag };

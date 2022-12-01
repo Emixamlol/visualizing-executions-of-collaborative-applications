@@ -128,7 +128,13 @@ export interface ReusableBasicState
 export interface ReusableTimeLine
   extends FrameworkReusableInterface<ReusableTimeLine> {}
 
-export interface ReusableFlag extends ReusablePatternInterface<ReusableFlag> {}
+export interface ReusableFlag extends ReusablePatternInterface<ReusableFlag> {
+  replicaId(): ID;
+  replicaId(value: ID): ReusableFlag;
+
+  enabled(): boolean;
+  enabled(value: boolean): ReusableFlag;
+}
 
 export interface ReusableValuePair
   extends ReusablePatternInterface<ReusableValuePair> {}

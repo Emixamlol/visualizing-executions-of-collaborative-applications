@@ -46,4 +46,6 @@ export default class LWW_Register implements RegisterInterface {
   payload = (): [string, number[]] => [this.X, this.getTimestamp()];
 
   getTimestamp = (): number[] => this.timestamp.getVector();
+
+  visualize = (): void => {};
 }

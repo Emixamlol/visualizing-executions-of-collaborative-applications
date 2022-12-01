@@ -1,4 +1,3 @@
-import RevisitedCounter from '../CRDTs/PN-Counter/revisited-counter';
 import VectorClock from '../CRDTs/vector-clock';
 
 export type payload = [string, Array<number>];
@@ -22,6 +21,8 @@ export interface CRDTInterface {
   payload(): payload; // payload returns array with a string (actual payload) and timestamp
 
   getTimestamp(): Array<number>;
+
+  visualize(): void; // how should the CRDT be visualized in the specific visualization
 }
 
 // ------------------------------------------ revisited ------------------------------------------

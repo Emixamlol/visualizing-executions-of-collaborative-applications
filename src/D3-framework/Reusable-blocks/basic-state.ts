@@ -3,6 +3,7 @@ import {
   Data,
   margin,
   ReusableBasicState,
+  symbolCoordinates,
 } from '../../types/d3-framework-types';
 import {
   getCircleCoordinates,
@@ -75,6 +76,9 @@ export const drawBasicState = (): ReusableBasicState => {
             .call((enter) => enter.transition(t).call(colorCircles))
             .append('title')
             .text((d) => d.title),
+        // .on('click', (event, { replicaId, title }) => {
+        //   console.log(`entered in circle ${replicaId} with title ${title}`);
+        // })
         (update) =>
           update
             .call(positionCircles)
@@ -85,14 +89,14 @@ export const drawBasicState = (): ReusableBasicState => {
 
     // --------------------------------- symbols ---------------------------------
 
-    const positionSymbols = (path) => {
+    const positionSymbols = (path): void => {
       path
         .attr('transform', (d) => `translate(${d.x}, ${d.y})`)
         .attr('fill', 'white')
         .attr('d', d3.symbol(d3.symbolsFill[4], 150)());
     };
 
-    const colorSymbols = (path) => {
+    const colorSymbols = (path): void => {
       path
         .attr('fill', (d) => colorScale(d.replicaId) as string)
         .attr('stroke', (d) => colorScale(d.replicaId) as string);

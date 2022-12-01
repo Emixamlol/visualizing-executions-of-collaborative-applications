@@ -1,3 +1,4 @@
+import { drawFlag } from '../../D3-framework';
 import { CRDTInterface, CRDTtype, payload } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
@@ -56,4 +57,8 @@ export default class LWW_Flag implements FlagInterface {
   ];
 
   getTimestamp = (): number[] => this.timestamp.getVector();
+
+  visualize = (): void => {
+    drawFlag(this.value());
+  };
 }

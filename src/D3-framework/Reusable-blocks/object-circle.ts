@@ -68,7 +68,7 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
             .attr('cy', (d) => d.y)
             .attr('fill', 'none')
             .attr('stroke', (d) => colorScale(d.id) as string)
-            .on('mouseenter', (event, { id }) => {
+            /* .on('mouseenter', (event, { id }) => {
               const circle = enter.select(`#${htmlClass + id}`);
               circle.attr('visibility', 'hidden');
               listeners.call('mouseenter', null, id);
@@ -79,7 +79,7 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
                 circle.attr('visibility', 'visible');
                 listeners.call('mouseout', null, id);
               }, 3000);
-            })
+            }) */
             .call((enter) => enter.transition(t).attr('r', radius)),
         (update) =>
           update

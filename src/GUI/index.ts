@@ -53,6 +53,8 @@ const allReplicasMenu = menu()
     const type = proxies.getType(id);
     const methods = getMethods(type);
 
+    proxies.visualizeCRDT(id);
+
     updateButtonsContainer.call(updateButtons.methods(methods));
     siblingReplicasContainer.call(
       siblingReplicasMenu.filterReplicas((data: Data) =>
