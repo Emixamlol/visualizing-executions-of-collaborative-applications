@@ -36,7 +36,6 @@ const sendToFramework = () => {
     const data = convertToData();
     console.log(data);
     framework.update(data);
-    framework.drawSpecificCircles(data);
 };
 /**
  * Sends the proxies information to the GUI
@@ -150,6 +149,18 @@ export const applyToProxy = (id, fn, params) => {
     sendToFramework();
     sendToGui();
 };
+/**
+ * Visualizes the more detailed information of a CRDT replica
+ *
+ * @param id  id of the CRDT replica
+ */
+export const visualizeCRDT = (id) => {
+    const { id: conceptualId } = conceptualCRDTNames.get(id); // get the id of the conceptual CRDT object the proxy is a replica from
+    const replicas = proxies.get(conceptualId);
+    const proxy = replicas.get(id);
+    proxy.apply('visualize', []);
+};
+// -------------------------- TEST CODE --------------------------
 const delay = (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
 };

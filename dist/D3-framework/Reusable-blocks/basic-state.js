@@ -46,7 +46,11 @@ export const drawBasicState = () => {
             .attr('r', 0)
             .call((enter) => enter.transition(t).call(colorCircles))
             .append('title')
-            .text((d) => d.title), (update) => update
+            .text((d) => d.title), 
+        // .on('click', (event, { replicaId, title }) => {
+        //   console.log(`entered in circle ${replicaId} with title ${title}`);
+        // })
+        (update) => update
             .call(positionCircles)
             .call(colorCircles)
             .select('title')

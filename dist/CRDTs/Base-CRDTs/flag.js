@@ -1,3 +1,4 @@
+import { drawFlag } from '../../D3-framework';
 import { CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 export default class LWW_Flag {
@@ -18,6 +19,9 @@ export default class LWW_Flag {
             this.getTimestamp(),
         ];
         this.getTimestamp = () => this.timestamp.getVector();
+        this.visualize = () => {
+            drawFlag(this.value());
+        };
         this.flag = true;
         this.pid = pid;
         this.timestamp = new VectorClock(maxProcesses);

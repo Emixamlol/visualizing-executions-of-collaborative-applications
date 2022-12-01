@@ -19,6 +19,7 @@ export default class LWW_Register {
         };
         this.payload = () => [this.X, this.getTimestamp()];
         this.getTimestamp = () => this.timestamp.getVector();
+        this.visualize = () => { };
         this.X = undefined;
         this.pid = pid;
         this.timestamp = new VectorClock(maxProcesses);

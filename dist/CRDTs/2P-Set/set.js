@@ -34,6 +34,7 @@ export default class TwoPhase_Set {
             ];
         };
         this.getTimestamp = () => this.timestamp.getVector();
+        this.visualize = () => { };
         this.A = new GrowOnly_Set(maxProcesses, pid);
         this.R = new GrowOnly_Set(maxProcesses, pid);
         this.pid = pid;

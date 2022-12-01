@@ -46,6 +46,7 @@ export default class GrowOnly_Set {
             return [Array.from(result).toString(), this.getTimestamp()];
         };
         this.getTimestamp = () => this.timestamp.getVector();
+        this.visualize = () => { };
         this.A = new Set([]);
         this.pid = pid;
         this.timestamp = new VectorClock(maxProcesses);

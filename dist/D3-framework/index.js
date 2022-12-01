@@ -1,3 +1,4 @@
 import { update } from './Svg/main-svg';
-import { drawSpecificCircles } from './Svg/specific-svg';
-export { update, drawSpecificCircles };
+import { drawFlag } from './Svg/specific-svg';
+export { update, drawFlag };
+// TODO export methods which draw in the specific svg

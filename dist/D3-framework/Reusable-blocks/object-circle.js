@@ -44,18 +44,18 @@ export const drawObjectCircle = () => {
             .attr('cy', (d) => d.y)
             .attr('fill', 'none')
             .attr('stroke', (d) => colorScale(d.id))
-            .on('mouseenter', (event, { id }) => {
-            const circle = enter.select(`#${htmlClass + id}`);
-            circle.attr('visibility', 'hidden');
-            listeners.call('mouseenter', null, id);
-        })
+            /* .on('mouseenter', (event, { id }) => {
+              const circle = enter.select(`#${htmlClass + id}`);
+              circle.attr('visibility', 'hidden');
+              listeners.call('mouseenter', null, id);
+            })
             .on('mouseout', (event, { id }) => {
-            const circle = enter.select(`#${htmlClass + id}`);
-            setTimeout(() => {
+              const circle = enter.select(`#${htmlClass + id}`);
+              setTimeout(() => {
                 circle.attr('visibility', 'visible');
                 listeners.call('mouseout', null, id);
-            }, 3000);
-        })
+              }, 3000);
+            }) */
             .call((enter) => enter.transition(t).attr('r', radius)), (update) => update
             .transition(t)
             .attr('cx', x)

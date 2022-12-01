@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { drawObjectCircle } from './../Reusable-blocks/object-circle';
+import { flag } from '../Reusable-blocks/Patterns/flag';
 // constants
 const width = 500;
 const height = 700;
@@ -11,14 +11,14 @@ const svg = d3
     .append('svg')
     .attr('width', width)
     .attr('height', height);
-const objectCircle = drawObjectCircle()
-    .width(width)
-    .height(height)
-    .margin(margin)
-    .data(data)
-    .radius(radius);
-svg.call(objectCircle);
-console.log(svg.node().getClientRects());
-export const drawSpecificCircles = (data) => {
-    svg.call(objectCircle.data(data));
+// TODO refactor: methods to be exported
+const drawFlag = (enabled) => {
+    const Flag = flag()
+        .width(width)
+        .height(height)
+        .margin(margin)
+        .enabled(enabled);
+    console.log('svg calling Flag');
+    svg.call(Flag);
 };
+export { drawFlag };

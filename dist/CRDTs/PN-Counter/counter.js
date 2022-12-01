@@ -35,6 +35,10 @@ export default class PN_Counter {
             this.pid,
             this.timestamp.getVector(),
         ];
+        this.visualize = () => {
+            console.log('executing visualize method in Counter CRDT');
+            // drawFlag()
+        };
         this.pid = pid;
         this.timestamp = new VectorClock(n);
         this.P = new Inc_Counter(n, pid);

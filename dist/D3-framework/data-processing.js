@@ -216,3 +216,14 @@ export const getTimelineCoordinates = (data, startYs, margin) => {
     });
     return timelineCoordinates;
 };
+/**
+ *
+ * @param data The information about every conceptual CRDT object with their respective replicas
+ * @param replicaId The ID of one specific replica of one conceptual CRDT object
+ * @returns The (x, y) coordinates for the specific visualization of the replica instance
+ */
+export const getReplicaCoordinates = (data, replicaId, margin) => {
+    const replicaCoordinates = [{ x: 0, y: 0 }];
+    const startYs = getStartYs(data, margin);
+    return replicaCoordinates;
+};
