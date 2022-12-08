@@ -7,6 +7,7 @@ export default class CrdtProxy {
         this.updateState = (msg) => {
             const payload = this.crdtReplica.payload(); // get the current payload
             this.state = Object.assign(Object.assign({}, this.state), { payload, history: this.state.history.concat({ msg, payload }) });
+            this.crdtReplica.visualize(); // visualize the change
         };
         this.query = (args) => {
             switch (this.crdtReplica.type) {
@@ -36,6 +37,10 @@ export default class CrdtProxy {
             console.log(this);
             this.crdtReplica[fn].apply(this.crdtReplica, params);
             this.updateState(Message.update);
+        };
+        this.visualize = () => {
+            console.log(this);
+            this.crdtReplica.visualize();
         };
         this.replicate = (replicaId, pid) => {
             const maxProcesses = this.crdtReplica.getTimestamp().length;

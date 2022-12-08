@@ -12,7 +12,7 @@ export default class LWW_Flag {
             this.flag = false;
             this.timestamp.increase(this.pid);
         };
-        this.value = () => Object.assign({}, this.flag);
+        this.value = () => JSON.parse(JSON.stringify(this.flag));
         this.compare = (lwwf) => this.timestamp.lessOrEqual(lwwf.timestamp);
         this.payload = () => [
             JSON.stringify(this.flag),
