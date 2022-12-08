@@ -46,6 +46,8 @@ export interface ProxyInterface {
 
   apply(fn: string, params: string[]): void;
 
+  visualize(): void;
+
   replicate(replicaId: ID, pid: number): CrdtProxy;
 
   getState(): StateInterface;

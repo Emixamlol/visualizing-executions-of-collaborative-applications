@@ -169,7 +169,7 @@ export const visualizeCRDT = (id: ID): void => {
   const { id: conceptualId } = conceptualCRDTNames.get(id); // get the id of the conceptual CRDT object the proxy is a replica from
   const replicas: Map<ID, CrdtProxy> = proxies.get(conceptualId);
   const proxy: CrdtProxy = replicas.get(id);
-  proxy.apply('visualize', []);
+  proxy.visualize();
 };
 
 // -------------------------- TEST CODE --------------------------

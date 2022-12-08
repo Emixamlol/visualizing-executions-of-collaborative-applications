@@ -53,6 +53,7 @@ export const flag = (): ReusableFlag => {
         (enter) =>
           enter
             .append('path')
+            .attr('class', replicaId)
             .call(positionFlag)
             .call((enter) => enter.transition(t).call(colorFlag)),
         (update) => update.call(positionFlag).call(colorFlag)

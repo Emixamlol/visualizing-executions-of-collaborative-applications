@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { sendReplicaId } from '../D3-framework/Svg/specific-svg';
 import * as proxies from '../Proxy';
 import { Data, margin } from '../types/d3-framework-types';
 import { updateButtons } from '../types/gui-types';
@@ -53,6 +54,7 @@ const allReplicasMenu = menu()
     const type = proxies.getType(id);
     const methods = getMethods(type);
 
+    sendReplicaId(id);
     proxies.visualizeCRDT(id);
 
     updateButtonsContainer.call(updateButtons.methods(methods));

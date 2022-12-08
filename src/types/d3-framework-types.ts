@@ -87,21 +87,6 @@ interface ReusablePatternInterface<T> {
   margin(value: margin): T;
 }
 
-// interface FrameworkReusableInterface<T> {
-//   (selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>): void;
-
-//   width(): number;
-//   width(value: number): T;
-
-//   height(): number;
-//   height(value: number): T;
-
-//   margin(): margin;
-//   margin(value: margin): T;
-
-//   data(): Data;
-//   data(value: Data): T;
-// }
 interface FrameworkReusableInterface<T> extends ReusablePatternInterface<T> {
   data(): Data;
   data(value: Data): T;
@@ -128,16 +113,18 @@ export interface ReusableBasicState
 export interface ReusableTimeLine
   extends FrameworkReusableInterface<ReusableTimeLine> {}
 
-export interface ReusableFlag extends ReusablePatternInterface<ReusableFlag> {
+interface LibraryReusableInterface<T> extends ReusablePatternInterface<T> {
   replicaId(): ID;
-  replicaId(value: ID): ReusableFlag;
+  replicaId(value: ID): T;
+}
 
+export interface ReusableFlag extends LibraryReusableInterface<ReusableFlag> {
   enabled(): boolean;
   enabled(value: boolean): ReusableFlag;
 }
 
 export interface ReusableValuePair
-  extends ReusablePatternInterface<ReusableValuePair> {}
+  extends LibraryReusableInterface<ReusableValuePair> {}
 
 export interface ReusableTombstone
-  extends ReusablePatternInterface<ReusableTombstone> {}
+  extends LibraryReusableInterface<ReusableTombstone> {}

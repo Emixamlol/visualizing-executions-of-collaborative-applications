@@ -1,4 +1,3 @@
-import { drawFlag } from '../../D3-framework';
 import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
 import Inc_Counter from '../Base-CRDTs/inc-counter';
 import VectorClock from '../vector-clock';

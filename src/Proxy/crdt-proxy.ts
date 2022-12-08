@@ -45,6 +45,7 @@ export default class CrdtProxy implements ProxyInterface {
       payload,
       history: this.state.history.concat({ msg, payload }),
     };
+    this.crdtReplica.visualize(); // visualize the change
   };
 
   query = (args?: string[]): number | string | boolean => {
@@ -82,6 +83,11 @@ export default class CrdtProxy implements ProxyInterface {
     console.log(this);
     this.crdtReplica[fn].apply(this.crdtReplica, params);
     this.updateState(Message.update);
+  };
+
+  visualize = (): void => {
+    console.log(this);
+    this.crdtReplica.visualize();
   };
 
   replicate = (replicaId: ID, pid: number): CrdtProxy => {

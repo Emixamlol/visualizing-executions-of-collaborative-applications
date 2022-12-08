@@ -1,5 +1,5 @@
 import { drawFlag } from '../../D3-framework';
-import { CRDTInterface, CRDTtype, payload } from '../../types/crdt-types';
+import { CRDTInterface, CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
 interface FlagInterface extends CRDTInterface {
@@ -37,7 +37,7 @@ export default class LWW_Flag implements FlagInterface {
     this.timestamp.increase(this.pid);
   };
 
-  value = (): boolean => Object.assign({}, this.flag);
+  value = (): boolean => JSON.parse(JSON.stringify(this.flag));
 
   compare = (lwwf: LWW_Flag): boolean =>
     this.timestamp.lessOrEqual(lwwf.timestamp);
