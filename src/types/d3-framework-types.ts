@@ -123,6 +123,14 @@ export interface ReusableFlag extends LibraryReusableInterface<ReusableFlag> {
   enabled(value: boolean): ReusableFlag;
 }
 
+export interface ReusableSet extends LibraryReusableInterface<ReusableSet> {
+  tombstone(): boolean;
+  tombstone(value: boolean): ReusableSet;
+
+  elements(): Array<string>;
+  elements(value: Array<string>): ReusableSet;
+}
+
 export interface ReusableValuePair
   extends LibraryReusableInterface<ReusableValuePair> {}
 
