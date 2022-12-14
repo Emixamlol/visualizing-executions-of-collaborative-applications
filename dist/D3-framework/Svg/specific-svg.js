@@ -29,6 +29,18 @@ const drawFlag = (enabled) => {
     console.log(`svg calling Flag with value ${enabled} and id = ${Flag.replicaId()}`);
     svg.call(Flag);
 };
+const drawCounter = (value) => {
+    const elements = [value.toString()];
+    const tombstone = false;
+    const Set = set()
+        .width(width)
+        .height(height)
+        .margin(margin)
+        .tombstone(tombstone)
+        .elements(elements)
+        .replicaId(replicaId);
+    svg.call(Set);
+};
 const drawSet = (tombstone, elements) => {
     const Set = set()
         .width(width)
@@ -50,4 +62,4 @@ const drawTombstone = () => {
     svg.call(Tombstone);
 };
 const drawValuePair = () => { };
-export { sendReplicaId, drawFlag, drawSet, drawTombstone, drawValuePair };
+export { sendReplicaId, drawFlag, drawCounter, drawSet, drawTombstone, drawValuePair, };

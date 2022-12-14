@@ -1,3 +1,4 @@
+import { drawCounter } from '../../D3-framework';
 import { CRDTtype } from '../../types/crdt-types';
 import Inc_Counter from '../Base-CRDTs/inc-counter';
 import VectorClock from '../vector-clock';
@@ -36,8 +37,7 @@ export default class PN_Counter {
             this.timestamp.getVector(),
         ];
         this.visualize = () => {
-            console.log('executing visualize method in Counter CRDT');
-            // drawFlag()
+            drawCounter(this.value());
         };
         this.pid = pid;
         this.timestamp = new VectorClock(n);

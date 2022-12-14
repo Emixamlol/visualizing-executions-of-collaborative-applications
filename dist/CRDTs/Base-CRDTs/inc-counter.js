@@ -1,4 +1,4 @@
-import { drawSet } from '../../D3-framework';
+import { drawCounter } from '../../D3-framework';
 import { CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 export default class Inc_Counter {
@@ -26,7 +26,7 @@ export default class Inc_Counter {
         ];
         this.getTimestamp = () => this.timestamp.getVector();
         this.visualize = () => {
-            drawSet(false, this.P.map((n) => n.toString()));
+            drawCounter(this.value());
         };
         this.pid = pid;
         this.timestamp = new VectorClock(n);
