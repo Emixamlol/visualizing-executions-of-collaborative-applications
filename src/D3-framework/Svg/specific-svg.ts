@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import { Data } from '../../types/d3-framework-types';
 import { ID } from '../../types/proxy-types';
 import { flag } from '../Reusable-blocks/Patterns/flag';
+import { set } from '../Reusable-blocks/Patterns/set';
 import { tombstone } from '../Reusable-blocks/Patterns/tombstone';
 
 // constants
@@ -41,6 +42,20 @@ const drawFlag = (enabled: boolean): void => {
   svg.call(Flag);
 };
 
+const drawSet = (tombstone: boolean, elements: Array<string>): void => {
+  const Set = set()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .tombstone(tombstone)
+    .elements(elements)
+    .replicaId(replicaId);
+
+  console.log(`svg calling Set with set = ${elements} and id = ${replicaId}`);
+
+  svg.call(Set);
+};
+
 const drawTombstone = (): void => {
   const Tombstone = tombstone()
     .width(width)
@@ -55,4 +70,4 @@ const drawTombstone = (): void => {
 
 const drawValuePair = (): void => {};
 
-export { sendReplicaId, drawFlag, drawTombstone, drawValuePair };
+export { sendReplicaId, drawFlag, drawSet, drawTombstone, drawValuePair };
