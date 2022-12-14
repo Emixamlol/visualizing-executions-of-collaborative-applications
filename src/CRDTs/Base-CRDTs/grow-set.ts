@@ -1,3 +1,4 @@
+import { drawSet } from '../../D3-framework';
 import { CRDTInterface, CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
@@ -16,7 +17,7 @@ export default class GrowOnly_Set implements SetInterface {
   private A: Set<string>;
   private pid: number;
   private timestamp: VectorClock;
-  type: CRDTtype = CRDTtype.set;
+  type: CRDTtype = CRDTtype.grow_set;
 
   constructor(maxProcesses: number, pid: number) {
     this.A = new Set([]);
@@ -73,5 +74,10 @@ export default class GrowOnly_Set implements SetInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (): void => {};
+  visualize = (): void => {
+    console.log('visualizing grow_set');
+    console.log(Array.from(this.A));
+
+    drawSet(false, Array.from(this.A));
+  };
 }
