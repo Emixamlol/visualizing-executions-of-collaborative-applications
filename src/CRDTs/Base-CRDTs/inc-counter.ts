@@ -1,4 +1,4 @@
-import { drawTombstone } from '../../D3-framework';
+import { drawSet, drawTombstone } from '../../D3-framework';
 import { CRDTInterface, CRDTtype, payload } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
@@ -54,6 +54,9 @@ export default class Inc_Counter implements Inc_CounterInterface {
   getTimestamp = (): number[] => this.timestamp.getVector();
 
   visualize = (): void => {
-    drawTombstone();
+    drawSet(
+      false,
+      this.P.map((n) => n.toString())
+    );
   };
 }
