@@ -24,8 +24,6 @@ export const flag = (): ReusableFlag => {
 
     const replicaCoordinates = [];
 
-    console.log(`replicaCoordinates = ${replicaCoordinates}`);
-
     // visualization
     const htmlClass = 'crdt-flag';
 
