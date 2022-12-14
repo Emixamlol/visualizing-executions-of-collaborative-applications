@@ -42,6 +42,21 @@ const drawFlag = (enabled: boolean): void => {
   svg.call(Flag);
 };
 
+const drawCounter = (value: number) => {
+  const elements = [value.toString()];
+  const tombstone = false;
+
+  const Set = set()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .tombstone(tombstone)
+    .elements(elements)
+    .replicaId(replicaId);
+
+  svg.call(Set);
+};
+
 const drawSet = (tombstone: boolean, elements: Array<string>): void => {
   const Set = set()
     .width(width)
@@ -70,4 +85,11 @@ const drawTombstone = (): void => {
 
 const drawValuePair = (): void => {};
 
-export { sendReplicaId, drawFlag, drawSet, drawTombstone, drawValuePair };
+export {
+  sendReplicaId,
+  drawFlag,
+  drawCounter,
+  drawSet,
+  drawTombstone,
+  drawValuePair,
+};
