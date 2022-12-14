@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { flag } from '../Reusable-blocks/Patterns/flag';
+import { set } from '../Reusable-blocks/Patterns/set';
 import { tombstone } from '../Reusable-blocks/Patterns/tombstone';
 // constants
 const width = 500;
@@ -28,6 +29,17 @@ const drawFlag = (enabled) => {
     console.log(`svg calling Flag with value ${enabled} and id = ${Flag.replicaId()}`);
     svg.call(Flag);
 };
+const drawSet = (tombstone, elements) => {
+    const Set = set()
+        .width(width)
+        .height(height)
+        .margin(margin)
+        .tombstone(tombstone)
+        .elements(elements)
+        .replicaId(replicaId);
+    console.log(`svg calling Set with set = ${elements} and id = ${replicaId}`);
+    svg.call(Set);
+};
 const drawTombstone = () => {
     const Tombstone = tombstone()
         .width(width)
@@ -38,4 +50,4 @@ const drawTombstone = () => {
     svg.call(Tombstone);
 };
 const drawValuePair = () => { };
-export { sendReplicaId, drawFlag, drawTombstone, drawValuePair };
+export { sendReplicaId, drawFlag, drawSet, drawTombstone, drawValuePair };

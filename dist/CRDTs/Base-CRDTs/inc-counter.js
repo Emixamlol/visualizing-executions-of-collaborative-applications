@@ -1,4 +1,4 @@
-import { drawTombstone } from '../../D3-framework';
+import { drawSet } from '../../D3-framework';
 import { CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 export default class Inc_Counter {
@@ -26,7 +26,7 @@ export default class Inc_Counter {
         ];
         this.getTimestamp = () => this.timestamp.getVector();
         this.visualize = () => {
-            drawTombstone();
+            drawSet(false, this.P.map((n) => n.toString()));
         };
         this.pid = pid;
         this.timestamp = new VectorClock(n);

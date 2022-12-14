@@ -1,41 +1,44 @@
 import * as d3 from 'd3';
-export const flag = () => {
+export const set = () => {
     let width;
     let height;
     let margin;
-    let enabled;
     let replicaId;
+    let tombstone;
+    let elements;
     const my = (selection) => {
         // set scales
         const x = margin.left * 2 + 50;
         const y = margin.top * 2 + 50;
         const t = d3.transition().duration(1000);
         // process data
-        const replicaCoordinates = [];
         // visualization
-        const htmlClass = 'crdt-flag';
-        const positionFlag = (path) => {
-            path
-                .attr('transform', `translate(${x}, ${y})`)
-                .attr('fill', 'white')
-                .attr('d', d3.symbol(d3.symbolsFill[5], 150)());
-        };
-        const colorFlag = (path) => {
-            const color = enabled ? 'green' : 'red';
-            path.attr('fill', color).attr('stroke', color);
-        };
+        const htmlClass = 'crdt-set';
         const g = selection
             .selectAll(`g.${htmlClass}`)
             .data([null])
             .join('g')
             .attr('class', htmlClass);
-        g.selectAll('path')
+        const positionSet = (tspan) => {
+            tspan
+                .attr('class', replicaId)
+                .attr('x', x)
+                .attr('y', (d, i) => y + i * 20)
+                .text((d) => d);
+        };
+        g.selectAll('text')
             .data([null])
             .join((enter) => enter
-            .append('path')
+            .append('text')
             .attr('class', replicaId)
-            .call(positionFlag)
-            .call((enter) => enter.transition(t).call(colorFlag)), (update) => update.call(positionFlag).call(colorFlag));
+            .attr('x', x)
+            .attr('y', y)
+            .selectAll('tspan')
+            .data(elements)
+            .join((enter) => enter.append('tspan').call(positionSet)), (update) => update
+            .selectAll('tspan')
+            .data(elements)
+            .join((enter) => enter.call(positionSet), (update) => update.call(positionSet)));
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;
@@ -49,8 +52,11 @@ export const flag = () => {
     my.replicaId = function (_) {
         return arguments.length ? ((replicaId = _), my) : replicaId;
     };
-    my.enabled = function (_) {
-        return arguments.length ? ((enabled = _), my) : enabled;
+    my.tombstone = function (_) {
+        return arguments.length ? ((tombstone = _), my) : tombstone;
+    };
+    my.elements = function (_) {
+        return arguments.length ? ((elements = _), my) : elements;
     };
     return my;
 };
