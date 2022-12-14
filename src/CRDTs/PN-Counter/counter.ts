@@ -1,3 +1,4 @@
+import { drawCounter } from '../../D3-framework';
 import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
 import Inc_Counter from '../Base-CRDTs/inc-counter';
 import VectorClock from '../vector-clock';
@@ -70,7 +71,6 @@ export default class PN_Counter implements PN_CounterInterface {
   ];
 
   visualize = (): void => {
-    console.log('executing visualize method in Counter CRDT');
-    // drawFlag()
+    drawCounter(this.value());
   };
 }
