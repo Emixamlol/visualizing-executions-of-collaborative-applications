@@ -63,7 +63,7 @@ const drawSet = (tombstone: boolean, elements: Array<string>): void => {
     .height(height)
     .margin(margin)
     .tombstone(tombstone)
-    .elements(elements)
+    .elements(elements.length === 0 ? [null] : elements)
     .replicaId(replicaId);
 
   console.log(`svg calling Set with set = ${elements} and id = ${replicaId}`);
