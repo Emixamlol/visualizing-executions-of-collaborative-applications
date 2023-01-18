@@ -1,3 +1,4 @@
+import { drawSet } from '../../D3-framework';
 import { CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 export default class LWW_Register {
@@ -19,7 +20,9 @@ export default class LWW_Register {
         };
         this.payload = () => [this.X, this.getTimestamp()];
         this.getTimestamp = () => this.timestamp.getVector();
-        this.visualize = () => { };
+        this.visualize = () => {
+            drawSet(false, [this.value()]);
+        };
         this.X = undefined;
         this.pid = pid;
         this.timestamp = new VectorClock(maxProcesses);
