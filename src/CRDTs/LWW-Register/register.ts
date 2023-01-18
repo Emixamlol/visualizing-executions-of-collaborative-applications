@@ -1,3 +1,4 @@
+import { drawSet } from '../../D3-framework';
 import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 
@@ -47,5 +48,7 @@ export default class LWW_Register implements RegisterInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (): void => {};
+  visualize = (): void => {
+    drawSet(false, [this.value()]);
+  };
 }
