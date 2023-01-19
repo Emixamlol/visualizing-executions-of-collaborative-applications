@@ -3,8 +3,9 @@ import { update } from './Svg/main-svg';
 import {
   drawFlag,
   drawCounter,
+  drawRegister,
   drawSet,
   drawTombstone,
 } from './Svg/specific-svg';
 
-export { update, drawCounter, drawFlag, drawSet, drawTombstone };
+export { update, drawCounter, drawFlag, drawRegister, drawSet, drawTombstone };
