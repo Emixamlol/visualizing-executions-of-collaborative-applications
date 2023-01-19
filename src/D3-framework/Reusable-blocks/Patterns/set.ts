@@ -56,8 +56,8 @@ export const set = (): ReusableSet => {
             .selectAll('tspan')
             .data(elements)
             .join(
-              (enter) => enter.call(positionSet),
-              (update) => update.call(positionSet)
+              (enter) => enter.append('tspan').call(positionSet),
+              (update) => update.append('tspan').call(positionSet)
             )
       );
   };
