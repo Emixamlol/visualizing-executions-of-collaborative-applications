@@ -1,4 +1,4 @@
-import { drawSet } from '../../D3-framework';
+import { drawRegister } from '../../D3-framework';
 import { CRDTtype } from '../../types/crdt-types';
 import VectorClock from '../vector-clock';
 export default class LWW_Register {
@@ -21,7 +21,8 @@ export default class LWW_Register {
         this.payload = () => [this.X, this.getTimestamp()];
         this.getTimestamp = () => this.timestamp.getVector();
         this.visualize = () => {
-            drawSet(false, [this.value()]);
+            // drawSet(false, [this.value()]);
+            drawRegister(this.value(), this.getTimestamp());
         };
         this.X = undefined;
         this.pid = pid;

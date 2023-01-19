@@ -38,7 +38,7 @@ export const set = () => {
             .join((enter) => enter.append('tspan').call(positionSet)), (update) => update
             .selectAll('tspan')
             .data(elements)
-            .join((enter) => enter.call(positionSet), (update) => update.call(positionSet)));
+            .join((enter) => enter.append('tspan').call(positionSet), (update) => update.append('tspan').call(positionSet)));
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;

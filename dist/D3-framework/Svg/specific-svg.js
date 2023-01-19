@@ -41,13 +41,16 @@ const drawCounter = (value) => {
         .replicaId(replicaId);
     svg.call(Set);
 };
+const drawRegister = (value, timestamp) => {
+    // TODO: implement value-pair pattern visualization and use this for the register
+};
 const drawSet = (tombstone, elements) => {
     const Set = set()
         .width(width)
         .height(height)
         .margin(margin)
         .tombstone(tombstone)
-        .elements(elements.length === 0 ? [null] : elements)
+        .elements(elements)
         .replicaId(replicaId);
     console.log(`svg calling Set with set = ${elements} and id = ${replicaId}`);
     svg.call(Set);
@@ -62,4 +65,4 @@ const drawTombstone = () => {
     svg.call(Tombstone);
 };
 const drawValuePair = () => { };
-export { sendReplicaId, drawFlag, drawCounter, drawSet, drawTombstone, drawValuePair, };
+export { sendReplicaId, drawFlag, drawCounter, drawRegister, drawSet, drawTombstone, drawValuePair, };
