@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { flag } from '../Reusable-blocks/Patterns/flag';
 import { set } from '../Reusable-blocks/Patterns/set';
 import { tombstone } from '../Reusable-blocks/Patterns/tombstone';
+import { valuePair } from '../Reusable-blocks/Patterns/value-pair';
 // constants
 const width = 500;
 const height = 700;
@@ -42,7 +43,16 @@ const drawCounter = (value) => {
     svg.call(Set);
 };
 const drawRegister = (value, timestamp) => {
-    // TODO: implement value-pair pattern visualization and use this for the register
+    const identifier = timestamp.reduce((acc, curr) => acc + curr);
+    const tuple = [value, identifier.toString()];
+    const ValuePair = valuePair()
+        .width(width)
+        .height(height)
+        .margin(margin)
+        .replicaId(replicaId)
+        .tuples([tuple]);
+    console.log(`svg calling ValuePair with value = ${value}, valueId = ${identifier} and replicaId = ${replicaId}`);
+    svg.call(ValuePair);
 };
 const drawSet = (tombstone, elements) => {
     const Set = set()
