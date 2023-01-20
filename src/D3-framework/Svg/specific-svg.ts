@@ -5,6 +5,7 @@ import { ID } from '../../types/proxy-types';
 import { flag } from '../Reusable-blocks/Patterns/flag';
 import { set } from '../Reusable-blocks/Patterns/set';
 import { tombstone } from '../Reusable-blocks/Patterns/tombstone';
+import { valuePair } from '../Reusable-blocks/Patterns/value-pair';
 
 // constants
 const width = 500;
@@ -58,7 +59,21 @@ const drawCounter = (value: number) => {
 };
 
 const drawRegister = (value: string, timestamp: number[]): void => {
-  // TODO: implement value-pair pattern visualization and use this for the register
+  const identifier = timestamp.reduce((acc, curr) => acc + curr);
+  const tuple: [string, ID] = [value, identifier.toString()];
+
+  const ValuePair = valuePair()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .replicaId(replicaId)
+    .tuples([tuple]);
+
+  console.log(
+    `svg calling ValuePair with value = ${value}, valueId = ${identifier} and replicaId = ${replicaId}`
+  );
+
+  svg.call(ValuePair);
 };
 
 const drawSet = (tombstone: boolean, elements: Array<string>): void => {
