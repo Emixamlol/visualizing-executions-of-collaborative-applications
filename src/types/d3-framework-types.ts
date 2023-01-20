@@ -132,7 +132,10 @@ export interface ReusableSet extends LibraryReusableInterface<ReusableSet> {
 }
 
 export interface ReusableValuePair
-  extends LibraryReusableInterface<ReusableValuePair> {}
+  extends LibraryReusableInterface<ReusableValuePair> {
+  tuples(): Array<[string, ID]>;
+  tuples(value: Array<[string, ID]>): ReusableValuePair;
+}
 
 export interface ReusableTombstone
   extends LibraryReusableInterface<ReusableTombstone> {}
