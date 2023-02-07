@@ -220,6 +220,7 @@ export const getTimelineCoordinates = (data, startYs, margin) => {
  *
  * @param data The information about every conceptual CRDT object with their respective replicas
  * @param replicaId The ID of one specific replica of one conceptual CRDT object
+ *
  * @returns The (x, y) coordinates for the specific visualization of the replica instance
  */
 export const getReplicaCoordinates = (data, replicaId, margin) => {
