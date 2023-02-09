@@ -116,6 +116,9 @@ export interface ReusableTimeLine
 interface LibraryReusableInterface<T> extends ReusablePatternInterface<T> {
   replicaId(): ID;
   replicaId(value: ID): T;
+
+  data(): Data;
+  data(value: Data): T;
 }
 
 export interface ReusableFlag extends LibraryReusableInterface<ReusableFlag> {
