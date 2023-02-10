@@ -8,25 +8,37 @@ const width = 500;
 const height = 700;
 const margin = { top: 20, right: 20, bottom: 20, left: 0 };
 const radius = 25;
+const svgClass = 'specific-svg';
 let replicaId; // the id of the current CRDT replica being visualized
+let localData = [];
 // svg
 const svg = d3
     .select('div.visualization > div.visualization-element')
     .append('svg')
+    .attr('id', svgClass)
+    .attr('class', svgClass)
     .attr('width', width)
     .attr('height', height);
+// update replica and data
 const sendReplicaId = (id) => {
+    console.log(`replicaId = ${replicaId}, id = ${id}`);
     replicaId = id;
     console.log(`removing all elements which don't have id = ${id}`);
     svg.selectChildren(`:not(.${replicaId})`).remove();
+    console.log(`replicaId = ${replicaId}, id = ${id}`);
 };
+const update = (data) => {
+    localData = data;
+};
+// draw methods
 const drawFlag = (enabled) => {
     const Flag = flag()
         .width(width)
         .height(height)
         .margin(margin)
         .enabled(enabled)
-        .replicaId(replicaId);
+        .replicaId(replicaId)
+        .data(localData);
     console.log(`svg calling Flag with value ${enabled} and id = ${Flag.replicaId()}`);
     svg.call(Flag);
 };
@@ -39,19 +51,22 @@ const drawCounter = (value) => {
         .margin(margin)
         .tombstone(tombstone)
         .elements(elements)
-        .replicaId(replicaId);
+        .replicaId(replicaId)
+        .data(localData);
+    console.log(`svg calling counter with replicaId = ${replicaId}`);
     svg.call(Set);
 };
 const drawRegister = (value, timestamp) => {
-    const identifier = timestamp.reduce((acc, curr) => acc + curr);
-    const tuple = [value, identifier.toString()];
+    const tuple = [value, timestamp.toString()];
+    // [1,2,3,4].toString().split(',').map(el => parseInt(el))
     const ValuePair = valuePair()
         .width(width)
         .height(height)
         .margin(margin)
         .replicaId(replicaId)
+        .data(localData)
         .tuples([tuple]);
-    console.log(`svg calling ValuePair with value = ${value}, valueId = ${identifier} and replicaId = ${replicaId}`);
+    console.log(`svg calling ValuePair with value = ${value}, valueId = ${timestamp} and replicaId = ${replicaId}`);
     svg.call(ValuePair);
 };
 const drawSet = (tombstone, elements) => {
@@ -61,7 +76,8 @@ const drawSet = (tombstone, elements) => {
         .margin(margin)
         .tombstone(tombstone)
         .elements(elements)
-        .replicaId(replicaId);
+        .replicaId(replicaId)
+        .data(localData);
     console.log(`svg calling Set with set = ${elements} and id = ${replicaId}`);
     svg.call(Set);
 };
@@ -70,9 +86,10 @@ const drawTombstone = () => {
         .width(width)
         .height(height)
         .margin(margin)
-        .replicaId(replicaId);
+        .replicaId(replicaId)
+        .data(localData);
     console.log(`svg calling Tombstone with id = ${Tombstone.replicaId()}`);
     svg.call(Tombstone);
 };
 const drawValuePair = () => { };
-export { sendReplicaId, drawFlag, drawCounter, drawRegister, drawSet, drawTombstone, drawValuePair, };
+export { sendReplicaId, update, drawFlag, drawCounter, drawRegister, drawSet, drawTombstone, drawValuePair, };

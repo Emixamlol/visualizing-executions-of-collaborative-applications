@@ -8,9 +8,12 @@ const width = 960;
 const height = 700;
 const margin = { top: 20, right: 20, bottom: 20, left: 20 };
 const radius = 25;
+const svgClass = 'general-svg';
 const svg = d3
     .select('div.visualization > div.visualization-element')
     .append('svg')
+    .attr('id', svgClass)
+    .attr('class', svgClass)
     .attr('width', width)
     .attr('height', height);
 const data = [];

@@ -1,16 +1,28 @@
 import * as d3 from 'd3';
+import { getStartYs } from '../../data-processing';
 export const flag = () => {
     let width;
     let height;
     let margin;
     let enabled;
     let replicaId;
+    let data = [];
     const my = (selection) => {
         // set scales
+        const replicas = data
+            .map(([, replicas]) => replicas.map(({ id }) => id))
+            .flat();
+        const colorScale = d3
+            .scaleOrdinal()
+            .domain(replicas)
+            .range(d3.schemePaired);
         const x = margin.left * 2 + 50;
-        const y = margin.top * 2 + 50;
         const t = d3.transition().duration(1000);
         // process data
+        const startYs = getStartYs(data, margin);
+        const y = startYs[data.findIndex(([, replicas]) => replicas.map(({ id, state }) => id).includes(replicaId))] +
+            margin.top +
+            25;
         const replicaCoordinates = [];
         // visualization
         const htmlClass = 'crdt-flag';
@@ -46,11 +58,14 @@ export const flag = () => {
     my.margin = function (_) {
         return arguments.length ? ((margin = _), my) : margin;
     };
+    my.enabled = function (_) {
+        return arguments.length ? ((enabled = _), my) : enabled;
+    };
     my.replicaId = function (_) {
         return arguments.length ? ((replicaId = _), my) : replicaId;
     };
-    my.enabled = function (_) {
-        return arguments.length ? ((enabled = _), my) : enabled;
+    my.data = function (_) {
+        return arguments.length ? ((data = _), my) : data;
     };
     return my;
 };

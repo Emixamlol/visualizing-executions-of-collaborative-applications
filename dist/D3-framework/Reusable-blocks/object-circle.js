@@ -11,7 +11,7 @@ export const drawObjectCircle = () => {
         // set scales
         const x = margin.left * 2 + 50;
         const replicas = data
-            .map(([id, replicas]) => replicas.map((replica) => replica.id))
+            .map(([, replicas]) => replicas.map(({ id }) => id))
             .flat();
         const colorScale = d3
             .scaleOrdinal()
