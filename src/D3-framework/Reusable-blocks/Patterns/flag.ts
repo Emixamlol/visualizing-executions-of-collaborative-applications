@@ -9,18 +9,36 @@ export const flag = (): ReusableFlag => {
   let margin: margin;
   let enabled: boolean;
   let replicaId: ID;
+  let data: Data = [];
 
   const my: ReusableFlag = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
   ) => {
     // set scales
-    const x = margin.left * 2 + 50;
+    const replicas = data
+      .map(([, replicas]) => replicas.map(({ id }) => id))
+      .flat();
 
-    const y = margin.top * 2 + 50;
+    const colorScale = d3
+      .scaleOrdinal()
+      .domain(replicas)
+      .range(d3.schemePaired);
+
+    const x = margin.left * 2 + 50;
 
     const t = d3.transition().duration(1000);
 
     // process data
+    const startYs = getStartYs(data, margin);
+
+    const y =
+      startYs[
+        data.findIndex(([, replicas]) =>
+          replicas.map(({ id, state }) => id).includes(replicaId)
+        )
+      ] +
+      margin.top +
+      25;
 
     const replicaCoordinates = [];
 
@@ -70,12 +88,16 @@ export const flag = (): ReusableFlag => {
     return arguments.length ? ((margin = _), my) : margin;
   };
 
+  my.enabled = function (_?: boolean): any {
+    return arguments.length ? ((enabled = _), my) : enabled;
+  };
+
   my.replicaId = function (_?: ID): any {
     return arguments.length ? ((replicaId = _), my) : replicaId;
   };
 
-  my.enabled = function (_?: boolean): any {
-    return arguments.length ? ((enabled = _), my) : enabled;
+  my.data = function (_?: Data): any {
+    return arguments.length ? ((data = _), my) : data;
   };
 
   return my;

@@ -1,12 +1,14 @@
 import * as d3 from 'd3';
-import { margin, ReusableSet } from '../../../types/d3-framework-types';
+import { Data, margin, ReusableSet } from '../../../types/d3-framework-types';
 import { ID } from '../../../types/proxy-types';
+import { getStartYs, getStateCoordinates } from '../../data-processing';
 
 export const set = (): ReusableSet => {
   let width: number;
   let height: number;
   let margin: margin;
   let replicaId: ID;
+  let data: Data = [];
   let tombstone: boolean;
   let elements: Array<string>;
 
@@ -14,13 +16,32 @@ export const set = (): ReusableSet => {
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
   ) => {
     // set scales
-    const x = margin.left * 2 + 50;
+    const replicas = data
+      .map(([, replicas]) => replicas.map(({ id }) => id))
+      .flat();
 
-    const y = margin.top * 2 + 50;
+    const x = margin.left * 2 + 50;
 
     const t = d3.transition().duration(1000);
 
     // process data
+    const startYs = getStartYs(data, margin);
+
+    const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
+
+    type processedData = Array<{ ry: number; y: number; id: string }>;
+
+    const objects: processedData = data
+      .map(([, replicas], dataIndex) =>
+        replicas.map(({ id, state }, replicaIndex) => ({
+          ry: replicas.length * 50,
+          y: startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex,
+          id,
+        }))
+      )
+      .flat();
+
+    const y = objects.at(index).y;
 
     // visualization
     const htmlClass = 'crdt-set';
@@ -76,6 +97,10 @@ export const set = (): ReusableSet => {
 
   my.replicaId = function (_?: ID): any {
     return arguments.length ? ((replicaId = _), my) : replicaId;
+  };
+
+  my.data = function (_?: Data): any {
+    return arguments.length ? ((data = _), my) : data;
   };
 
   my.tombstone = function (_?: boolean): any {
