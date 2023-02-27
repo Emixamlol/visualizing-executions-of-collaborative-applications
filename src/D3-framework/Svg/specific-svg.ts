@@ -4,12 +4,16 @@ import { Data } from '../../types/d3-framework-types';
 import { ID } from '../../types/proxy-types';
 import { flag } from '../Reusable-blocks/Patterns/flag';
 import { set } from '../Reusable-blocks/Patterns/set';
+import { timestamp as reusableTimestamp } from '../Reusable-blocks/Patterns/timestamp';
 import { tombstone } from '../Reusable-blocks/Patterns/tombstone';
 import { valuePair } from '../Reusable-blocks/Patterns/value-pair';
 
+const visualizationDiv = document.getElementById('visualization');
+const dimensions = visualizationDiv.getBoundingClientRect();
+
 // constants
-const width = 500;
-const height = 700;
+const width = dimensions.width / 2; //500;
+const height = dimensions.height; //700;
 const margin = { top: 20, right: 20, bottom: 20, left: 0 };
 const radius = 25;
 const svgClass = 'specific-svg';
@@ -19,7 +23,7 @@ let localData: Data = [];
 
 // svg
 const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
-  .select('div.visualization > div.visualization-element')
+  .select('div.visualization')
   .append('svg')
   .attr('id', svgClass)
   .attr('class', svgClass)
@@ -56,7 +60,7 @@ const drawFlag = (enabled: boolean): void => {
   svg.call(Flag);
 };
 
-const drawCounter = (value: number) => {
+const drawCounter = (value: number, timestamp: Array<number>) => {
   const elements = [value.toString()];
   const tombstone = false;
 
@@ -69,29 +73,47 @@ const drawCounter = (value: number) => {
     .replicaId(replicaId)
     .data(localData);
 
-  console.log(`svg calling counter with replicaId = ${replicaId}`);
-
-  svg.call(Set);
-};
-
-const drawRegister = (value: string, timestamp: number[]): void => {
-  const tuple: [string, ID] = [value, timestamp.toString()];
-
-  // [1,2,3,4].toString().split(',').map(el => parseInt(el))
-
-  const ValuePair = valuePair()
+  const Timestamp = reusableTimestamp()
     .width(width)
     .height(height)
     .margin(margin)
-    .replicaId(replicaId)
     .data(localData)
-    .tuples([tuple]);
+    .replicaId(replicaId)
+    .timestamp(timestamp);
+
+  console.log(`svg calling counter with replicaId = ${replicaId}`);
+
+  svg.call(Set).call(Timestamp);
+};
+
+const drawRegister = (value: string, timestamp: Array<number>): void => {
+  // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
+
+  const elements = value === undefined ? ['undefined'] : [value.toString()];
+  const tombstone = false;
+
+  const Set = set()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .tombstone(tombstone)
+    .elements(elements)
+    .replicaId(replicaId)
+    .data(localData);
+
+  const Timestamp = reusableTimestamp()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .data(localData)
+    .replicaId(replicaId)
+    .timestamp(timestamp);
 
   console.log(
     `svg calling ValuePair with value = ${value}, valueId = ${timestamp} and replicaId = ${replicaId}`
   );
 
-  svg.call(ValuePair);
+  svg.call(Set).call(Timestamp);
 };
 
 const drawSet = (tombstone: boolean, elements: Array<string>): void => {
