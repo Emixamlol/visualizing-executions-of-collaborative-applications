@@ -26,7 +26,7 @@ export default class Inc_Counter {
         ];
         this.getTimestamp = () => this.timestamp.getVector();
         this.visualize = () => {
-            drawCounter(this.value());
+            drawCounter(this.value(), this.getTimestamp());
         };
         this.pid = pid;
         this.timestamp = new VectorClock(n);
