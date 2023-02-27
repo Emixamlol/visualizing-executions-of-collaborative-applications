@@ -1,8 +1,18 @@
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  /* grid-template-columns: repeat(1, 1fr); */
+  /* grid-template-columns: repeat(auto, minmax(220px, 1fr)); */
+  grid-template-columns: auto;
   grid-template-rows: 70vh 28vh;
-  row-gap: 16px;
+  row-gap: 5px;
+}
+
+#general-svg {
+  grid-column: 1 / 2;
+}
+
+#specific-svg {
+  grid-column: 2 / -1;
 }
 
 .flexbox-container {
