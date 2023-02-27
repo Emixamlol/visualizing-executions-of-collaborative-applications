@@ -87,6 +87,8 @@ interface ReusablePatternInterface<T> {
   margin(value: margin): T;
 }
 
+// Reusable general visualization components
+
 interface FrameworkReusableInterface<T> extends ReusablePatternInterface<T> {
   data(): Data;
   data(value: Data): T;
@@ -112,6 +114,8 @@ export interface ReusableBasicState
 
 export interface ReusableTimeLine
   extends FrameworkReusableInterface<ReusableTimeLine> {}
+
+// Reusable custom d3-based library components
 
 interface LibraryReusableInterface<T> extends ReusablePatternInterface<T> {
   replicaId(): ID;
@@ -142,3 +146,9 @@ export interface ReusableValuePair
 
 export interface ReusableTombstone
   extends LibraryReusableInterface<ReusableTombstone> {}
+
+export interface ReusableTimestamp
+  extends LibraryReusableInterface<ReusableTimestamp> {
+  timestamp(): Array<number>;
+  timestamp(value: Array<number>): ReusableTimestamp;
+}
