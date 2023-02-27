@@ -71,6 +71,6 @@ export default class PN_Counter implements PN_CounterInterface {
   ];
 
   visualize = (): void => {
-    drawCounter(this.value());
+    drawCounter(this.value(), this.getTimestamp());
   };
 }
