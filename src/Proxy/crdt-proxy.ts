@@ -1,5 +1,6 @@
 import { LWW_Register, PN_Counter, TwoPhase_Set } from '../CRDTs';
 import { createCRDT, revisitedCreateCRDT } from '../CRDTs/create-crdt';
+import { sendObjectId, sendReplicaId } from '../D3-framework/Svg/specific-svg';
 import {
   CRDTInterface,
   CRDTtype,
@@ -45,6 +46,8 @@ export default class CrdtProxy implements ProxyInterface {
       payload,
       history: this.state.history.concat({ msg, payload }),
     };
+    sendReplicaId(this.id);
+    sendObjectId(this.replicaName);
     this.crdtReplica.visualize(); // visualize the change
   };
 
