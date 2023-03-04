@@ -1,3 +1,4 @@
+import { drawSet } from '../../D3-framework';
 import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
 import GrowOnly_Set from '../Base-CRDTs/grow-set';
 import VectorClock from '../vector-clock';
@@ -66,5 +67,15 @@ export default class TwoPhase_Set implements SetInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (): void => {};
+  visualize = (): void => {
+    console.log(`visualizing 2-phase set with pid = ${this.pid}`);
+    const [elements, tombstone] = [
+      this.A.payload()[0].split(','),
+      this.R.payload()[0].split(','),
+    ];
+    console.log(elements);
+    console.log(tombstone);
+
+    drawSet(elements, tombstone);
+  };
 }
