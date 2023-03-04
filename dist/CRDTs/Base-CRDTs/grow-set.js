@@ -36,7 +36,7 @@ export default class GrowOnly_Set {
         };
         this.merge = (gos) => {
             const rs = new GrowOnly_Set(this.timestamp.length, this.pid); // the resulting set to be returned
-            rs.A = this.union(this.A, gos.A);
+            rs.A = this.union(new Set(this.A), new Set(gos.A));
             rs.pid = this.pid;
             rs.timestamp = this.timestamp.merge(gos.timestamp);
             rs.timestamp.increase(this.pid);
@@ -50,7 +50,7 @@ export default class GrowOnly_Set {
         this.visualize = () => {
             console.log('visualizing grow_set');
             console.log(Array.from(this.A));
-            drawSet(false, Array.from(this.A));
+            drawSet(Array.from(this.A));
         };
         this.A = new Set([]);
         this.pid = pid;

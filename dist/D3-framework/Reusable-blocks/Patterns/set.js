@@ -6,14 +6,18 @@ export const set = () => {
     let margin;
     let replicaId;
     let data = [];
-    let tombstone;
     let elements;
+    let tombstone = [];
     const my = (selection) => {
         // set scales
         const replicas = data
             .map(([, replicas]) => replicas.map(({ id }) => id))
             .flat();
-        const x = margin.left * 2 + 50;
+        const colorScale = d3
+            .scaleOrdinal()
+            .domain(replicas)
+            .range(d3.schemePaired);
+        const x = margin.left * 2 + 100;
         const t = d3.transition().duration(1000);
         // process data
         const startYs = getStartYs(data, margin);
@@ -29,18 +33,33 @@ export const set = () => {
         // visualization
         const htmlClass = 'crdt-set';
         const g = selection
-            .selectAll(`g.${htmlClass}`)
+            .selectAll(`g.${replicaId}`)
             .data([null])
             .join('g')
-            .attr('class', htmlClass);
+            .attr('class', replicaId);
+        // label
+        const labelx = margin.left * 2 + 50;
+        g.selectAll(`text.${replicaId}`)
+            .data([null])
+            .join((enter) => enter
+            .append('text')
+            .attr('x', labelx)
+            .attr('y', y)
+            .text(`${replicaId} : `));
+        // rest
         const positionSet = (tspan) => {
             tspan
                 .attr('class', replicaId)
                 .attr('x', x)
                 .attr('y', (d, i) => y + i * 20)
+                .attr('fill', (d) => {
+                if (tombstone.includes(d))
+                    return 'red';
+            })
                 .text((d) => d);
         };
-        g.selectAll('text')
+        const text = g
+            .selectAll(`text.${replicaId}`)
             .data([null])
             .join((enter) => enter
             .append('text')
@@ -52,7 +71,14 @@ export const set = () => {
             .join((enter) => enter.append('tspan').call(positionSet)), (update) => update
             .selectAll('tspan')
             .data(elements)
-            .join((enter) => enter.append('tspan').call(positionSet), (update) => update.call(positionSet)));
+            .join((enter) => enter
+            .append('tspan')
+            .call(positionSet)
+            .filter((d) => tombstone.includes(d))
+            .attr('fill', 'red'), (update) => update
+            .call(positionSet)
+            .filter((d) => tombstone.includes(d))
+            .attr('fill', 'red')));
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;

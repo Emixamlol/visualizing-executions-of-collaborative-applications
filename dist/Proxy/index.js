@@ -46,6 +46,10 @@ const sendToGui = () => {
     gui.update(data);
 };
 /**
+ * Get the ID of the conceptual object represented by a replica
+ */
+export const getObjectId = (id) => conceptualCRDTNames.get(id).id;
+/**
  * Get the CRDT type of a CRDT replica
  */
 export const getType = (id) => conceptualCRDTNames.get(id).type;

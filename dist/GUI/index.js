@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { sendReplicaId } from '../D3-framework/Svg/specific-svg';
+import { sendObjectId, sendReplicaId } from '../D3-framework/Svg/specific-svg';
 import * as proxies from '../Proxy';
 import { getAllReplicas, getMethods, getSiblingReplicas, } from './data-processing';
 import { menu } from './Reusable-blocks/menu';
@@ -23,8 +23,10 @@ const allReplicasMenu = menu()
     .data(data)
     .filterReplicas(getAllReplicas)
     .on('change', (id) => {
+    const objectId = proxies.getObjectId(id);
     const type = proxies.getType(id);
     const methods = getMethods(type);
+    sendObjectId(objectId);
     sendReplicaId(id);
     proxies.visualizeCRDT(id);
     updateButtonsContainer.call(updateButtons.methods(methods));

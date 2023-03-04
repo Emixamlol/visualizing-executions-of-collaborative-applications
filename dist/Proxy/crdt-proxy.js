@@ -1,4 +1,5 @@
 import { createCRDT } from '../CRDTs/create-crdt';
+import { sendObjectId, sendReplicaId } from '../D3-framework/Svg/specific-svg';
 import { CRDTtype, } from '../types/crdt-types';
 import { Message, } from '../types/proxy-types';
 export default class CrdtProxy {
@@ -7,6 +8,8 @@ export default class CrdtProxy {
         this.updateState = (msg) => {
             const payload = this.crdtReplica.payload(); // get the current payload
             this.state = Object.assign(Object.assign({}, this.state), { payload, history: this.state.history.concat({ msg, payload }) });
+            sendReplicaId(this.id);
+            sendObjectId(this.replicaName);
             this.crdtReplica.visualize(); // visualize the change
         };
         this.query = (args) => {
