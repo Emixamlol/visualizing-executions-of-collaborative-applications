@@ -18,7 +18,8 @@ const margin = { top: 20, right: 20, bottom: 20, left: 0 };
 const radius = 25;
 const svgClass = 'specific-svg';
 
-let replicaId: ID; // the id of the current CRDT replica being visualized
+let objecId: ID = 'p'; // the id of the conceptual object represented by several replicas
+let replicaId: ID = 'p'; // the id of the current CRDT replica being visualized
 let localData: Data = [];
 
 // svg
@@ -30,12 +31,21 @@ const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
   .attr('width', width)
   .attr('height', height);
 
-// update replica and data
+// update objecctId, replicaId and data
+const sendObjectId = (id: ID): void => {
+  console.log(`objectId = ${objecId}, sent id = ${id}`);
+  if (objecId !== id) {
+    console.log(`removing all elements in specific visualization`);
+    svg.selectChildren('*').remove();
+  }
+  objecId = id;
+};
+
 const sendReplicaId = (id: ID): void => {
   console.log(`replicaId = ${replicaId}, id = ${id}`);
   replicaId = id;
-  console.log(`removing all elements which don't have id = ${id}`);
-  svg.selectChildren(`:not(.${replicaId})`).remove();
+  // console.log(`removing all elements which don't have id = ${id}`);
+  // svg.selectChildren(`:not(.${replicaId})`).remove();
   console.log(`replicaId = ${replicaId}, id = ${id}`);
 };
 
@@ -62,13 +72,11 @@ const drawFlag = (enabled: boolean): void => {
 
 const drawCounter = (value: number, timestamp: Array<number>) => {
   const elements = [value.toString()];
-  const tombstone = false;
 
   const Set = set()
     .width(width)
     .height(height)
     .margin(margin)
-    .tombstone(tombstone)
     .elements(elements)
     .replicaId(replicaId)
     .data(localData);
@@ -90,13 +98,11 @@ const drawRegister = (value: string, timestamp: Array<number>): void => {
   // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
 
   const elements = value === undefined ? ['undefined'] : [value.toString()];
-  const tombstone = false;
 
   const Set = set()
     .width(width)
     .height(height)
     .margin(margin)
-    .tombstone(tombstone)
     .elements(elements)
     .replicaId(replicaId)
     .data(localData);
@@ -116,13 +122,13 @@ const drawRegister = (value: string, timestamp: Array<number>): void => {
   svg.call(Set).call(Timestamp);
 };
 
-const drawSet = (tombstone: boolean, elements: Array<string>): void => {
+const drawSet = (elements: Array<string>, tombstone?: Array<string>): void => {
   const Set = set()
     .width(width)
     .height(height)
     .margin(margin)
-    .tombstone(tombstone)
     .elements(elements)
+    .tombstone(tombstone !== undefined ? tombstone : [])
     .replicaId(replicaId)
     .data(localData);
 
@@ -147,6 +153,7 @@ const drawTombstone = (): void => {
 const drawValuePair = (): void => {};
 
 export {
+  sendObjectId,
   sendReplicaId,
   update,
   drawFlag,
