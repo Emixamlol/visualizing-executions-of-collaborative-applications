@@ -28,7 +28,7 @@ export const valuePair = (): ReusableValuePair => {
       .domain(replicas)
       .range(d3.schemePaired);
 
-    const x = margin.left * 2 + 50;
+    const x = margin.left * 2 + 100;
 
     const t = d3.transition().duration(1000);
 
@@ -59,10 +59,25 @@ export const valuePair = (): ReusableValuePair => {
     const htmlClass = 'crdt-value-pair';
 
     const g = selection
-      .selectAll(`g.${htmlClass}`)
+      .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', htmlClass);
+      .attr('class', replicaId);
+
+    // label
+    const labelx = margin.left * 2 + 50;
+
+    g.selectAll(`text.${replicaId}`)
+      .data([null])
+      .join((enter) =>
+        enter
+          .append('text')
+          .attr('x', labelx)
+          .attr('y', y)
+          .text(`${replicaId} : `)
+      );
+
+    // rest
 
     // visualize elements
 

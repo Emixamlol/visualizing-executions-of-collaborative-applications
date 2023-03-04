@@ -24,7 +24,7 @@ export const flag = (): ReusableFlag => {
       .domain(replicas)
       .range(d3.schemePaired);
 
-    const x = margin.left * 2 + 50;
+    const x = margin.left * 2 + 100;
 
     const t = d3.transition().duration(1000);
 
@@ -58,10 +58,25 @@ export const flag = (): ReusableFlag => {
     };
 
     const g = selection
-      .selectAll(`g.${htmlClass}`)
+      .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', htmlClass);
+      .attr('class', replicaId);
+
+    // label
+    const labelx = margin.left * 2 + 50;
+
+    g.selectAll(`text.${replicaId}`)
+      .data([null])
+      .join((enter) =>
+        enter
+          .append('text')
+          .attr('x', labelx)
+          .attr('y', y)
+          .text(`${replicaId} : `)
+      );
+
+    // rest
 
     g.selectAll('path')
       .data([null])
@@ -69,7 +84,7 @@ export const flag = (): ReusableFlag => {
         (enter) =>
           enter
             .append('path')
-            .attr('class', replicaId)
+            .attr('class', htmlClass)
             .call(positionFlag)
             .call((enter) => enter.transition(t).call(colorFlag)),
         (update) => update.call(positionFlag).call(colorFlag)

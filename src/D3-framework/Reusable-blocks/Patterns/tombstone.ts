@@ -50,10 +50,25 @@ export const tombstone = (): ReusableTombstone => {
     const htmlClass = 'crdt-tombstone';
 
     const g = selection
-      .selectAll(`g.${htmlClass}`)
+      .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', htmlClass);
+      .attr('class', replicaId);
+
+    // label
+    const labelx = margin.left * 2 + 50;
+
+    g.selectAll(`text.${replicaId}`)
+      .data([null])
+      .join((enter) =>
+        enter
+          .append('text')
+          .attr('x', labelx)
+          .attr('y', y)
+          .text(`${replicaId} : `)
+      );
+
+    // rest
 
     const positionTombstone = (path): void => {
       path

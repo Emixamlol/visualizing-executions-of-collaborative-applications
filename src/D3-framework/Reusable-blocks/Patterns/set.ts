@@ -9,8 +9,8 @@ export const set = (): ReusableSet => {
   let margin: margin;
   let replicaId: ID;
   let data: Data = [];
-  let tombstone: boolean;
   let elements: Array<string>;
+  let tombstone: Array<string> = [];
 
   const my: ReusableSet = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -20,7 +20,12 @@ export const set = (): ReusableSet => {
       .map(([, replicas]) => replicas.map(({ id }) => id))
       .flat();
 
-    const x = margin.left * 2 + 50;
+    const colorScale = d3
+      .scaleOrdinal()
+      .domain(replicas)
+      .range(d3.schemePaired);
+
+    const x = margin.left * 2 + 100;
 
     const t = d3.transition().duration(1000);
 
@@ -47,20 +52,39 @@ export const set = (): ReusableSet => {
     const htmlClass = 'crdt-set';
 
     const g = selection
-      .selectAll(`g.${htmlClass}`)
+      .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', htmlClass);
+      .attr('class', replicaId);
+
+    // label
+    const labelx = margin.left * 2 + 50;
+
+    g.selectAll(`text.${replicaId}`)
+      .data([null])
+      .join((enter) =>
+        enter
+          .append('text')
+          .attr('x', labelx)
+          .attr('y', y)
+          .text(`${replicaId} : `)
+      );
+
+    // rest
 
     const positionSet = (tspan) => {
       tspan
         .attr('class', replicaId)
         .attr('x', x)
         .attr('y', (d, i) => y + i * 20)
+        .attr('fill', (d) => {
+          if (tombstone.includes(d)) return 'red';
+        })
         .text((d) => d);
     };
 
-    g.selectAll('text')
+    const text = g
+      .selectAll(`text.${replicaId}`)
       .data([null])
       .join(
         (enter) =>
@@ -77,8 +101,17 @@ export const set = (): ReusableSet => {
             .selectAll('tspan')
             .data(elements)
             .join(
-              (enter) => enter.append('tspan').call(positionSet),
-              (update) => update.call(positionSet)
+              (enter) =>
+                enter
+                  .append('tspan')
+                  .call(positionSet)
+                  .filter((d) => tombstone.includes(d))
+                  .attr('fill', 'red'),
+              (update) =>
+                update
+                  .call(positionSet)
+                  .filter((d) => tombstone.includes(d))
+                  .attr('fill', 'red')
             )
       );
   };
@@ -103,7 +136,7 @@ export const set = (): ReusableSet => {
     return arguments.length ? ((data = _), my) : data;
   };
 
-  my.tombstone = function (_?: boolean): any {
+  my.tombstone = function (_?: Array<string>): any {
     return arguments.length ? ((tombstone = _), my) : tombstone;
   };
 
