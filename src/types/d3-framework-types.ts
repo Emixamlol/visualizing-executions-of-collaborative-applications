@@ -131,11 +131,11 @@ export interface ReusableFlag extends LibraryReusableInterface<ReusableFlag> {
 }
 
 export interface ReusableSet extends LibraryReusableInterface<ReusableSet> {
-  tombstone(): boolean;
-  tombstone(value: boolean): ReusableSet;
-
   elements(): Array<string>;
   elements(value: Array<string>): ReusableSet;
+
+  tombstone(): Array<string>;
+  tombstone(value: Array<string>): ReusableSet;
 }
 
 export interface ReusableValuePair
