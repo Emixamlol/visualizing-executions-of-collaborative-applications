@@ -31,7 +31,7 @@ const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
   .attr('width', width)
   .attr('height', height);
 
-// update objecctId, replicaId and data
+// update objectId, replicaId and data
 const sendObjectId = (id: ID): void => {
   console.log(`objectId = ${objecId}, sent id = ${id}`);
   if (objecId !== id) {
