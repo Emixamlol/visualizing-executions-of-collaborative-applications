@@ -123,6 +123,12 @@ interface LibraryReusableInterface<T> extends ReusablePatternInterface<T> {
 
   data(): Data;
   data(value: Data): T;
+
+  x(): number;
+  x(value: number): T;
+
+  y(): number;
+  y(value: number): T;
 }
 
 export interface ReusableFlag extends LibraryReusableInterface<ReusableFlag> {
@@ -152,3 +158,6 @@ export interface ReusableTimestamp
   timestamp(): Array<number>;
   timestamp(value: Array<number>): ReusableTimestamp;
 }
+
+export interface ReusableLabel
+  extends LibraryReusableInterface<ReusableLabel> {}
