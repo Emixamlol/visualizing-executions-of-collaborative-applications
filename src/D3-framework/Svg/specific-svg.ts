@@ -2,11 +2,12 @@ import * as d3 from 'd3';
 
 import { Data } from '../../types/d3-framework-types';
 import { ID } from '../../types/proxy-types';
-import { flag } from '../Reusable-blocks/Patterns/flag';
-import { set } from '../Reusable-blocks/Patterns/set';
-import { timestamp as reusableTimestamp } from '../Reusable-blocks/Patterns/timestamp';
-import { tombstone } from '../Reusable-blocks/Patterns/tombstone';
-import { valuePair } from '../Reusable-blocks/Patterns/value-pair';
+import { getStartYs } from '../data-processing';
+import { flag } from '../Reusable-blocks/library/flag';
+import { set } from '../Reusable-blocks/library/set';
+import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/timestamp';
+import { tombstone } from '../Reusable-blocks/library/tombstone';
+import { valuePair } from '../Reusable-blocks/library/value-pair';
 
 const visualizationDiv = document.getElementById('visualization');
 const dimensions = visualizationDiv.getBoundingClientRect();
@@ -18,9 +19,12 @@ const margin = { top: 20, right: 20, bottom: 20, left: 0 };
 const radius = 25;
 const svgClass = 'specific-svg';
 
+// local information
 let objecId: ID = 'p'; // the id of the conceptual object represented by several replicas
 let replicaId: ID = 'p'; // the id of the current CRDT replica being visualized
 let localData: Data = [];
+let replicas: Array<ID>;
+let startHeights: Array<number>;
 
 // svg
 const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
@@ -51,6 +55,27 @@ const sendReplicaId = (id: ID): void => {
 
 const update = (data: Data): void => {
   localData = data;
+
+  replicas = data.map(([, replicas]) => replicas.map(({ id }) => id)).flat();
+
+  const startYs = getStartYs(data, margin);
+  startHeights = data
+    .map(([, replicas], dataIndex) =>
+      replicas.map(
+        (d, replicaIndex) =>
+          startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex
+      )
+    )
+    .flat();
+};
+
+const remove = (id: ID): void => {
+  svg.selectAll(`g.${id}`).remove();
+};
+
+const yValue = (): number => {
+  const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
+  return startHeights.at(index);
 };
 
 // draw methods
