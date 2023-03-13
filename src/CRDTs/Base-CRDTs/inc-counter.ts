@@ -54,6 +54,6 @@ export default class Inc_Counter implements Inc_CounterInterface {
   getTimestamp = (): number[] => this.timestamp.getVector();
 
   visualize = (): void => {
-    drawCounter(this.value(), this.getTimestamp());
+    drawCounter(this.value(), this.P.slice());
   };
 }
