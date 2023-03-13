@@ -1,12 +1,14 @@
 import * as d3 from 'd3';
 import { getStartYs } from '../../data-processing';
-export const timestamp = () => {
+export const valuePair = () => {
+    let x;
+    let y;
     let width;
     let height;
     let margin;
     let replicaId;
     let data = [];
-    let timestamp;
+    let tuples;
     const my = (selection) => {
         // set scales
         const replicas = data
@@ -17,6 +19,9 @@ export const timestamp = () => {
             .domain(replicas)
             .range(d3.schemePaired);
         const x = margin.left * 2 + 100;
+        const t = d3.transition().duration(1000);
+        const cx = x + 300;
+        const sqrtScale = d3.scaleSqrt().domain([0, 100]).range([0, 50]);
         // process data
         const startYs = getStartYs(data, margin);
         const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
@@ -25,7 +30,7 @@ export const timestamp = () => {
             .flat();
         const y = startHeights.at(index);
         // visualization
-        const htmlClass = 'crdt-timestamp';
+        const htmlClass = 'crdt-value-pair';
         const g = selection
             .selectAll(`g.${replicaId}`)
             .data([null])
@@ -41,6 +46,45 @@ export const timestamp = () => {
             .attr('y', y)
             .text(`${replicaId} : `));
         // rest
+        // visualize elements
+        const positionSet = (tspan) => {
+            tspan
+                .attr('class', replicaId)
+                .attr('x', x)
+                .attr('y', (d, i) => y + i * 20)
+                .text((d) => d[0]);
+        };
+        g.selectAll('text')
+            .data([null])
+            .join((enter) => enter
+            .append('text')
+            .attr('class', replicaId)
+            .attr('x', x)
+            .attr('y', y)
+            .selectAll('tspan')
+            .data(tuples)
+            .join((enter) => enter.append('tspan').call(positionSet)), (update) => update
+            .selectAll('tspan')
+            .data(tuples)
+            .join((enter) => enter.append('tspan').call(positionSet), (update) => update.call(positionSet)));
+        // visualize unique identifiers associated to the elements
+        /*   const positionCircle = (circle) => {
+          circle
+            .attr('r', (d) => sqrtScale(d[1]))
+            .attr('cx', cx)
+            .attr('cy', (d, i) => y + i * 20);
+        };
+    
+        g.selectAll('circle')
+          .data(tuples)
+          .join(
+            (enter) => enter.append('circle').call(positionCircle),
+            (update) => update.call(positionCircle)
+          ); */
+        const [value, timestamp] = [
+            tuples[0][0],
+            tuples[0][1].split(',').map((n) => parseInt(n)),
+        ];
         const bandScale = d3
             .scaleBand()
             .domain(d3.range(timestamp.length).map((val) => val.toString()))
@@ -53,7 +97,6 @@ export const timestamp = () => {
         g.selectAll('rect')
             .data(timestamp)
             .join('rect')
-            .attr('class', htmlClass)
             .attr('x', (d, i) => x + bandScale(i.toString()))
             .attr('y', y)
             .attr('height', (d) => {
@@ -62,6 +105,12 @@ export const timestamp = () => {
         })
             .attr('width', bandScale.bandwidth())
             .attr('fill', colorScale(replicaId));
+    };
+    my.x = function (_) {
+        return arguments.length ? ((x = _), my) : x;
+    };
+    my.y = function (_) {
+        return arguments.length ? ((y = _), my) : y;
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;
@@ -78,8 +127,8 @@ export const timestamp = () => {
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : data;
     };
-    my.timestamp = function (_) {
-        return arguments.length ? ((timestamp = _), my) : timestamp;
+    my.tuples = function (_) {
+        return arguments.length ? ((tuples = _), my) : tuples;
     };
     return my;
 };

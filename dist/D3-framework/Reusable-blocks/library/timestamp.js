@@ -1,6 +1,8 @@
 import * as d3 from 'd3';
 import { getStartYs } from '../../data-processing';
 export const timestamp = () => {
+    let x;
+    let y;
     let width;
     let height;
     let margin;
@@ -62,6 +64,12 @@ export const timestamp = () => {
         })
             .attr('width', bandScale.bandwidth())
             .attr('fill', colorScale(replicaId));
+    };
+    my.x = function (_) {
+        return arguments.length ? ((x = _), my) : x;
+    };
+    my.y = function (_) {
+        return arguments.length ? ((y = _), my) : y;
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;

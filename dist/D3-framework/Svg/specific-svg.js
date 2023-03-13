@@ -1,8 +1,9 @@
 import * as d3 from 'd3';
-import { flag } from '../Reusable-blocks/Patterns/flag';
-import { set } from '../Reusable-blocks/Patterns/set';
-import { timestamp as reusableTimestamp } from '../Reusable-blocks/Patterns/timestamp';
-import { tombstone } from '../Reusable-blocks/Patterns/tombstone';
+import { getStartYs } from '../data-processing';
+import { flag } from '../Reusable-blocks/library/flag';
+import { set } from '../Reusable-blocks/library/set';
+import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/timestamp';
+import { tombstone } from '../Reusable-blocks/library/tombstone';
 const visualizationDiv = document.getElementById('visualization');
 const dimensions = visualizationDiv.getBoundingClientRect();
 // constants
@@ -11,9 +12,12 @@ const height = dimensions.height; //700;
 const margin = { top: 20, right: 20, bottom: 20, left: 0 };
 const radius = 25;
 const svgClass = 'specific-svg';
+// local information
 let objecId = 'p'; // the id of the conceptual object represented by several replicas
 let replicaId = 'p'; // the id of the current CRDT replica being visualized
 let localData = [];
+let replicas;
+let startHeights;
 // svg
 const svg = d3
     .select('div.visualization')
@@ -22,7 +26,7 @@ const svg = d3
     .attr('class', svgClass)
     .attr('width', width)
     .attr('height', height);
-// update objecctId, replicaId and data
+// update objectId, replicaId and data
 const sendObjectId = (id) => {
     console.log(`objectId = ${objecId}, sent id = ${id}`);
     if (objecId !== id) {
@@ -40,6 +44,18 @@ const sendReplicaId = (id) => {
 };
 const update = (data) => {
     localData = data;
+    replicas = data.map(([, replicas]) => replicas.map(({ id }) => id)).flat();
+    const startYs = getStartYs(data, margin);
+    startHeights = data
+        .map(([, replicas], dataIndex) => replicas.map((d, replicaIndex) => startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex))
+        .flat();
+};
+const remove = (id) => {
+    svg.selectAll(`g.${id}`).remove();
+};
+const yValue = () => {
+    const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
+    return startHeights.at(index);
 };
 // draw methods
 const drawFlag = (enabled) => {

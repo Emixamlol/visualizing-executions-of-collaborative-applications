@@ -2,6 +2,8 @@ import * as d3 from 'd3';
 import { rgb } from 'd3';
 import { getStartYs } from '../../data-processing';
 export const tombstone = () => {
+    let x;
+    let y;
     let width;
     let height;
     let margin;
@@ -73,6 +75,12 @@ export const tombstone = () => {
             .call((enter) => enter.transition(t).call(colorCross)), (update) => update.call(positionCross).call(colorCross));
         // <g><path d="M -12.09 11.36 L 31.99 11.36 Q 52.61 11.36 52.61 31.99 Q 52.61 52.61 31.99 52.61 L -12.09 52.61 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" transform="rotate(-90,20.26,31.99)" pointer-events="all"/>
         // <path d="M 11.5 17.25 L 18.5 17.25 L 18.5 9 L 22 9 L 22 17.25 L 29 17.25 L 29 20.75 L 22 20.75 L 22 29 L 18.5 29 L 18.5 20.75 L 11.5 20.75 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/></g>
+    };
+    my.x = function (_) {
+        return arguments.length ? ((x = _), my) : x;
+    };
+    my.y = function (_) {
+        return arguments.length ? ((y = _), my) : y;
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;

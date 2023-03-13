@@ -23,14 +23,10 @@ export const valuePair = () => {
         // process data
         const startYs = getStartYs(data, margin);
         const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
-        const objects = data
-            .map(([, replicas], dataIndex) => replicas.map(({ id, state }, replicaIndex) => ({
-            ry: replicas.length * 50,
-            y: startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex,
-            id,
-        })))
+        const startHeights = data
+            .map(([, replicas], dataIndex) => replicas.map((d, replicaIndex) => startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex))
             .flat();
-        const y = objects.at(index).y;
+        const y = startHeights.at(index);
         // visualization
         const htmlClass = 'crdt-value-pair';
         const g = selection

@@ -20,7 +20,7 @@ export const flag = () => {
         const t = d3.transition().duration(1000);
         // process data
         const startYs = getStartYs(data, margin);
-        const y = startYs[data.findIndex(([, replicas]) => replicas.map(({ id, state }) => id).includes(replicaId))] +
+        const y = startYs[data.findIndex(([, replicas]) => replicas.map(({ id }) => id).includes(replicaId))] +
             margin.top +
             25;
         const replicaCoordinates = [];

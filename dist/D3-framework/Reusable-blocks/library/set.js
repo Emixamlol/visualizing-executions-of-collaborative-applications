@@ -1,12 +1,15 @@
 import * as d3 from 'd3';
 import { getStartYs } from '../../data-processing';
-export const timestamp = () => {
+export const set = () => {
+    let x;
+    let y;
     let width;
     let height;
     let margin;
     let replicaId;
     let data = [];
-    let timestamp;
+    let elements;
+    let tombstone = [];
     const my = (selection) => {
         // set scales
         const replicas = data
@@ -17,6 +20,7 @@ export const timestamp = () => {
             .domain(replicas)
             .range(d3.schemePaired);
         const x = margin.left * 2 + 100;
+        const t = d3.transition().duration(1000);
         // process data
         const startYs = getStartYs(data, margin);
         const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
@@ -25,7 +29,7 @@ export const timestamp = () => {
             .flat();
         const y = startHeights.at(index);
         // visualization
-        const htmlClass = 'crdt-timestamp';
+        const htmlClass = 'crdt-set';
         const g = selection
             .selectAll(`g.${replicaId}`)
             .data([null])
@@ -41,27 +45,44 @@ export const timestamp = () => {
             .attr('y', y)
             .text(`${replicaId} : `));
         // rest
-        const bandScale = d3
-            .scaleBand()
-            .domain(d3.range(timestamp.length).map((val) => val.toString()))
-            .range([100, 300])
-            .paddingInner(0.05);
-        const yScale = d3
-            .scaleLinear()
-            .domain([Math.min(...timestamp), Math.max(...timestamp)])
-            .range([5, 20]);
-        g.selectAll('rect')
-            .data(timestamp)
-            .join('rect')
-            .attr('class', htmlClass)
-            .attr('x', (d, i) => x + bandScale(i.toString()))
+        const positionSet = (tspan) => {
+            tspan
+                .attr('class', replicaId)
+                .attr('x', x)
+                .attr('y', (d, i) => y + i * 20)
+                .attr('fill', (d) => {
+                if (tombstone.includes(d))
+                    return 'red';
+            })
+                .text((d) => d);
+        };
+        const text = g
+            .selectAll(`text.${replicaId}`)
+            .data([null])
+            .join((enter) => enter
+            .append('text')
+            .attr('class', replicaId)
+            .attr('x', x)
             .attr('y', y)
-            .attr('height', (d) => {
-            console.log(d);
-            return yScale(d);
-        })
-            .attr('width', bandScale.bandwidth())
-            .attr('fill', colorScale(replicaId));
+            .selectAll('tspan')
+            .data(elements)
+            .join((enter) => enter.append('tspan').call(positionSet)), (update) => update
+            .selectAll('tspan')
+            .data(elements)
+            .join((enter) => enter
+            .append('tspan')
+            .call(positionSet)
+            .filter((d) => tombstone.includes(d))
+            .attr('fill', 'red'), (update) => update
+            .call(positionSet)
+            .filter((d) => tombstone.includes(d))
+            .attr('fill', 'red')));
+    };
+    my.x = function (_) {
+        return arguments.length ? ((x = _), my) : x;
+    };
+    my.y = function (_) {
+        return arguments.length ? ((y = _), my) : y;
     };
     my.width = function (_) {
         return arguments.length ? ((width = _), my) : width;
@@ -78,8 +99,11 @@ export const timestamp = () => {
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : data;
     };
-    my.timestamp = function (_) {
-        return arguments.length ? ((timestamp = _), my) : timestamp;
+    my.tombstone = function (_) {
+        return arguments.length ? ((tombstone = _), my) : tombstone;
+    };
+    my.elements = function (_) {
+        return arguments.length ? ((elements = _), my) : elements;
     };
     return my;
 };
