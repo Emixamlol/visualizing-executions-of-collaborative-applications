@@ -4,6 +4,7 @@ import { Data } from '../../types/d3-framework-types';
 import { ID } from '../../types/proxy-types';
 import { getStartYs } from '../data-processing';
 import { flag } from '../Reusable-blocks/library/flag';
+import { label } from '../Reusable-blocks/library/label';
 import { set } from '../Reusable-blocks/library/set';
 import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/timestamp';
 import { tombstone } from '../Reusable-blocks/library/tombstone';
@@ -17,6 +18,8 @@ const width = dimensions.width / 2; //500;
 const height = dimensions.height; //700;
 const margin = { top: 20, right: 20, bottom: 20, left: 0 };
 const radius = 25;
+const labelX = margin.left * 2 + 50;
+const baseX = labelX + 50;
 const svgClass = 'specific-svg';
 
 // local information
@@ -84,6 +87,8 @@ const drawFlag = (enabled: boolean): void => {
     .width(width)
     .height(height)
     .margin(margin)
+    .x(baseX)
+    .y(yValue())
     .enabled(enabled)
     .replicaId(replicaId)
     .data(localData);
@@ -98,10 +103,21 @@ const drawFlag = (enabled: boolean): void => {
 const drawCounter = (value: number, timestamp: Array<number>) => {
   const elements = [value.toString()];
 
+  const Label = label()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .x(labelX)
+    .y(yValue())
+    .replicaId(replicaId)
+    .data(localData);
+
   const Set = set()
     .width(width)
     .height(height)
     .margin(margin)
+    .x(baseX)
+    .y(yValue())
     .elements(elements)
     .replicaId(replicaId)
     .data(localData);
@@ -110,13 +126,15 @@ const drawCounter = (value: number, timestamp: Array<number>) => {
     .width(width)
     .height(height)
     .margin(margin)
+    .x(baseX)
+    .y(yValue())
     .data(localData)
     .replicaId(replicaId)
     .timestamp(timestamp);
 
   console.log(`svg calling counter with replicaId = ${replicaId}`);
 
-  svg.call(Set).call(Timestamp);
+  svg.call(Label).call(Set).call(Timestamp);
 };
 
 const drawRegister = (value: string, timestamp: Array<number>): void => {
@@ -128,6 +146,8 @@ const drawRegister = (value: string, timestamp: Array<number>): void => {
     .width(width)
     .height(height)
     .margin(margin)
+    .x(baseX)
+    .y(yValue())
     .elements(elements)
     .replicaId(replicaId)
     .data(localData);
@@ -136,6 +156,8 @@ const drawRegister = (value: string, timestamp: Array<number>): void => {
     .width(width)
     .height(height)
     .margin(margin)
+    .x(baseX)
+    .y(yValue())
     .data(localData)
     .replicaId(replicaId)
     .timestamp(timestamp);
@@ -152,6 +174,8 @@ const drawSet = (elements: Array<string>, tombstone?: Array<string>): void => {
     .width(width)
     .height(height)
     .margin(margin)
+    .x(baseX)
+    .y(yValue())
     .elements(elements)
     .tombstone(tombstone !== undefined ? tombstone : [])
     .replicaId(replicaId)
@@ -167,6 +191,8 @@ const drawTombstone = (): void => {
     .width(width)
     .height(height)
     .margin(margin)
+    .x(baseX)
+    .y(yValue())
     .replicaId(replicaId)
     .data(localData);
 

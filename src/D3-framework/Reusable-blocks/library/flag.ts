@@ -26,7 +26,7 @@ export const flag = (): ReusableFlag => {
       .domain(replicas)
       .range(d3.schemePaired);
 
-    const x = margin.left * 2 + 100;
+    // const x = margin.left * 2 + 100;
 
     const t = d3.transition().duration(1000);
 
@@ -41,8 +41,6 @@ export const flag = (): ReusableFlag => {
       ] +
       margin.top +
       25;
-
-    const replicaCoordinates = [];
 
     // visualization
     const htmlClass = 'crdt-flag';

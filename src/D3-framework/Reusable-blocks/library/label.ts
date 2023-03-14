@@ -16,32 +16,11 @@ export const label = (): ReusableLabel => {
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
   ) => {
     // set scales
-    const replicas = data
-      .map(([, replicas]) => replicas.map(({ id }) => id))
-      .flat();
 
     // process data
-    const startYs = getStartYs(data, margin);
-
-    const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
-
-    type Heights = Array<number>;
-
-    const startHeights: Heights = data
-      .map(([, replicas], dataIndex) =>
-        replicas.map(
-          (d, replicaIndex) =>
-            startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex
-        )
-      )
-      .flat();
-
-    const y = startHeights.at(index);
 
     // visualization
     const htmlClass = 'crdt-set';
-    // label
-    const labelx = margin.left * 2 + 50;
 
     const g = selection
       .selectAll(`g.${replicaId}`)
@@ -52,11 +31,7 @@ export const label = (): ReusableLabel => {
     g.selectAll(`text.${replicaId}`)
       .data([null])
       .join((enter) =>
-        enter
-          .append('text')
-          .attr('x', labelx)
-          .attr('y', y)
-          .text(`${replicaId} : `)
+        enter.append('text').attr('x', x).attr('y', y).text(`${replicaId} : `)
       );
   };
 

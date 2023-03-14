@@ -30,10 +30,10 @@ export const timestamp = (): ReusableTimestamp => {
       .domain(replicas)
       .range(d3.schemePaired);
 
-    const x = margin.left * 2 + 100;
+    // const x = margin.left * 2 + 100;
 
     // process data
-    const startYs = getStartYs(data, margin);
+    /*     const startYs = getStartYs(data, margin);
 
     const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
 
@@ -48,7 +48,7 @@ export const timestamp = (): ReusableTimestamp => {
       )
       .flat();
 
-    const y = startHeights.at(index);
+    const y = startHeights.at(index); */
 
     // visualization
     const htmlClass = 'crdt-timestamp';

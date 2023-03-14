@@ -27,27 +27,9 @@ export const set = (): ReusableSet => {
       .domain(replicas)
       .range(d3.schemePaired);
 
-    const x = margin.left * 2 + 100;
-
     const t = d3.transition().duration(1000);
 
     // process data
-    const startYs = getStartYs(data, margin);
-
-    const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
-
-    type Heights = Array<number>;
-
-    const startHeights: Heights = data
-      .map(([, replicas], dataIndex) =>
-        replicas.map(
-          (d, replicaIndex) =>
-            startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex
-        )
-      )
-      .flat();
-
-    const y = startHeights.at(index);
 
     // visualization
     const htmlClass = 'crdt-set';
@@ -57,21 +39,6 @@ export const set = (): ReusableSet => {
       .data([null])
       .join('g')
       .attr('class', replicaId);
-
-    // label
-    const labelx = margin.left * 2 + 50;
-
-    g.selectAll(`text.${replicaId}`)
-      .data([null])
-      .join((enter) =>
-        enter
-          .append('text')
-          .attr('x', labelx)
-          .attr('y', y)
-          .text(`${replicaId} : `)
-      );
-
-    // rest
 
     const positionSet = (tspan) => {
       tspan
