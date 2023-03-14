@@ -1,5 +1,4 @@
 import * as d3 from 'd3';
-import { getStartYs } from '../../data-processing';
 export const set = () => {
     let x;
     let y;
@@ -19,15 +18,8 @@ export const set = () => {
             .scaleOrdinal()
             .domain(replicas)
             .range(d3.schemePaired);
-        const x = margin.left * 2 + 100;
         const t = d3.transition().duration(1000);
         // process data
-        const startYs = getStartYs(data, margin);
-        const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
-        const startHeights = data
-            .map(([, replicas], dataIndex) => replicas.map((d, replicaIndex) => startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex))
-            .flat();
-        const y = startHeights.at(index);
         // visualization
         const htmlClass = 'crdt-set';
         const g = selection
@@ -35,16 +27,6 @@ export const set = () => {
             .data([null])
             .join('g')
             .attr('class', replicaId);
-        // label
-        const labelx = margin.left * 2 + 50;
-        g.selectAll(`text.${replicaId}`)
-            .data([null])
-            .join((enter) => enter
-            .append('text')
-            .attr('x', labelx)
-            .attr('y', y)
-            .text(`${replicaId} : `));
-        // rest
         const positionSet = (tspan) => {
             tspan
                 .attr('class', replicaId)

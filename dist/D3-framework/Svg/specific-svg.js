@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { getStartYs } from '../data-processing';
 import { flag } from '../Reusable-blocks/library/flag';
+import { label } from '../Reusable-blocks/library/label';
 import { set } from '../Reusable-blocks/library/set';
 import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/timestamp';
 import { tombstone } from '../Reusable-blocks/library/tombstone';
@@ -11,6 +12,8 @@ const width = dimensions.width / 2; //500;
 const height = dimensions.height; //700;
 const margin = { top: 20, right: 20, bottom: 20, left: 0 };
 const radius = 25;
+const labelX = margin.left * 2 + 50;
+const baseX = labelX + 50;
 const svgClass = 'specific-svg';
 // local information
 let objecId = 'p'; // the id of the conceptual object represented by several replicas
@@ -63,6 +66,8 @@ const drawFlag = (enabled) => {
         .width(width)
         .height(height)
         .margin(margin)
+        .x(baseX)
+        .y(yValue())
         .enabled(enabled)
         .replicaId(replicaId)
         .data(localData);
@@ -71,10 +76,20 @@ const drawFlag = (enabled) => {
 };
 const drawCounter = (value, timestamp) => {
     const elements = [value.toString()];
+    const Label = label()
+        .width(width)
+        .height(height)
+        .margin(margin)
+        .x(labelX)
+        .y(yValue())
+        .replicaId(replicaId)
+        .data(localData);
     const Set = set()
         .width(width)
         .height(height)
         .margin(margin)
+        .x(baseX)
+        .y(yValue())
         .elements(elements)
         .replicaId(replicaId)
         .data(localData);
@@ -82,11 +97,13 @@ const drawCounter = (value, timestamp) => {
         .width(width)
         .height(height)
         .margin(margin)
+        .x(baseX)
+        .y(yValue())
         .data(localData)
         .replicaId(replicaId)
         .timestamp(timestamp);
     console.log(`svg calling counter with replicaId = ${replicaId}`);
-    svg.call(Set).call(Timestamp);
+    svg.call(Label).call(Set).call(Timestamp);
 };
 const drawRegister = (value, timestamp) => {
     // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
@@ -95,6 +112,8 @@ const drawRegister = (value, timestamp) => {
         .width(width)
         .height(height)
         .margin(margin)
+        .x(baseX)
+        .y(yValue())
         .elements(elements)
         .replicaId(replicaId)
         .data(localData);
@@ -102,6 +121,8 @@ const drawRegister = (value, timestamp) => {
         .width(width)
         .height(height)
         .margin(margin)
+        .x(baseX)
+        .y(yValue())
         .data(localData)
         .replicaId(replicaId)
         .timestamp(timestamp);
@@ -113,6 +134,8 @@ const drawSet = (elements, tombstone) => {
         .width(width)
         .height(height)
         .margin(margin)
+        .x(baseX)
+        .y(yValue())
         .elements(elements)
         .tombstone(tombstone !== undefined ? tombstone : [])
         .replicaId(replicaId)
@@ -125,6 +148,8 @@ const drawTombstone = () => {
         .width(width)
         .height(height)
         .margin(margin)
+        .x(baseX)
+        .y(yValue())
         .replicaId(replicaId)
         .data(localData);
     console.log(`svg calling Tombstone with id = ${Tombstone.replicaId()}`);

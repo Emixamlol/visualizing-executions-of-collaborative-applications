@@ -1,6 +1,5 @@
 import * as d3 from 'd3';
 import { rgb } from 'd3';
-import { getStartYs } from '../../data-processing';
 export const tombstone = () => {
     let x;
     let y;
@@ -14,15 +13,8 @@ export const tombstone = () => {
         const replicas = data
             .map(([, replicas]) => replicas.map(({ id }) => id))
             .flat();
-        const x = margin.left * 2 + 50;
         const t = d3.transition().duration(1000);
         // process data
-        const startYs = getStartYs(data, margin);
-        const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
-        const startHeights = data
-            .map(([, replicas], dataIndex) => replicas.map((d, replicaIndex) => startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex))
-            .flat();
-        const y = startHeights.at(index);
         // visualization
         const htmlClass = 'crdt-tombstone';
         const g = selection

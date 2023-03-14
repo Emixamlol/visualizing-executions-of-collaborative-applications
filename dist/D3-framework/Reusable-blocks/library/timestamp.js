@@ -1,5 +1,4 @@
 import * as d3 from 'd3';
-import { getStartYs } from '../../data-processing';
 export const timestamp = () => {
     let x;
     let y;
@@ -18,14 +17,24 @@ export const timestamp = () => {
             .scaleOrdinal()
             .domain(replicas)
             .range(d3.schemePaired);
-        const x = margin.left * 2 + 100;
+        // const x = margin.left * 2 + 100;
         // process data
-        const startYs = getStartYs(data, margin);
+        /*     const startYs = getStartYs(data, margin);
+    
         const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
-        const startHeights = data
-            .map(([, replicas], dataIndex) => replicas.map((d, replicaIndex) => startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex))
-            .flat();
-        const y = startHeights.at(index);
+    
+        type Heights = Array<number>;
+    
+        const startHeights: Heights = data
+          .map(([, replicas], dataIndex) =>
+            replicas.map(
+              (d, replicaIndex) =>
+                startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex
+            )
+          )
+          .flat();
+    
+        const y = startHeights.at(index); */
         // visualization
         const htmlClass = 'crdt-timestamp';
         const g = selection
