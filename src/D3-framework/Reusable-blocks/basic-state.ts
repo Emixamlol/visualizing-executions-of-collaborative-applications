@@ -102,12 +102,13 @@ export const drawBasicState = (): ReusableBasicState => {
         .attr('stroke', (d) => colorScale(d.replicaId) as string);
     };
 
-    g.selectAll('path')
+    g.selectAll('path.symbol')
       .data(symbolCoordinates)
       .join(
         (enter) =>
           enter
             .append('path')
+            .attr('class', 'symbol')
             .call(positionSymbols)
             .call((enter) => enter.transition(t).call(colorSymbols))
             .append('title')
@@ -122,12 +123,44 @@ export const drawBasicState = (): ReusableBasicState => {
 
     // --------------------------------- lines ---------------------------------
 
+    const defs = g
+      .selectAll('defs')
+      .data([null])
+      .join((enter) => enter.append('defs'));
+
+    const marker = defs
+      .selectAll('marker')
+      .data([null])
+      .join((enter) => enter.append('marker'));
+
+    marker
+      .attr('id', 'arrow')
+      .attr('viewBox', '0 0 10 10')
+      .attr('refX', 5)
+      .attr('refY', 5)
+      .attr('markerWidth', 6)
+      .attr('markerHeight', 6)
+      .attr('orient', 'auto-start-reverse');
+
+    const arrowPath = marker
+      .selectAll('path.arrow')
+      .data([null])
+      .join((enter) => enter.append('path'));
+
+    arrowPath
+      .attr('class', 'arrow')
+      .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+      .attr('fill', null)
+      .attr('stroke', null)
+      .attr('transform', null);
+
     const positionLines = (line, x_2: string, y_2: string) => {
       line
         .attr('x1', (d) => d.x_1)
         .attr('y1', (d) => d.y_1)
         .attr('x2', (d) => d[x_2])
-        .attr('y2', (d) => d[y_2]);
+        .attr('y2', (d) => d[y_2])
+        .attr('marker-end', 'url(#arrow)');
     };
 
     g.selectAll('line')
