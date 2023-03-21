@@ -1,6 +1,10 @@
 import { LWW_Register, PN_Counter, TwoPhase_Set } from '../CRDTs';
 import { createCRDT, revisitedCreateCRDT } from '../CRDTs/create-crdt';
-import { sendObjectId, sendReplicaId } from '../D3-framework/Svg/specific-svg';
+import {
+  sendObjectId,
+  sendReplicaId,
+  positionMergedReplicas,
+} from '../D3-framework/Svg/specific-svg';
 import {
   CRDTInterface,
   CRDTtype,
@@ -48,7 +52,6 @@ export default class CrdtProxy implements ProxyInterface {
     };
     sendReplicaId(this.id);
     sendObjectId(this.replicaName);
-    this.crdtReplica.visualize(); // visualize the change
   };
 
   query = (args?: string[]): number | string | boolean => {
@@ -65,8 +68,25 @@ export default class CrdtProxy implements ProxyInterface {
     }
   };
 
+  // positionMergedReplicas
+  // positionMergedReplicas
+
+  private setupMergeVisualization = (other: CrdtProxy): void => {
+    sendObjectId(null); // make sure to delete all specific visualizations
+    // visualize other replica (sender)
+    sendObjectId(other.replicaName);
+    sendReplicaId(other.id);
+    other.crdtReplica.visualize();
+    // visualize this replica (receiver)
+    sendReplicaId(this.id);
+    this.crdtReplica.visualize();
+    positionMergedReplicas(other.id, this.id);
+  };
+
   merge = (other: CrdtProxy): void => {
     if (this.replicaName === other.replicaName) {
+      this.setupMergeVisualization(other); // set up the specific visualization of the merge
+      // perform the merge on the replicas and update the state
       this.crdtReplica = this.crdtReplica.merge(other.crdtReplica);
       this.state = {
         ...this.state,
@@ -79,6 +99,12 @@ export default class CrdtProxy implements ProxyInterface {
         }),
       };
       this.updateState(Message.merge);
+      this.crdtReplica.visualize();
+      // sendObjectId(this.replicaName);
+      // this.crdtReplica.visualize();
+      // sendReplicaId(other.id);
+      // other.crdtReplica.visualize();
+      // positionMergedReplicas(this.id, other.id);
     }
   };
 
@@ -86,6 +112,7 @@ export default class CrdtProxy implements ProxyInterface {
     console.log(this);
     this.crdtReplica[fn].apply(this.crdtReplica, params);
     this.updateState(Message.update);
+    this.crdtReplica.visualize(); // visualize the update
   };
 
   visualize = (): void => {

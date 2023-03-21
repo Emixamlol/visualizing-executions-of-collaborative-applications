@@ -161,3 +161,5 @@ export interface ReusableTimestamp
 
 export interface ReusableLabel
   extends LibraryReusableInterface<ReusableLabel> {}
+
+export type ReusableComponents = Array<LibraryReusableInterface<any>>;

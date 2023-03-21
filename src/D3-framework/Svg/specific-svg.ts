@@ -1,6 +1,10 @@
 import * as d3 from 'd3';
 
-import { Data } from '../../types/d3-framework-types';
+import {
+  Data,
+  ReusableComponents,
+  ReusableLabel,
+} from '../../types/d3-framework-types';
 import { ID } from '../../types/proxy-types';
 import { getStartYs } from '../data-processing';
 import { flag } from '../Reusable-blocks/library/flag';
@@ -28,6 +32,12 @@ let replicaId: ID = 'p'; // the id of the current CRDT replica being visualized
 let localData: Data = [];
 let replicas: Array<ID>;
 let startHeights: Array<number>;
+let merge: boolean = false;
+
+/**
+ * map of replicas who are currently being visualized in the specific-svg, mapped to the elements visualizing them
+ */
+const activeVisualizations: Map<ID, ReusableComponents> = new Map();
 
 // svg
 const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
@@ -38,12 +48,18 @@ const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
   .attr('width', width)
   .attr('height', height);
 
+// group element visualizing the result of a merge
+const mergeG = svg.append('g').attr('class', 'merge');
+
 // update objectId, replicaId and data
 const sendObjectId = (id: ID): void => {
   console.log(`objectId = ${objecId}, sent id = ${id}`);
   if (objecId !== id) {
-    console.log(`removing all elements in specific visualization`);
-    svg.selectChildren('*').remove();
+    console.log(
+      `removing all elements (except merge group) in specific visualization`
+    );
+    svg.selectChildren('*').filter(':not(g.merge)').remove();
+    activeVisualizations.clear();
   }
   objecId = id;
 };
@@ -51,8 +67,6 @@ const sendObjectId = (id: ID): void => {
 const sendReplicaId = (id: ID): void => {
   console.log(`replicaId = ${replicaId}, id = ${id}`);
   replicaId = id;
-  // console.log(`removing all elements which don't have id = ${id}`);
-  // svg.selectChildren(`:not(.${replicaId})`).remove();
   console.log(`replicaId = ${replicaId}, id = ${id}`);
 };
 
@@ -74,6 +88,7 @@ const update = (data: Data): void => {
 
 const remove = (id: ID): void => {
   svg.selectAll(`g.${id}`).remove();
+  activeVisualizations.delete(id);
 };
 
 const yValue = (): number => {
@@ -81,8 +96,67 @@ const yValue = (): number => {
   return startHeights.at(index);
 };
 
-// draw methods
+// ------------------------- draw methods -------------------------
+
+// help methods
+const newLabel = (): ReusableLabel => {
+  return label()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .x(labelX)
+    .y(yValue())
+    .replicaId(replicaId)
+    .data(localData);
+};
+
+const drawMergedReplica = (components: ReusableComponents): void => {
+  console.log(`drawing merged replica with merge = ${merge}`);
+
+  merge = false;
+  const addX = width / 5;
+  const newY = height * 0.6;
+
+  components.forEach((component) => {
+    const newX = component.x() + addX;
+    component.x(newX);
+    component.y(newY);
+    mergeG.call(component);
+  });
+};
+
+const positionMergedReplicas = (senderId: ID, receiverId: ID): void => {
+  console.log(
+    `positioning merged replicas with senderId = ${senderId}; receiverId = ${receiverId}`
+  );
+
+  merge = true;
+  const addX = 400;
+  const newY = 80;
+
+  const [senderComponents, receiverComponents] = [
+    activeVisualizations.get(senderId),
+    activeVisualizations.get(receiverId),
+  ];
+
+  senderComponents.forEach((component) => {
+    const newY = 80;
+    component.y(newY);
+    svg.call(component);
+  });
+
+  receiverComponents.forEach((component) => {
+    const newX = component.x() + addX;
+    component.x(newX);
+    component.y(newY);
+    svg.call(component);
+  });
+};
+
+// main methods
 const drawFlag = (enabled: boolean): void => {
+  const Label = newLabel();
+
   const Flag = flag()
     .width(width)
     .height(height)
@@ -93,24 +167,26 @@ const drawFlag = (enabled: boolean): void => {
     .replicaId(replicaId)
     .data(localData);
 
+  const components = [Label, Flag];
+
+  activeVisualizations.set(replicaId, components);
+
   console.log(
     `svg calling Flag with value ${enabled} and id = ${Flag.replicaId()}`
   );
+  console.log(activeVisualizations);
 
-  svg.call(Flag);
+  if (merge) {
+    drawMergedReplica(components);
+  } else {
+    svg.call(Label).call(Flag);
+  }
 };
 
 const drawCounter = (value: number, timestamp: Array<number>) => {
   const elements = [value.toString()];
 
-  const Label = label()
-    .width(width)
-    .height(height)
-    .margin(margin)
-    .x(labelX)
-    .y(yValue())
-    .replicaId(replicaId)
-    .data(localData);
+  const Label = newLabel();
 
   const Set = set()
     .width(width)
@@ -132,12 +208,23 @@ const drawCounter = (value: number, timestamp: Array<number>) => {
     .replicaId(replicaId)
     .timestamp(timestamp);
 
-  console.log(`svg calling counter with replicaId = ${replicaId}`);
+  const components = [Label, Set, Timestamp];
 
-  svg.call(Label).call(Set).call(Timestamp);
+  activeVisualizations.set(replicaId, components);
+
+  console.log(`svg calling counter with replicaId = ${replicaId}`);
+  console.log(activeVisualizations);
+
+  if (merge) {
+    drawMergedReplica(components);
+  } else {
+    svg.call(Label).call(Set).call(Timestamp);
+  }
 };
 
 const drawRegister = (value: string, timestamp: Array<number>): void => {
+  const Label = newLabel();
+
   // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
 
   const elements = value === undefined ? ['undefined'] : [value.toString()];
@@ -162,14 +249,25 @@ const drawRegister = (value: string, timestamp: Array<number>): void => {
     .replicaId(replicaId)
     .timestamp(timestamp);
 
+  const components = [Label, Set, Timestamp];
+
+  activeVisualizations.set(replicaId, components);
+
   console.log(
     `svg calling ValuePair with value = ${value}, valueId = ${timestamp} and replicaId = ${replicaId}`
   );
+  console.log(activeVisualizations);
 
-  svg.call(Set).call(Timestamp);
+  if (merge) {
+    drawMergedReplica(components);
+  } else {
+    svg.call(Label).call(Set).call(Timestamp);
+  }
 };
 
 const drawSet = (elements: Array<string>, tombstone?: Array<string>): void => {
+  const Label = newLabel();
+
   const Set = set()
     .width(width)
     .height(height)
@@ -181,12 +279,23 @@ const drawSet = (elements: Array<string>, tombstone?: Array<string>): void => {
     .replicaId(replicaId)
     .data(localData);
 
-  console.log(`svg calling Set with set = ${elements} and id = ${replicaId}`);
+  const components = [Label, Set];
 
-  svg.call(Set);
+  activeVisualizations.set(replicaId, components);
+
+  console.log(`svg calling Set with set = ${elements} and id = ${replicaId}`);
+  console.log(activeVisualizations);
+
+  if (merge) {
+    drawMergedReplica(components);
+  } else {
+    svg.call(Label).call(Set);
+  }
 };
 
 const drawTombstone = (): void => {
+  const Label = newLabel();
+
   const Tombstone = tombstone()
     .width(width)
     .height(height)
@@ -196,9 +305,18 @@ const drawTombstone = (): void => {
     .replicaId(replicaId)
     .data(localData);
 
-  console.log(`svg calling Tombstone with id = ${Tombstone.replicaId()}`);
+  const components = [Label, Tombstone];
 
-  svg.call(Tombstone);
+  activeVisualizations.set(replicaId, components);
+
+  console.log(`svg calling Tombstone with id = ${Tombstone.replicaId()}`);
+  console.log(activeVisualizations);
+
+  if (merge) {
+    drawMergedReplica(components);
+  } else {
+    svg.call(Label).call(Tombstone);
+  }
 };
 
 const drawValuePair = (): void => {};
@@ -213,4 +331,5 @@ export {
   drawSet,
   drawTombstone,
   drawValuePair,
+  positionMergedReplicas,
 };
