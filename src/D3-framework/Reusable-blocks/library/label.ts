@@ -20,18 +20,26 @@ export const label = (): ReusableLabel => {
     // process data
 
     // visualization
-    const htmlClass = 'crdt-set';
+    const htmlClass = 'crdt-label';
 
     const g = selection
       .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', replicaId);
+      .attr('class', [htmlClass, replicaId].join(' '));
 
     g.selectAll(`text.${replicaId}`)
       .data([null])
-      .join((enter) =>
-        enter.append('text').attr('x', x).attr('y', y).text(`${replicaId} : `)
+      .join(
+        (enter) =>
+          enter
+            .append('text')
+            .attr('class', [htmlClass, replicaId].join(' '))
+            .attr('x', x)
+            .attr('y', y)
+            // .attr('fill-opacity', 0.5)
+            .text(`${replicaId} : `),
+        (update) => update.attr('x', x).attr('y', y)
       );
   };
 
