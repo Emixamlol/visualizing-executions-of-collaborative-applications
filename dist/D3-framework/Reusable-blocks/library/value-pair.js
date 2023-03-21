@@ -27,7 +27,7 @@ export const valuePair = () => {
             .selectAll(`g.${replicaId}`)
             .data([null])
             .join('g')
-            .attr('class', replicaId);
+            .attr('class', [htmlClass, replicaId].join(' '));
         // visualize elements
         const positionSet = (tspan) => {
             tspan
@@ -40,7 +40,7 @@ export const valuePair = () => {
             .data([null])
             .join((enter) => enter
             .append('text')
-            .attr('class', replicaId)
+            .attr('class', [htmlClass, replicaId].join(' '))
             .attr('x', x)
             .attr('y', y)
             .selectAll('tspan')

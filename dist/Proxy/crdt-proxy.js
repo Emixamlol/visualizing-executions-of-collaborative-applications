@@ -1,5 +1,5 @@
 import { createCRDT } from '../CRDTs/create-crdt';
-import { sendObjectId, sendReplicaId } from '../D3-framework/Svg/specific-svg';
+import { sendObjectId, sendReplicaId, positionMergedReplicas, } from '../D3-framework/Svg/specific-svg';
 import { CRDTtype, } from '../types/crdt-types';
 import { Message, } from '../types/proxy-types';
 export default class CrdtProxy {
@@ -10,7 +10,6 @@ export default class CrdtProxy {
             this.state = Object.assign(Object.assign({}, this.state), { payload, history: this.state.history.concat({ msg, payload }) });
             sendReplicaId(this.id);
             sendObjectId(this.replicaName);
-            this.crdtReplica.visualize(); // visualize the change
         };
         this.query = (args) => {
             switch (this.crdtReplica.type) {
@@ -23,8 +22,23 @@ export default class CrdtProxy {
                     throw new Error('cannot query invalid crdt');
             }
         };
+        // positionMergedReplicas
+        // positionMergedReplicas
+        this.setupMergeVisualization = (other) => {
+            sendObjectId(null); // make sure to delete all specific visualizations
+            // visualize other replica (sender)
+            sendObjectId(other.replicaName);
+            sendReplicaId(other.id);
+            other.crdtReplica.visualize();
+            // visualize this replica (receiver)
+            sendReplicaId(this.id);
+            this.crdtReplica.visualize();
+            positionMergedReplicas(other.id, this.id);
+        };
         this.merge = (other) => {
             if (this.replicaName === other.replicaName) {
+                this.setupMergeVisualization(other); // set up the specific visualization of the merge
+                // perform the merge on the replicas and update the state
                 this.crdtReplica = this.crdtReplica.merge(other.crdtReplica);
                 this.state = Object.assign(Object.assign({}, this.state), { merges: this.state.merges.concat({
                         from: {
@@ -34,12 +48,19 @@ export default class CrdtProxy {
                         to: this.state.history.length,
                     }) });
                 this.updateState(Message.merge);
+                this.crdtReplica.visualize();
+                // sendObjectId(this.replicaName);
+                // this.crdtReplica.visualize();
+                // sendReplicaId(other.id);
+                // other.crdtReplica.visualize();
+                // positionMergedReplicas(this.id, other.id);
             }
         };
         this.apply = (fn, params) => {
             console.log(this);
             this.crdtReplica[fn].apply(this.crdtReplica, params);
             this.updateState(Message.update);
+            this.crdtReplica.visualize(); // visualize the update
         };
         this.visualize = () => {
             console.log(this);

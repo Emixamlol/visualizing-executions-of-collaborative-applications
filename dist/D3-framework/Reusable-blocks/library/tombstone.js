@@ -21,17 +21,7 @@ export const tombstone = () => {
             .selectAll(`g.${replicaId}`)
             .data([null])
             .join('g')
-            .attr('class', replicaId);
-        // label
-        const labelx = margin.left * 2 + 50;
-        g.selectAll(`text.${replicaId}`)
-            .data([null])
-            .join((enter) => enter
-            .append('text')
-            .attr('x', labelx)
-            .attr('y', y)
-            .text(`${replicaId} : `));
-        // rest
+            .attr('class', [htmlClass, replicaId].join(' '));
         const positionTombstone = (path) => {
             path
                 .attr('transform', 'rotate(-90, 20.26, 31.99)')

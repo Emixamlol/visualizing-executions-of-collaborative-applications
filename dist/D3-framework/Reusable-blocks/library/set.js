@@ -26,10 +26,10 @@ export const set = () => {
             .selectAll(`g.${replicaId}`)
             .data([null])
             .join('g')
-            .attr('class', replicaId);
+            .attr('class', [htmlClass, replicaId].join(' '));
         const positionSet = (tspan) => {
             tspan
-                .attr('class', replicaId)
+                .attr('class', [htmlClass, replicaId].join(' '))
                 .attr('x', x)
                 .attr('y', (d, i) => y + i * 20)
                 .attr('fill', (d) => {
@@ -43,7 +43,7 @@ export const set = () => {
             .data([null])
             .join((enter) => enter
             .append('text')
-            .attr('class', replicaId)
+            .attr('class', [htmlClass, replicaId].join(' '))
             .attr('x', x)
             .attr('y', y)
             .selectAll('tspan')

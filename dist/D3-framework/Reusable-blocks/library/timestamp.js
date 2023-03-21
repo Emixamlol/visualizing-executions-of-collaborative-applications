@@ -17,45 +17,17 @@ export const timestamp = () => {
             .scaleOrdinal()
             .domain(replicas)
             .range(d3.schemePaired);
-        // const x = margin.left * 2 + 100;
-        // process data
-        /*     const startYs = getStartYs(data, margin);
-    
-        const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
-    
-        type Heights = Array<number>;
-    
-        const startHeights: Heights = data
-          .map(([, replicas], dataIndex) =>
-            replicas.map(
-              (d, replicaIndex) =>
-                startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex
-            )
-          )
-          .flat();
-    
-        const y = startHeights.at(index); */
         // visualization
         const htmlClass = 'crdt-timestamp';
         const g = selection
             .selectAll(`g.${replicaId}`)
             .data([null])
             .join('g')
-            .attr('class', replicaId);
-        // label
-        const labelx = margin.left * 2 + 50;
-        g.selectAll(`text.${replicaId}`)
-            .data([null])
-            .join((enter) => enter
-            .append('text')
-            .attr('x', labelx)
-            .attr('y', y)
-            .text(`${replicaId} : `));
-        // rest
+            .attr('class', [htmlClass, replicaId].join(' '));
         const bandScale = d3
             .scaleBand()
             .domain(d3.range(timestamp.length).map((val) => val.toString()))
-            .range([100, 300])
+            .range([50, 300])
             .paddingInner(0.05);
         const yScale = d3
             .scaleLinear()
