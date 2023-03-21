@@ -36,22 +36,7 @@ export const tombstone = (): ReusableTombstone => {
       .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', replicaId);
-
-    // label
-    const labelx = margin.left * 2 + 50;
-
-    g.selectAll(`text.${replicaId}`)
-      .data([null])
-      .join((enter) =>
-        enter
-          .append('text')
-          .attr('x', labelx)
-          .attr('y', y)
-          .text(`${replicaId} : `)
-      );
-
-    // rest
+      .attr('class', [htmlClass, replicaId].join(' '));
 
     const positionTombstone = (path): void => {
       path

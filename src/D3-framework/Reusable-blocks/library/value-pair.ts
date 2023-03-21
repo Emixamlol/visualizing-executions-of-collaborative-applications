@@ -45,7 +45,7 @@ export const valuePair = (): ReusableValuePair => {
       .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', replicaId);
+      .attr('class', [htmlClass, replicaId].join(' '));
 
     // visualize elements
 
@@ -63,7 +63,7 @@ export const valuePair = (): ReusableValuePair => {
         (enter) =>
           enter
             .append('text')
-            .attr('class', replicaId)
+            .attr('class', [htmlClass, replicaId].join(' '))
             .attr('x', x)
             .attr('y', y)
             .selectAll('tspan')
