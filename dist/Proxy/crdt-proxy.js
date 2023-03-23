@@ -22,17 +22,10 @@ export default class CrdtProxy {
                     throw new Error('cannot query invalid crdt');
             }
         };
-        // positionMergedReplicas
-        // positionMergedReplicas
         this.setupMergeVisualization = (other) => {
             sendObjectId(null); // make sure to delete all specific visualizations
-            // visualize other replica (sender)
-            sendObjectId(other.replicaName);
-            sendReplicaId(other.id);
-            other.crdtReplica.visualize();
-            // visualize this replica (receiver)
-            sendReplicaId(this.id);
-            this.crdtReplica.visualize();
+            other.visualize(); // sender replica
+            this.visualize(); // receiver replica
             positionMergedReplicas(other.id, this.id);
         };
         this.merge = (other) => {
@@ -59,6 +52,8 @@ export default class CrdtProxy {
         };
         this.visualize = () => {
             console.log(this);
+            sendObjectId(this.replicaName);
+            sendReplicaId(this.id);
             this.crdtReplica.visualize();
         };
         this.replicate = (replicaId, pid) => {

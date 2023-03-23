@@ -142,8 +142,6 @@ const drawFlag = (enabled) => {
         .data(localData);
     const components = [Label, Flag];
     activeVisualizations.set(replicaId, components);
-    console.log(`svg calling Flag with value ${enabled} and id = ${Flag.replicaId()}`);
-    console.log(activeVisualizations);
     if (merge) {
         drawMergedReplica(components);
     }
@@ -151,7 +149,7 @@ const drawFlag = (enabled) => {
         drawReplicas();
     }
 };
-const drawCounter = (value, timestamp) => {
+const drawCounter = (value, P) => {
     const elements = [value.toString()];
     const Label = newLabel();
     const Set = set()
@@ -163,7 +161,7 @@ const drawCounter = (value, timestamp) => {
         .elements(elements)
         .replicaId(replicaId)
         .data(localData);
-    const Timestamp = reusableTimestamp()
+    const P_vector = reusableTimestamp()
         .width(width)
         .height(height)
         .margin(margin)
@@ -171,16 +169,13 @@ const drawCounter = (value, timestamp) => {
         .y(yValue(replicaId))
         .data(localData)
         .replicaId(replicaId)
-        .timestamp(timestamp);
-    const components = [Label, Set, Timestamp];
+        .timestamp(P);
+    const components = [Label, Set, P_vector];
     activeVisualizations.set(replicaId, components);
-    console.log(`svg calling counter with replicaId = ${replicaId}`);
-    console.log(activeVisualizations);
     if (merge) {
         drawMergedReplica(components);
     }
     else {
-        // svg.call(Label).call(Set).call(Timestamp);
         drawReplicas();
     }
 };
@@ -209,8 +204,6 @@ const drawRegister = (value, timestamp) => {
         .timestamp(timestamp);
     const components = [Label, Set, Timestamp];
     activeVisualizations.set(replicaId, components);
-    console.log(`svg calling ValuePair with value = ${value}, valueId = ${timestamp} and replicaId = ${replicaId}`);
-    console.log(activeVisualizations);
     if (merge) {
         drawMergedReplica(components);
     }
@@ -232,8 +225,6 @@ const drawSet = (elements, tombstone) => {
         .data(localData);
     const components = [Label, Set];
     activeVisualizations.set(replicaId, components);
-    console.log(`svg calling Set with set = ${elements} and id = ${replicaId}`);
-    console.log(activeVisualizations);
     if (merge) {
         drawMergedReplica(components);
     }
@@ -253,8 +244,6 @@ const drawTombstone = () => {
         .data(localData);
     const components = [Label, Tombstone];
     activeVisualizations.set(replicaId, components);
-    console.log(`svg calling Tombstone with id = ${Tombstone.replicaId()}`);
-    console.log(activeVisualizations);
     if (merge) {
         drawMergedReplica(components);
     }

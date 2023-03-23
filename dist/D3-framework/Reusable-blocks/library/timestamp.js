@@ -54,12 +54,16 @@ export const timestamp = () => {
             .call(positionRect)
             .attr('width', bandScale.bandwidth())
             .attr('fill', colorScale(replicaId))
-            .call(spawnRect), (update) => update
+            .call(spawnRect)
+            .append('title')
+            .text((d) => d), (update) => update
             .attr('fill-opacity', 1)
             .transition(t)
             .call(positionRect)
             .attr('width', bandScale.bandwidth())
-            .attr('fill', colorScale(replicaId)));
+            .attr('fill', colorScale(replicaId))
+            .select('title')
+            .text((d) => d));
     };
     my.x = function (_) {
         return arguments.length ? ((x = _), my) : x;
