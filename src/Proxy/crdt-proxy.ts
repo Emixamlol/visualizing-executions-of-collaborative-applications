@@ -100,11 +100,6 @@ export default class CrdtProxy implements ProxyInterface {
       };
       this.updateState(Message.merge);
       this.crdtReplica.visualize();
-      // sendObjectId(this.replicaName);
-      // this.crdtReplica.visualize();
-      // sendReplicaId(other.id);
-      // other.crdtReplica.visualize();
-      // positionMergedReplicas(this.id, other.id);
     }
   };
 
