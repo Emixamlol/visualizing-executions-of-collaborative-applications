@@ -38,7 +38,7 @@ export const set = (): ReusableSet => {
       .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', [htmlClass, replicaId].join(' '));
+      .attr('class', replicaId);
 
     const positionSet = (tspan) => {
       tspan
@@ -51,8 +51,7 @@ export const set = (): ReusableSet => {
         .text((d) => d);
     };
 
-    const text = g
-      .selectAll(`text.${replicaId}`)
+    g.selectAll(`text.${htmlClass}.${replicaId}`)
       .data([null])
       .join(
         (enter) =>

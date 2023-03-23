@@ -37,7 +37,7 @@ export const timestamp = (): ReusableTimestamp => {
       .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', [htmlClass, replicaId].join(' '));
+      .attr('class', replicaId);
 
     const bandScale = d3
       .scaleBand()

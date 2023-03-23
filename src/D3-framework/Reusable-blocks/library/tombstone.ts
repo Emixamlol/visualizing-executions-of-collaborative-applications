@@ -36,7 +36,7 @@ export const tombstone = (): ReusableTombstone => {
       .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', [htmlClass, replicaId].join(' '));
+      .attr('class', replicaId);
 
     const positionTombstone = (path): void => {
       path
@@ -52,14 +52,14 @@ export const tombstone = (): ReusableTombstone => {
       path.attr('fill', rgb(255, 255, 255));
     };
 
-    g.selectAll('path#tombstone')
+    g.selectAll(`path.${htmlClass}`)
       .data([null])
       .join(
         (enter) =>
           enter
             .append('path')
             .attr('id', 'tombstone')
-            .attr('class', replicaId)
+            .attr('class', htmlClass)
             .call(positionTombstone)
             .call((enter) => enter.transition(t).call(colorTombstone)),
         (update) => update.call(positionTombstone).call(colorTombstone)
