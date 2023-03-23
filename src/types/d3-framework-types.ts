@@ -109,7 +109,7 @@ export interface ReusableObjectCircle
 export interface ReusableBasicState
   extends FrameworkReusableInterface<ReusableBasicState> {
   radius(): number;
-  radius(value: number): ReusableObjectCircle;
+  radius(value: number): ReusableBasicState;
 }
 
 export interface ReusableTimeLine
