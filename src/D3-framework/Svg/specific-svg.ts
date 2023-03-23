@@ -9,6 +9,7 @@ import { ID } from '../../types/proxy-types';
 import { getStartYs } from '../data-processing';
 import { flag } from '../Reusable-blocks/library/flag';
 import { label } from '../Reusable-blocks/library/label';
+import { mergeArrows } from '../Reusable-blocks/library/merge';
 import { set } from '../Reusable-blocks/library/set';
 import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/timestamp';
 import { tombstone } from '../Reusable-blocks/library/tombstone';
@@ -59,6 +60,7 @@ const sendObjectId = (id: ID): void => {
       `removing all elements (except merge group) in specific visualization`
     );
     svg.selectChildren('*').filter(':not(g.merge)').remove();
+    mergeG.selectChildren('*').remove();
     activeVisualizations.clear();
   }
   objecId = id;
@@ -67,6 +69,7 @@ const sendObjectId = (id: ID): void => {
 const sendReplicaId = (id: ID): void => {
   console.log(`replicaId = ${replicaId}, id = ${id}`);
   replicaId = id;
+  mergeG.selectChildren('*').remove();
   console.log(`replicaId = ${replicaId}, id = ${id}`);
 };
 
@@ -91,21 +94,21 @@ const remove = (id: ID): void => {
   activeVisualizations.delete(id);
 };
 
-const yValue = (): number => {
+const yValue = (replicaId: ID): number => {
   const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
   return startHeights.at(index);
 };
 
 // ------------------------- draw methods -------------------------
 
-// help methods
+// ----- help methods -----
 const newLabel = (): ReusableLabel => {
   return label()
     .width(width)
     .height(height)
     .margin(margin)
     .x(labelX)
-    .y(yValue())
+    .y(yValue(replicaId))
     .replicaId(replicaId)
     .data(localData);
 };
@@ -115,7 +118,10 @@ const drawMergedReplica = (components: ReusableComponents): void => {
 
   merge = false;
   const addX = width / 5;
-  const newY = height * 0.6;
+  const newY = height * 0.75;
+
+  const arrows = mergeArrows();
+  mergeG.call(arrows);
 
   components.forEach((component) => {
     const newX = component.x() + addX;
@@ -132,7 +138,7 @@ const positionMergedReplicas = (senderId: ID, receiverId: ID): void => {
 
   merge = true;
   const addX = 400;
-  const newY = 80;
+  const newY = height * 0.3;
 
   const [senderComponents, receiverComponents] = [
     activeVisualizations.get(senderId),
@@ -140,7 +146,6 @@ const positionMergedReplicas = (senderId: ID, receiverId: ID): void => {
   ];
 
   senderComponents.forEach((component) => {
-    const newY = 80;
     component.y(newY);
     svg.call(component);
   });
@@ -153,7 +158,20 @@ const positionMergedReplicas = (senderId: ID, receiverId: ID): void => {
   });
 };
 
-// main methods
+const drawReplicas = () => {
+  // draw the currently active replicas
+  activeVisualizations.forEach((components, replicaId) => {
+    components.forEach((component) => {
+      const props = Object.getOwnPropertyNames(component);
+      component
+        .x(props.includes('label') ? labelX : baseX)
+        .y(yValue(replicaId));
+      svg.call(component);
+    });
+  });
+};
+
+// ----- component methods -----
 const drawFlag = (enabled: boolean): void => {
   const Label = newLabel();
 
@@ -162,7 +180,7 @@ const drawFlag = (enabled: boolean): void => {
     .height(height)
     .margin(margin)
     .x(baseX)
-    .y(yValue())
+    .y(yValue(replicaId))
     .enabled(enabled)
     .replicaId(replicaId)
     .data(localData);
@@ -179,7 +197,7 @@ const drawFlag = (enabled: boolean): void => {
   if (merge) {
     drawMergedReplica(components);
   } else {
-    svg.call(Label).call(Flag);
+    drawReplicas();
   }
 };
 
@@ -193,7 +211,7 @@ const drawCounter = (value: number, timestamp: Array<number>) => {
     .height(height)
     .margin(margin)
     .x(baseX)
-    .y(yValue())
+    .y(yValue(replicaId))
     .elements(elements)
     .replicaId(replicaId)
     .data(localData);
@@ -203,7 +221,7 @@ const drawCounter = (value: number, timestamp: Array<number>) => {
     .height(height)
     .margin(margin)
     .x(baseX)
-    .y(yValue())
+    .y(yValue(replicaId))
     .data(localData)
     .replicaId(replicaId)
     .timestamp(timestamp);
@@ -218,7 +236,8 @@ const drawCounter = (value: number, timestamp: Array<number>) => {
   if (merge) {
     drawMergedReplica(components);
   } else {
-    svg.call(Label).call(Set).call(Timestamp);
+    // svg.call(Label).call(Set).call(Timestamp);
+    drawReplicas();
   }
 };
 
@@ -234,17 +253,18 @@ const drawRegister = (value: string, timestamp: Array<number>): void => {
     .height(height)
     .margin(margin)
     .x(baseX)
-    .y(yValue())
+    .y(yValue(replicaId))
     .elements(elements)
     .replicaId(replicaId)
     .data(localData);
 
+  // TODO: get element widths
   const Timestamp = reusableTimestamp()
     .width(width)
     .height(height)
     .margin(margin)
-    .x(baseX)
-    .y(yValue())
+    .x(baseX + 100)
+    .y(yValue(replicaId))
     .data(localData)
     .replicaId(replicaId)
     .timestamp(timestamp);
@@ -261,7 +281,7 @@ const drawRegister = (value: string, timestamp: Array<number>): void => {
   if (merge) {
     drawMergedReplica(components);
   } else {
-    svg.call(Label).call(Set).call(Timestamp);
+    drawReplicas();
   }
 };
 
@@ -273,7 +293,7 @@ const drawSet = (elements: Array<string>, tombstone?: Array<string>): void => {
     .height(height)
     .margin(margin)
     .x(baseX)
-    .y(yValue())
+    .y(yValue(replicaId))
     .elements(elements)
     .tombstone(tombstone !== undefined ? tombstone : [])
     .replicaId(replicaId)
@@ -289,7 +309,7 @@ const drawSet = (elements: Array<string>, tombstone?: Array<string>): void => {
   if (merge) {
     drawMergedReplica(components);
   } else {
-    svg.call(Label).call(Set);
+    drawReplicas();
   }
 };
 
@@ -301,7 +321,7 @@ const drawTombstone = (): void => {
     .height(height)
     .margin(margin)
     .x(baseX)
-    .y(yValue())
+    .y(yValue(replicaId))
     .replicaId(replicaId)
     .data(localData);
 
@@ -315,7 +335,7 @@ const drawTombstone = (): void => {
   if (merge) {
     drawMergedReplica(components);
   } else {
-    svg.call(Label).call(Tombstone);
+    drawReplicas();
   }
 };
 
