@@ -27,16 +27,16 @@ export const valuePair = () => {
             .selectAll(`g.${replicaId}`)
             .data([null])
             .join('g')
-            .attr('class', [htmlClass, replicaId].join(' '));
+            .attr('class', replicaId);
         // visualize elements
         const positionSet = (tspan) => {
             tspan
-                .attr('class', replicaId)
+                .attr('class', [htmlClass, replicaId].join(' '))
                 .attr('x', x)
                 .attr('y', (d, i) => y + i * 20)
                 .text((d) => d[0]);
         };
-        g.selectAll('text')
+        g.selectAll(`text.${htmlClass}.${replicaId}`)
             .data([null])
             .join((enter) => enter
             .append('text')

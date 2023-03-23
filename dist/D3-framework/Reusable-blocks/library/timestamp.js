@@ -23,7 +23,7 @@ export const timestamp = () => {
             .selectAll(`g.${replicaId}`)
             .data([null])
             .join('g')
-            .attr('class', [htmlClass, replicaId].join(' '));
+            .attr('class', replicaId);
         const bandScale = d3
             .scaleBand()
             .domain(d3.range(timestamp.length).map((val) => val.toString()))

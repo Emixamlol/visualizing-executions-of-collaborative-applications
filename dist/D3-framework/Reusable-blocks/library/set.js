@@ -26,7 +26,7 @@ export const set = () => {
             .selectAll(`g.${replicaId}`)
             .data([null])
             .join('g')
-            .attr('class', [htmlClass, replicaId].join(' '));
+            .attr('class', replicaId);
         const positionSet = (tspan) => {
             tspan
                 .attr('class', [htmlClass, replicaId].join(' '))
@@ -38,8 +38,7 @@ export const set = () => {
             })
                 .text((d) => d);
         };
-        const text = g
-            .selectAll(`text.${replicaId}`)
+        g.selectAll(`text.${htmlClass}.${replicaId}`)
             .data([null])
             .join((enter) => enter
             .append('text')

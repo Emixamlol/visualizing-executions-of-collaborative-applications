@@ -15,8 +15,8 @@ export const label = () => {
             .selectAll(`g.${replicaId}`)
             .data([null])
             .join('g')
-            .attr('class', [htmlClass, replicaId].join(' '));
-        g.selectAll(`text.${replicaId}`)
+            .attr('class', replicaId);
+        g.selectAll(`text.${htmlClass}.${replicaId}`)
             .data([null])
             .join((enter) => enter
             .append('text')
@@ -26,6 +26,7 @@ export const label = () => {
             // .attr('fill-opacity', 0.5)
             .text(`${replicaId} : `), (update) => update.attr('x', x).attr('y', y));
     };
+    my.label = null;
     my.x = function (_) {
         return arguments.length ? ((x = _), my) : x;
     };

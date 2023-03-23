@@ -49,11 +49,6 @@ export default class CrdtProxy {
                     }) });
                 this.updateState(Message.merge);
                 this.crdtReplica.visualize();
-                // sendObjectId(this.replicaName);
-                // this.crdtReplica.visualize();
-                // sendReplicaId(other.id);
-                // other.crdtReplica.visualize();
-                // positionMergedReplicas(this.id, other.id);
             }
         };
         this.apply = (fn, params) => {

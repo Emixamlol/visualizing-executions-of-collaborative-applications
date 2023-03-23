@@ -1,5 +1,4 @@
 import * as d3 from 'd3';
-import { getStartYs } from '../../data-processing';
 export const flag = () => {
     let x;
     let y;
@@ -18,13 +17,8 @@ export const flag = () => {
             .scaleOrdinal()
             .domain(replicas)
             .range(d3.schemePaired);
-        // const x = margin.left * 2 + 100;
         const t = d3.transition().duration(1000);
         // process data
-        const startYs = getStartYs(data, margin);
-        const y = startYs[data.findIndex(([, replicas]) => replicas.map(({ id }) => id).includes(replicaId))] +
-            margin.top +
-            25;
         // visualization
         const htmlClass = 'crdt-flag';
         const positionFlag = (path) => {
