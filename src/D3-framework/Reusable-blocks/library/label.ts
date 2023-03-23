@@ -1,7 +1,6 @@
 import * as d3 from 'd3';
 import { Data, margin, ReusableLabel } from '../../../types/d3-framework-types';
 import { ID } from '../../../types/proxy-types';
-import { getStartYs } from '../../data-processing';
 
 export const label = (): ReusableLabel => {
   let x: number;

@@ -6,7 +6,6 @@ import {
   ReusableTombstone,
 } from '../../../types/d3-framework-types';
 import { ID } from '../../../types/proxy-types';
-import { getStartYs } from '../../data-processing';
 
 export const tombstone = (): ReusableTombstone => {
   let x: number;

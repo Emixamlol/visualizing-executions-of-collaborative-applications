@@ -1,5 +1,4 @@
 import * as d3 from 'd3';
-import { Data } from '../../types/d3-framework-types';
 import { ReusableButton, updateButtons } from '../../types/gui-types';
 
 export const updateButton = (): ReusableButton => {

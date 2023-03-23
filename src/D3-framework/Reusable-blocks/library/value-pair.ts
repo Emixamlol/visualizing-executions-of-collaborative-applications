@@ -5,7 +5,6 @@ import {
   ReusableValuePair,
 } from '../../../types/d3-framework-types';
 import { ID } from '../../../types/proxy-types';
-import { getStartYs } from '../../data-processing';
 
 export const valuePair = (): ReusableValuePair => {
   let x: number;

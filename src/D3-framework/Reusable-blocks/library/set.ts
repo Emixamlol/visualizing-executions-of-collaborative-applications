@@ -1,7 +1,6 @@
 import * as d3 from 'd3';
 import { Data, margin, ReusableSet } from '../../../types/d3-framework-types';
 import { ID } from '../../../types/proxy-types';
-import { getStartYs, getStateCoordinates } from '../../data-processing';
 
 export const set = (): ReusableSet => {
   let x: number;
@@ -36,6 +35,7 @@ export const set = (): ReusableSet => {
 
     const g = selection
       .selectAll(`g.${replicaId}`)
+      // TODO: refactor "[null]" (use actual data) -> use subCRDTs
       .data([null])
       .join('g')
       .attr('class', replicaId);
