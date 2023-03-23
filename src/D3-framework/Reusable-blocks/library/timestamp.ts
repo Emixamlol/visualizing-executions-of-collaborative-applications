@@ -5,7 +5,6 @@ import {
   ReusableTimestamp,
 } from '../../../types/d3-framework-types';
 import { ID } from '../../../types/proxy-types';
-import { getStartYs } from '../../data-processing';
 
 export const timestamp = (): ReusableTimestamp => {
   let x: number;
@@ -76,7 +75,9 @@ export const timestamp = (): ReusableTimestamp => {
             .call(positionRect)
             .attr('width', bandScale.bandwidth())
             .attr('fill', colorScale(replicaId) as string)
-            .call(spawnRect),
+            .call(spawnRect)
+            .append('title')
+            .text((d) => d),
         (update) =>
           update
             .attr('fill-opacity', 1)
@@ -84,6 +85,8 @@ export const timestamp = (): ReusableTimestamp => {
             .call(positionRect)
             .attr('width', bandScale.bandwidth())
             .attr('fill', colorScale(replicaId) as string)
+            .select('title')
+            .text((d) => d)
       );
   };
 
