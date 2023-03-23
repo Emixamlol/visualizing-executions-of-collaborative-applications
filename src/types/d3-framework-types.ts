@@ -159,7 +159,8 @@ export interface ReusableTimestamp
   timestamp(value: Array<number>): ReusableTimestamp;
 }
 
-export interface ReusableLabel
-  extends LibraryReusableInterface<ReusableLabel> {}
+export interface ReusableLabel extends LibraryReusableInterface<ReusableLabel> {
+  label: void; // discriminator (dummy field to know it's a ReusableLabel)
+}
 
 export type ReusableComponents = Array<LibraryReusableInterface<any>>;

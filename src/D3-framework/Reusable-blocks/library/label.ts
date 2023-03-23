@@ -26,9 +26,9 @@ export const label = (): ReusableLabel => {
       .selectAll(`g.${replicaId}`)
       .data([null])
       .join('g')
-      .attr('class', [htmlClass, replicaId].join(' '));
+      .attr('class', replicaId);
 
-    g.selectAll(`text.${replicaId}`)
+    g.selectAll(`text.${htmlClass}.${replicaId}`)
       .data([null])
       .join(
         (enter) =>
@@ -42,6 +42,8 @@ export const label = (): ReusableLabel => {
         (update) => update.attr('x', x).attr('y', y)
       );
   };
+
+  my.label = null;
 
   my.x = function (_?: number): any {
     return arguments.length ? ((x = _), my) : x;
