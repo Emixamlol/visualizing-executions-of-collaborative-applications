@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { visualizeCRDT } from '../../Proxy';
 
 import { Data } from '../../types/d3-framework-types';
 import { drawBasicState } from './../Reusable-blocks/basic-state';
@@ -38,6 +39,10 @@ const objectCircle = drawObjectCircle()
   .margin(margin)
   .data(data)
   .radius(radius)
+  .on('click', (id) => {
+    console.log(`clicked on circle ${id}`);
+    visualizeCRDT(id);
+  })
   .on('mouseenter', (id) => {
     console.log(`entered circle ${id}`);
   })
