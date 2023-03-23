@@ -68,18 +68,10 @@ export default class CrdtProxy implements ProxyInterface {
     }
   };
 
-  // positionMergedReplicas
-  // positionMergedReplicas
-
   private setupMergeVisualization = (other: CrdtProxy): void => {
     sendObjectId(null); // make sure to delete all specific visualizations
-    // visualize other replica (sender)
-    sendObjectId(other.replicaName);
-    sendReplicaId(other.id);
-    other.crdtReplica.visualize();
-    // visualize this replica (receiver)
-    sendReplicaId(this.id);
-    this.crdtReplica.visualize();
+    other.visualize(); // sender replica
+    this.visualize(); // receiver replica
     positionMergedReplicas(other.id, this.id);
   };
 
@@ -112,6 +104,8 @@ export default class CrdtProxy implements ProxyInterface {
 
   visualize = (): void => {
     console.log(this);
+    sendObjectId(this.replicaName);
+    sendReplicaId(this.id);
     this.crdtReplica.visualize();
   };
 
