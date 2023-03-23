@@ -60,7 +60,10 @@ export const flag = (): ReusableFlag => {
             .attr('class', htmlClass)
             .call(positionFlag)
             .call((enter) => enter.transition(t).call(colorFlag)),
-        (update) => update.call(positionFlag).call(colorFlag)
+        (update) =>
+          update
+            .call((update) => update.transition(t).call(positionFlag))
+            .call((update) => update.transition(t).call(colorFlag))
       );
   };
 

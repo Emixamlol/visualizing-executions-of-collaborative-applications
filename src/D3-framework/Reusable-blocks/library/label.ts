@@ -17,6 +17,8 @@ export const label = (): ReusableLabel => {
   ) => {
     // set scales
 
+    const t = d3.transition().duration(1000);
+
     // process data
 
     // visualization
@@ -28,6 +30,14 @@ export const label = (): ReusableLabel => {
       .join('g')
       .attr('class', replicaId);
 
+    const positionLabel = (text) => {
+      text.attr('x', x).attr('y', y);
+    };
+
+    const spawnLabel = (text) => {
+      text.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
+    };
+
     g.selectAll(`text.${htmlClass}.${replicaId}`)
       .data([null])
       .join(
@@ -35,11 +45,11 @@ export const label = (): ReusableLabel => {
           enter
             .append('text')
             .attr('class', [htmlClass, replicaId].join(' '))
-            .attr('x', x)
-            .attr('y', y)
-            // .attr('fill-opacity', 0.5)
+            .call(positionLabel)
+            .call(spawnLabel)
             .text(`${replicaId} : `),
-        (update) => update.attr('x', x).attr('y', y)
+        (update) =>
+          update.attr('fill-opacity', 1).transition(t).call(positionLabel)
       );
   };
 
