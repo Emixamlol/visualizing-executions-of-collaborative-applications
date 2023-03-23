@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 export const label = () => {
     let x;
     let y;
@@ -8,6 +9,7 @@ export const label = () => {
     let data;
     const my = (selection) => {
         // set scales
+        const t = d3.transition().duration(1000);
         // process data
         // visualization
         const htmlClass = 'crdt-label';
@@ -16,15 +18,20 @@ export const label = () => {
             .data([null])
             .join('g')
             .attr('class', replicaId);
+        const positionLabel = (text) => {
+            text.attr('x', x).attr('y', y);
+        };
+        const spawnLabel = (text) => {
+            text.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
+        };
         g.selectAll(`text.${htmlClass}.${replicaId}`)
             .data([null])
             .join((enter) => enter
             .append('text')
             .attr('class', [htmlClass, replicaId].join(' '))
-            .attr('x', x)
-            .attr('y', y)
-            // .attr('fill-opacity', 0.5)
-            .text(`${replicaId} : `), (update) => update.attr('x', x).attr('y', y));
+            .call(positionLabel)
+            .call(spawnLabel)
+            .text(`${replicaId} : `), (update) => update.attr('fill-opacity', 1).transition(t).call(positionLabel));
     };
     my.label = null;
     my.x = function (_) {

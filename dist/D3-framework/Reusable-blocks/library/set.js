@@ -27,6 +27,9 @@ export const set = () => {
             .data([null])
             .join('g')
             .attr('class', replicaId);
+        const spawnElement = (tspan) => {
+            tspan.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
+        };
         const positionSet = (tspan) => {
             tspan
                 .attr('class', [htmlClass, replicaId].join(' '))
@@ -36,7 +39,7 @@ export const set = () => {
                 if (tombstone.includes(d))
                     return 'red';
             })
-                .text((d) => d);
+                .call((tspan) => tspan.text((d) => d));
         };
         g.selectAll(`text.${htmlClass}.${replicaId}`)
             .data([null])
@@ -47,14 +50,17 @@ export const set = () => {
             .attr('y', y)
             .selectAll('tspan')
             .data(elements)
-            .join((enter) => enter.append('tspan').call(positionSet)), (update) => update
+            .join((enter) => enter.append('tspan').call(positionSet).call(spawnElement)), (update) => update
             .selectAll('tspan')
             .data(elements)
             .join((enter) => enter
             .append('tspan')
             .call(positionSet)
+            .call(spawnElement)
             .filter((d) => tombstone.includes(d))
             .attr('fill', 'red'), (update) => update
+            .attr('fill-opacity', 1)
+            .transition(t)
             .call(positionSet)
             .filter((d) => tombstone.includes(d))
             .attr('fill', 'red')));

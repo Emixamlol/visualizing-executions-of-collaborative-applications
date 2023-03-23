@@ -17,6 +17,7 @@ export const timestamp = () => {
             .scaleOrdinal()
             .domain(replicas)
             .range(d3.schemePaired);
+        const t = d3.transition().duration(1000);
         // visualization
         const htmlClass = 'crdt-timestamp';
         const g = selection
@@ -33,18 +34,32 @@ export const timestamp = () => {
             .scaleLinear()
             .domain([Math.min(...timestamp), Math.max(...timestamp)])
             .range([5, 20]);
+        const spawnRect = (rect) => {
+            rect.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
+        };
+        const positionRect = (rect) => {
+            rect
+                .attr('x', (d, i) => x + bandScale(i.toString()))
+                .attr('y', y)
+                .attr('height', (d) => {
+                console.log(d);
+                return yScale(d);
+            });
+        };
         g.selectAll('rect')
             .data(timestamp)
-            .join('rect')
+            .join((enter) => enter
+            .append('rect')
             .attr('class', htmlClass)
-            .attr('x', (d, i) => x + bandScale(i.toString()))
-            .attr('y', y)
-            .attr('height', (d) => {
-            console.log(d);
-            return yScale(d);
-        })
+            .call(positionRect)
             .attr('width', bandScale.bandwidth())
-            .attr('fill', colorScale(replicaId));
+            .attr('fill', colorScale(replicaId))
+            .call(spawnRect), (update) => update
+            .attr('fill-opacity', 1)
+            .transition(t)
+            .call(positionRect)
+            .attr('width', bandScale.bandwidth())
+            .attr('fill', colorScale(replicaId)));
     };
     my.x = function (_) {
         return arguments.length ? ((x = _), my) : x;

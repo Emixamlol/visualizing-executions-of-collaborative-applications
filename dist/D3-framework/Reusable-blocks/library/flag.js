@@ -42,7 +42,9 @@ export const flag = () => {
             .append('path')
             .attr('class', htmlClass)
             .call(positionFlag)
-            .call((enter) => enter.transition(t).call(colorFlag)), (update) => update.call(positionFlag).call(colorFlag));
+            .call((enter) => enter.transition(t).call(colorFlag)), (update) => update
+            .call((update) => update.transition(t).call(positionFlag))
+            .call((update) => update.transition(t).call(colorFlag)));
     };
     my.x = function (_) {
         return arguments.length ? ((x = _), my) : x;
