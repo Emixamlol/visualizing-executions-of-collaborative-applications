@@ -75,9 +75,6 @@ export default class GrowOnly_Set implements SetInterface {
   getTimestamp = (): number[] => this.timestamp.getVector();
 
   visualize = (): void => {
-    console.log('visualizing grow_set');
-    console.log(Array.from(this.A));
-
     drawSet(Array.from(this.A));
   };
 }
