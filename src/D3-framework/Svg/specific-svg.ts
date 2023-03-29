@@ -250,7 +250,7 @@ const drawRegister = (value: string, timestamp: Array<number>): void => {
     .data(localData);
 
   // TODO: get element widths
-  const Timestamp = reusableTimestamp()
+  /* const Timestamp = reusableTimestamp()
     .width(width)
     .height(height)
     .margin(margin)
@@ -258,9 +258,9 @@ const drawRegister = (value: string, timestamp: Array<number>): void => {
     .y(yValue(replicaId))
     .data(localData)
     .replicaId(replicaId)
-    .timestamp(timestamp);
+    .timestamp(timestamp); */
 
-  const components = [Label, Set, Timestamp];
+  const components = [Label, Set]; //, Timestamp];
 
   activeVisualizations.set(replicaId, components);
 
