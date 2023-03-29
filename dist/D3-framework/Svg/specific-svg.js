@@ -193,16 +193,16 @@ const drawRegister = (value, timestamp) => {
         .replicaId(replicaId)
         .data(localData);
     // TODO: get element widths
-    const Timestamp = reusableTimestamp()
-        .width(width)
-        .height(height)
-        .margin(margin)
-        .x(baseX + 100)
-        .y(yValue(replicaId))
-        .data(localData)
-        .replicaId(replicaId)
-        .timestamp(timestamp);
-    const components = [Label, Set, Timestamp];
+    /* const Timestamp = reusableTimestamp()
+      .width(width)
+      .height(height)
+      .margin(margin)
+      .x(baseX + 100)
+      .y(yValue(replicaId))
+      .data(localData)
+      .replicaId(replicaId)
+      .timestamp(timestamp); */
+    const components = [Label, Set]; //, Timestamp];
     activeVisualizations.set(replicaId, components);
     if (merge) {
         drawMergedReplica(components);

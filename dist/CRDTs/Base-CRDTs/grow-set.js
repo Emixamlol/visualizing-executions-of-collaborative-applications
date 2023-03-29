@@ -48,8 +48,6 @@ export default class GrowOnly_Set {
         };
         this.getTimestamp = () => this.timestamp.getVector();
         this.visualize = () => {
-            console.log('visualizing grow_set');
-            console.log(Array.from(this.A));
             drawSet(Array.from(this.A));
         };
         this.A = new Set([]);
