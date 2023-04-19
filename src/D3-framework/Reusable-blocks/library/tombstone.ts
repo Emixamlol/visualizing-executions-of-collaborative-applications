@@ -15,6 +15,7 @@ export const tombstone = (): ReusableTombstone => {
   let margin: margin;
   let replicaId: ID;
   let data: Data = [];
+  let color: string;
 
   const my: ReusableTombstone = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -121,6 +122,10 @@ export const tombstone = (): ReusableTombstone => {
 
   my.data = function (_?: Data): any {
     return arguments.length ? ((data = _), my) : data;
+  };
+
+  my.color = function (_?: string): any {
+    return arguments.length ? ((color = _), my) : color;
   };
 
   return my;

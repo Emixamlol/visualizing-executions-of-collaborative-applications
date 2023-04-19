@@ -10,6 +10,7 @@ export const set = (): ReusableSet => {
   let margin: margin;
   let replicaId: ID;
   let data: Data = [];
+  let color: string;
   let elements: Array<string>;
   let tombstone: Array<string> = [];
 
@@ -118,6 +119,10 @@ export const set = (): ReusableSet => {
 
   my.data = function (_?: Data): any {
     return arguments.length ? ((data = _), my) : data;
+  };
+
+  my.color = function (_?: string): any {
+    return arguments.length ? ((color = _), my) : color;
   };
 
   my.tombstone = function (_?: Array<string>): any {

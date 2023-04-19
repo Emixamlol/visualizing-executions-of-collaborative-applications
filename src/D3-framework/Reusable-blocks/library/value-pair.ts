@@ -14,6 +14,7 @@ export const valuePair = (): ReusableValuePair => {
   let margin: margin;
   let replicaId: ID;
   let data: Data = [];
+  let color: string;
   let tuples: Array<[string, ID]>;
 
   const my: ReusableValuePair = (
@@ -149,6 +150,10 @@ export const valuePair = (): ReusableValuePair => {
 
   my.data = function (_?: Data): any {
     return arguments.length ? ((data = _), my) : data;
+  };
+
+  my.color = function (_?: string): any {
+    return arguments.length ? ((color = _), my) : color;
   };
 
   my.tuples = function (_?: Array<[string, ID]>): any {
