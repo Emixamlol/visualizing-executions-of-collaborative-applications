@@ -38,7 +38,7 @@ export const drawObjectCircle = (): ReusableObjectCircle => {
     type processedData = Array<Array<{ ry: number; y: number; id: string }>>;
 
     const objects: processedData = data.map(([, replicas], dataIndex) =>
-      replicas.map(({ id, state }, replicaIndex) => ({
+      replicas.map(({ id }, replicaIndex) => ({
         ry: replicas.length * 50,
         y: startYs[dataIndex] + radius + margin.top + 100 * replicaIndex,
         id,
