@@ -76,8 +76,9 @@ export default class CrdtProxy implements ProxyInterface {
   };
 
   merge = (other: CrdtProxy): void => {
+    // TODO: refactor merge visualization and call it again
     if (this.replicaName === other.replicaName) {
-      this.setupMergeVisualization(other); // set up the specific visualization of the merge
+      // this.setupMergeVisualization(other); // set up the specific visualization of the merge
       // perform the merge on the replicas and update the state
       this.crdtReplica = this.crdtReplica.merge(other.crdtReplica);
       this.state = {

@@ -1,4 +1,5 @@
 import VectorClock from '../CRDTs/vector-clock';
+import { basicParameters } from './d3-framework-types';
 
 export type payload = [string, Array<number>];
 
@@ -22,7 +23,7 @@ export interface CRDTInterface {
 
   getTimestamp(): Array<number>;
 
-  visualize(x?: number, y?: number): void; // how should the CRDT be visualized in the specific visualization
+  visualize(params?: basicParameters): void; // how should the CRDT be visualized in the specific visualization
 }
 
 // ------------------------------------------ revisited ------------------------------------------
