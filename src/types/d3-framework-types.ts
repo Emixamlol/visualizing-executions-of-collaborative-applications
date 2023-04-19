@@ -29,6 +29,13 @@ export type margin = {
   left: number;
 };
 
+export type basicParameters = {
+  label: string;
+  x: number;
+  y: number;
+  color: string;
+};
+
 // ------------------------------------------- processed data types -------------------------------------------
 
 export type stateCoordinates = Array<{
@@ -129,6 +136,9 @@ interface LibraryReusableInterface<T> extends ReusablePatternInterface<T> {
 
   y(): number;
   y(value: number): T;
+
+  color(): string;
+  color(value: string): T;
 }
 
 export interface ReusableFlag extends LibraryReusableInterface<ReusableFlag> {
