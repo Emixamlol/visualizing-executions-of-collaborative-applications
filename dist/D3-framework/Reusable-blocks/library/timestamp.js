@@ -7,6 +7,7 @@ export const timestamp = () => {
     let margin;
     let replicaId;
     let data = [];
+    let color;
     let timestamp;
     const my = (selection) => {
         // set scales
@@ -85,6 +86,9 @@ export const timestamp = () => {
     };
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : data;
+    };
+    my.color = function (_) {
+        return arguments.length ? ((color = _), my) : color;
     };
     my.timestamp = function (_) {
         return arguments.length ? ((timestamp = _), my) : timestamp;

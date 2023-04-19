@@ -8,6 +8,7 @@ export const tombstone = () => {
     let margin;
     let replicaId;
     let data = [];
+    let color;
     const my = (selection) => {
         // set scales
         const replicas = data
@@ -78,6 +79,9 @@ export const tombstone = () => {
     };
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : data;
+    };
+    my.color = function (_) {
+        return arguments.length ? ((color = _), my) : color;
     };
     return my;
 };

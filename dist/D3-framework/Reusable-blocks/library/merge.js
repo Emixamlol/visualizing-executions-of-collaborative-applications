@@ -40,8 +40,6 @@ export const mergeArrows = () => {
             .attr('stroke-miterlimit', 10)
             .attr('pointer-events', 'all')
             .call(spawnInformation);
-        /* curve.attr('transform', 'translate(300, 120)');
-        head.attr('transform', 'translate(300, 120)'); */
         // arrow from receiver replica to result of merge
         const receiverLine = g
             .selectAll('path.senderLine')
@@ -67,8 +65,6 @@ export const mergeArrows = () => {
             .attr('stroke-miterlimit', 10)
             .attr('pointer-events', 'all')
             .call(spawnInformation);
-        /* receiverLine.attr('transform', 'translate(500, 280)');
-        receiverHead.attr('transform', 'translate(500, 280)'); */
         // message
         g.selectAll('text')
             .data([null])

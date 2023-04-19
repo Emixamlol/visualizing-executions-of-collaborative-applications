@@ -7,6 +7,7 @@ export const set = () => {
     let margin;
     let replicaId;
     let data = [];
+    let color;
     let elements;
     let tombstone = [];
     const my = (selection) => {
@@ -86,6 +87,9 @@ export const set = () => {
     };
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : data;
+    };
+    my.color = function (_) {
+        return arguments.length ? ((color = _), my) : color;
     };
     my.tombstone = function (_) {
         return arguments.length ? ((tombstone = _), my) : tombstone;

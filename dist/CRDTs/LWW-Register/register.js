@@ -20,9 +20,14 @@ export default class LWW_Register {
         };
         this.payload = () => [this.X, this.getTimestamp()];
         this.getTimestamp = () => this.timestamp.getVector();
-        this.visualize = () => {
-            // drawSet(false, [this.value()]);
-            drawRegister(this.value(), this.getTimestamp());
+        this.visualize = (params) => {
+            const defaultParameters = {
+                label: 'register',
+                x: 0,
+                y: 0,
+                color: '',
+            };
+            drawRegister(params === undefined ? defaultParameters : params, this.value(), this.getTimestamp());
         };
         this.X = undefined;
         this.pid = pid;

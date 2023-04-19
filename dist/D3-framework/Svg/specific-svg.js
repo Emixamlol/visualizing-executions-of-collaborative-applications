@@ -23,8 +23,14 @@ let localData = [];
 let replicas;
 let startHeights;
 let merge = false;
+// TODO: refactor to work around groupElements map
 /**
- * map of replicas who are currently being visualized in the specific-svg, mapped to the elements visualizing them
+ * map of id to group elements. The latter contains the svg elements drawing the replica with that id
+ */
+const groupElements = new Map();
+// TODO : refactor so that composition is possible
+/**
+ * map of replicas who are currently being visualized in the specific-svg, mapped to the Map of sub-elements visualizing them
  */
 const activeVisualizations = new Map();
 // svg
@@ -37,23 +43,31 @@ const svg = d3
     .attr('height', height);
 // group element visualizing the result of a merge
 const mergeG = svg.append('g').attr('class', 'merge');
-// update objectId, replicaId and data
+// ------------------------- update methods -------------------------
+// update objectId
 const sendObjectId = (id) => {
     console.log(`objectId = ${objecId}, sent id = ${id}`);
     if (objecId !== id) {
         console.log(`removing all elements (except merge group) in specific visualization`);
         svg.selectChildren('*').filter(':not(g.merge)').remove();
         mergeG.selectChildren('*').remove();
+        groupElements.clear();
         activeVisualizations.clear();
     }
     objecId = id;
 };
+// update replicaId
 const sendReplicaId = (id) => {
     console.log(`replicaId = ${replicaId}, id = ${id}`);
     replicaId = id;
+    if (!groupElements.has(id)) {
+        const g = svg.append('g').attr('class', id);
+        groupElements.set(id, g);
+    }
     mergeG.selectChildren('*').remove();
     console.log(`replicaId = ${replicaId}, id = ${id}`);
 };
+// update the data sent by the proxies
 const update = (data) => {
     localData = data;
     replicas = data.map(([, replicas]) => replicas.map(({ id }) => id)).flat();
@@ -62,8 +76,19 @@ const update = (data) => {
         .map(([, replicas], dataIndex) => replicas.map((d, replicaIndex) => startYs[dataIndex] + 25 + margin.top + 100 * replicaIndex))
         .flat();
 };
+// add newly created visualization components for a replica to the map
+const updateVisualizations = (label, components) => {
+    const subComponents = activeVisualizations.get(replicaId);
+    const id = label === undefined ? replicaId : label;
+    const allComponents = subComponents === undefined
+        ? new Map([[id, components]])
+        : subComponents.set(id, components);
+    activeVisualizations.set(replicaId, allComponents);
+    console.log(activeVisualizations, 'activeVisualizations');
+};
 const remove = (id) => {
     svg.selectAll(`g.${id}`).remove();
+    groupElements.delete(id);
     activeVisualizations.delete(id);
 };
 const yValue = (replicaId) => {
@@ -105,31 +130,42 @@ const positionMergedReplicas = (senderId, receiverId) => {
         activeVisualizations.get(senderId),
         activeVisualizations.get(receiverId),
     ];
-    senderComponents.forEach((component) => {
-        component.y(newY);
-        svg.call(component);
+    senderComponents.forEach((components, key) => {
+        const g = groupElements.get(senderId);
+        components.forEach((component) => {
+            component.y(newY);
+            g.call(component);
+        });
     });
-    receiverComponents.forEach((component) => {
-        const newX = component.x() + addX;
-        component.x(newX);
-        component.y(newY);
-        svg.call(component);
+    receiverComponents.forEach((components, key) => {
+        const g = groupElements.get(receiverId);
+        components.forEach((component) => {
+            const newX = component.x() + addX;
+            component.x(newX);
+            component.y(newY);
+            g.call(component);
+        });
     });
 };
 const drawReplicas = () => {
     // draw the currently active replicas
-    activeVisualizations.forEach((components, replicaId) => {
-        components.forEach((component) => {
-            const props = Object.getOwnPropertyNames(component);
-            component
-                .x(props.includes('label') ? labelX : baseX)
-                .y(yValue(replicaId));
-            svg.call(component);
+    activeVisualizations.forEach((map, replicaId) => {
+        const g = groupElements.get(replicaId);
+        map.forEach((components, key) => {
+            components.forEach((component) => {
+                const props = Object.getOwnPropertyNames(component);
+                component
+                    .x(props.includes('label') ? labelX : baseX)
+                    .y(yValue(replicaId))
+                    .replicaId(key);
+                g.call(component);
+            });
         });
     });
 };
 // ----- component methods -----
-const drawFlag = (enabled) => {
+const drawFlag = (params, enabled) => {
+    const { label, x, y, color } = params;
     const Label = newLabel();
     const Flag = flag()
         .width(width)
@@ -141,7 +177,7 @@ const drawFlag = (enabled) => {
         .replicaId(replicaId)
         .data(localData);
     const components = [Label, Flag];
-    activeVisualizations.set(replicaId, components);
+    updateVisualizations(label, components);
     if (merge) {
         drawMergedReplica(components);
     }
@@ -149,7 +185,8 @@ const drawFlag = (enabled) => {
         drawReplicas();
     }
 };
-const drawCounter = (value, P) => {
+const drawCounter = (params, value, P) => {
+    const { label, x, y, color } = params;
     const elements = [value.toString()];
     const Label = newLabel();
     const Set = set()
@@ -171,7 +208,7 @@ const drawCounter = (value, P) => {
         .replicaId(replicaId)
         .timestamp(P);
     const components = [Label, Set, P_vector];
-    activeVisualizations.set(replicaId, components);
+    updateVisualizations(label, components);
     if (merge) {
         drawMergedReplica(components);
     }
@@ -179,7 +216,8 @@ const drawCounter = (value, P) => {
         drawReplicas();
     }
 };
-const drawRegister = (value, timestamp) => {
+const drawRegister = (params, value, timestamp) => {
+    const { label, x, y, color } = params;
     const Label = newLabel();
     // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
     const elements = value === undefined ? ['undefined'] : [value.toString()];
@@ -203,7 +241,7 @@ const drawRegister = (value, timestamp) => {
       .replicaId(replicaId)
       .timestamp(timestamp); */
     const components = [Label, Set]; //, Timestamp];
-    activeVisualizations.set(replicaId, components);
+    updateVisualizations(label, components);
     if (merge) {
         drawMergedReplica(components);
     }
@@ -211,7 +249,8 @@ const drawRegister = (value, timestamp) => {
         drawReplicas();
     }
 };
-const drawSet = (elements, tombstone) => {
+const drawSet = (params, elements, tombstone) => {
+    const { label, x, y, color } = params;
     const Label = newLabel();
     const Set = set()
         .width(width)
@@ -224,7 +263,7 @@ const drawSet = (elements, tombstone) => {
         .replicaId(replicaId)
         .data(localData);
     const components = [Label, Set];
-    activeVisualizations.set(replicaId, components);
+    updateVisualizations(label, components);
     if (merge) {
         drawMergedReplica(components);
     }
@@ -232,7 +271,8 @@ const drawSet = (elements, tombstone) => {
         drawReplicas();
     }
 };
-const drawTombstone = () => {
+const drawTombstone = (params) => {
+    const { label, x, y, color } = params;
     const Label = newLabel();
     const Tombstone = tombstone()
         .width(width)
@@ -243,7 +283,7 @@ const drawTombstone = () => {
         .replicaId(replicaId)
         .data(localData);
     const components = [Label, Tombstone];
-    activeVisualizations.set(replicaId, components);
+    updateVisualizations(label, components);
     if (merge) {
         drawMergedReplica(components);
     }
@@ -251,5 +291,5 @@ const drawTombstone = () => {
         drawReplicas();
     }
 };
-const drawValuePair = () => { };
+const drawValuePair = (params) => { };
 export { sendObjectId, sendReplicaId, update, drawFlag, drawCounter, drawRegister, drawSet, drawTombstone, drawValuePair, positionMergedReplicas, };

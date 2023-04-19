@@ -20,7 +20,7 @@ export const drawObjectCircle = () => {
         const t = d3.transition().duration(1000);
         // process data
         const startYs = getStartYs(data, margin);
-        const objects = data.map(([, replicas], dataIndex) => replicas.map(({ id, state }, replicaIndex) => ({
+        const objects = data.map(([, replicas], dataIndex) => replicas.map(({ id }, replicaIndex) => ({
             ry: replicas.length * 50,
             y: startYs[dataIndex] + radius + margin.top + 100 * replicaIndex,
             id,

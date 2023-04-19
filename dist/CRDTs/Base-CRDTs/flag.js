@@ -19,8 +19,14 @@ export default class LWW_Flag {
             this.getTimestamp(),
         ];
         this.getTimestamp = () => this.timestamp.getVector();
-        this.visualize = () => {
-            drawFlag(this.value());
+        this.visualize = (params) => {
+            const defaultParameters = {
+                label: 'flag',
+                x: 0,
+                y: 0,
+                color: '',
+            };
+            drawFlag(params === undefined ? defaultParameters : params, this.value());
         };
         this.flag = true;
         this.pid = pid;

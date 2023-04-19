@@ -25,8 +25,14 @@ export default class Inc_Counter {
             this.getTimestamp(),
         ];
         this.getTimestamp = () => this.timestamp.getVector();
-        this.visualize = () => {
-            drawCounter(this.value(), this.P.slice());
+        this.visualize = (params) => {
+            const defaultParameters = {
+                label: 'inc-counter',
+                x: 0,
+                y: 0,
+                color: '',
+            };
+            drawCounter(params === undefined ? defaultParameters : params, this.value(), this.P.slice());
         };
         this.pid = pid;
         this.timestamp = new VectorClock(n);

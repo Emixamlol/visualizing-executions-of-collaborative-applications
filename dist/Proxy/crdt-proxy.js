@@ -29,8 +29,9 @@ export default class CrdtProxy {
             positionMergedReplicas(other.id, this.id);
         };
         this.merge = (other) => {
+            // TODO: refactor merge visualization and call it again
             if (this.replicaName === other.replicaName) {
-                this.setupMergeVisualization(other); // set up the specific visualization of the merge
+                // this.setupMergeVisualization(other); // set up the specific visualization of the merge
                 // perform the merge on the replicas and update the state
                 this.crdtReplica = this.crdtReplica.merge(other.crdtReplica);
                 this.state = Object.assign(Object.assign({}, this.state), { merges: this.state.merges.concat({

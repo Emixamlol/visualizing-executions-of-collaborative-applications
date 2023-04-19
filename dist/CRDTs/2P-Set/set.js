@@ -1,4 +1,3 @@
-import { drawSet } from '../../D3-framework';
 import { CRDTtype } from '../../types/crdt-types';
 import GrowOnly_Set from '../Base-CRDTs/grow-set';
 import VectorClock from '../vector-clock';
@@ -35,15 +34,18 @@ export default class TwoPhase_Set {
             ];
         };
         this.getTimestamp = () => this.timestamp.getVector();
-        this.visualize = () => {
+        this.visualize = (params) => {
             console.log(`visualizing 2-phase set with pid = ${this.pid}`);
-            const [elements, tombstone] = [
-                this.A.payload()[0].split(','),
-                this.R.payload()[0].split(','),
+            /*   const [elements, tombstone] = [
+              this.A.payload()[0].split(','),
+              this.R.payload()[0].split(','),
             ];
             console.log(elements);
             console.log(tombstone);
-            drawSet(elements, tombstone);
+        
+            drawSet(elements, tombstone); */
+            this.A.visualize({ label: 'A', x: 0, y: 0, color: '' });
+            this.R.visualize({ label: 'R', x: 0, y: 0, color: '' });
         };
         this.A = new GrowOnly_Set(maxProcesses, pid);
         this.R = new GrowOnly_Set(maxProcesses, pid);

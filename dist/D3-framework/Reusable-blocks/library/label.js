@@ -7,6 +7,7 @@ export const label = () => {
     let margin;
     let replicaId;
     let data;
+    let color;
     const my = (selection) => {
         // set scales
         const t = d3.transition().duration(1000);
@@ -54,6 +55,9 @@ export const label = () => {
     };
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : data;
+    };
+    my.color = function (_) {
+        return arguments.length ? ((color = _), my) : color;
     };
     return my;
 };

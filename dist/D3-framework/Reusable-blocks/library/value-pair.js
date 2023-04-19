@@ -7,6 +7,7 @@ export const valuePair = () => {
     let margin;
     let replicaId;
     let data = [];
+    let color;
     let tuples;
     const my = (selection) => {
         // set scales
@@ -108,6 +109,9 @@ export const valuePair = () => {
     };
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : data;
+    };
+    my.color = function (_) {
+        return arguments.length ? ((color = _), my) : color;
     };
     my.tuples = function (_) {
         return arguments.length ? ((tuples = _), my) : tuples;

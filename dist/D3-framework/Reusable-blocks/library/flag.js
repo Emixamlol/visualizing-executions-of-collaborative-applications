@@ -8,6 +8,7 @@ export const flag = () => {
     let enabled;
     let replicaId;
     let data = [];
+    let color;
     const my = (selection) => {
         // set scales
         const replicas = data
@@ -69,6 +70,9 @@ export const flag = () => {
     };
     my.data = function (_) {
         return arguments.length ? ((data = _), my) : data;
+    };
+    my.color = function (_) {
+        return arguments.length ? ((color = _), my) : color;
     };
     return my;
 };
