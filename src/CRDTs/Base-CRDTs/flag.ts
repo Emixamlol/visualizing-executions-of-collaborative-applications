@@ -1,5 +1,6 @@
 import { drawFlag } from '../../D3-framework';
 import { CRDTInterface, CRDTtype } from '../../types/crdt-types';
+import { basicParameters } from '../../types/d3-framework-types';
 import VectorClock from '../vector-clock';
 
 interface FlagInterface extends CRDTInterface {
@@ -58,7 +59,13 @@ export default class LWW_Flag implements FlagInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (): void => {
-    drawFlag(this.value());
+  visualize = (params?: basicParameters): void => {
+    const defaultParameters: basicParameters = {
+      label: 'flag',
+      x: 0,
+      y: 0,
+      color: '',
+    };
+    drawFlag(params === undefined ? defaultParameters : params, this.value());
   };
 }

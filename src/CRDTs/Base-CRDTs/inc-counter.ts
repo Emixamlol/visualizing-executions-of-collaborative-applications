@@ -1,5 +1,6 @@
 import { drawCounter, drawSet, drawTombstone } from '../../D3-framework';
 import { CRDTInterface, CRDTtype, payload } from '../../types/crdt-types';
+import { basicParameters } from '../../types/d3-framework-types';
 import VectorClock from '../vector-clock';
 
 interface Inc_CounterInterface extends CRDTInterface {
@@ -53,7 +54,17 @@ export default class Inc_Counter implements Inc_CounterInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (): void => {
-    drawCounter(this.value(), this.P.slice());
+  visualize = (params?: basicParameters): void => {
+    const defaultParameters: basicParameters = {
+      label: 'inc-counter',
+      x: 0,
+      y: 0,
+      color: '',
+    };
+    drawCounter(
+      params === undefined ? defaultParameters : params,
+      this.value(),
+      this.P.slice()
+    );
   };
 }

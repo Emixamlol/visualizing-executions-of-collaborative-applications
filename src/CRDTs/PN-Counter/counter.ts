@@ -1,5 +1,6 @@
 import { drawCounter } from '../../D3-framework';
 import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
+import { basicParameters } from '../../types/d3-framework-types';
 import Inc_Counter from '../Base-CRDTs/inc-counter';
 import VectorClock from '../vector-clock';
 
@@ -70,7 +71,8 @@ export default class PN_Counter implements PN_CounterInterface {
     this.timestamp.getVector(),
   ];
 
-  visualize = (): void => {
-    drawCounter(this.value(), this.getTimestamp());
+  visualize = (params?: basicParameters): void => {
+    this.P.visualize({ label: 'P', x: 0, y: 0, color: '' });
+    this.N.visualize({ label: 'N', x: 0, y: 0, color: '' });
   };
 }

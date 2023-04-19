@@ -1,5 +1,6 @@
 import { drawRegister } from '../../D3-framework';
 import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
+import { basicParameters } from '../../types/d3-framework-types';
 import VectorClock from '../vector-clock';
 
 interface RegisterInterface extends CRDTInterface {
@@ -48,8 +49,17 @@ export default class LWW_Register implements RegisterInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (): void => {
-    // drawSet(false, [this.value()]);
-    drawRegister(this.value(), this.getTimestamp());
+  visualize = (params: basicParameters): void => {
+    const defaultParameters: basicParameters = {
+      label: 'register',
+      x: 0,
+      y: 0,
+      color: '',
+    };
+    drawRegister(
+      params === undefined ? defaultParameters : params,
+      this.value(),
+      this.getTimestamp()
+    );
   };
 }
