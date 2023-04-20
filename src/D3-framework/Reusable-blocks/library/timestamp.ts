@@ -75,7 +75,10 @@ export const timestamp = (): ReusableTimestamp => {
             .attr('class', htmlClass)
             .call(positionRect)
             .attr('width', bandScale.bandwidth())
-            .attr('fill', colorScale(replicaId) as string)
+            .attr(
+              'fill',
+              color === undefined ? (colorScale(replicaId) as string) : color
+            )
             .call(spawnRect)
             .append('title')
             .text((d) => d),
@@ -85,7 +88,10 @@ export const timestamp = (): ReusableTimestamp => {
             .transition(t)
             .call(positionRect)
             .attr('width', bandScale.bandwidth())
-            .attr('fill', colorScale(replicaId) as string)
+            .attr(
+              'fill',
+              color === undefined ? (colorScale(replicaId) as string) : color
+            )
             .select('title')
             .text((d) => d)
       );
