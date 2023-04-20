@@ -25,7 +25,6 @@ export const set = () => {
         const htmlClass = 'crdt-set';
         const g = selection
             .selectAll(`g.${replicaId}`)
-            // TODO: refactor "[null]" (use actual data) -> use subCRDTs
             .data([null])
             .join('g')
             .attr('class', replicaId);

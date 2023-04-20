@@ -8,6 +8,7 @@ export const label = () => {
     let replicaId;
     let data;
     let color;
+    let caption;
     const my = (selection) => {
         // set scales
         const t = d3.transition().duration(1000);
@@ -32,9 +33,8 @@ export const label = () => {
             .attr('class', [htmlClass, replicaId].join(' '))
             .call(positionLabel)
             .call(spawnLabel)
-            .text(`${replicaId} : `), (update) => update.attr('fill-opacity', 1).transition(t).call(positionLabel));
+            .text(`${caption} : `), (update) => update.attr('fill-opacity', 1).transition(t).call(positionLabel));
     };
-    my.label = null;
     my.x = function (_) {
         return arguments.length ? ((x = _), my) : x;
     };
@@ -58,6 +58,9 @@ export const label = () => {
     };
     my.color = function (_) {
         return arguments.length ? ((color = _), my) : color;
+    };
+    my.caption = function (_) {
+        return arguments.length ? ((caption = _), my) : caption;
     };
     return my;
 };

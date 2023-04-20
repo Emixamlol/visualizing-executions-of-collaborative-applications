@@ -6,6 +6,7 @@ import { mergeArrows } from '../Reusable-blocks/library/merge';
 import { set } from '../Reusable-blocks/library/set';
 import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/timestamp';
 import { tombstone } from '../Reusable-blocks/library/tombstone';
+import { componentHandling } from '../component-handling';
 const visualizationDiv = document.getElementById('visualization');
 const dimensions = visualizationDiv.getBoundingClientRect();
 // constants
@@ -33,6 +34,7 @@ const groupElements = new Map();
  * map of replicas who are currently being visualized in the specific-svg, mapped to the Map of sub-elements visualizing them
  */
 const activeVisualizations = new Map();
+const refactorMap = new Map();
 // svg
 const svg = d3
     .select('div.visualization')
@@ -58,14 +60,17 @@ const sendObjectId = (id) => {
 };
 // update replicaId
 const sendReplicaId = (id) => {
-    console.log(`replicaId = ${replicaId}, id = ${id}`);
     replicaId = id;
     if (!groupElements.has(id)) {
         const g = svg.append('g').attr('class', id);
         groupElements.set(id, g);
     }
+    if (!refactorMap.has(id)) {
+        const g = svg.append('g').attr('class', id);
+        const handler = new componentHandling(g);
+        refactorMap.set(id, handler);
+    }
     mergeG.selectChildren('*').remove();
-    console.log(`replicaId = ${replicaId}, id = ${id}`);
 };
 // update the data sent by the proxies
 const update = (data) => {
@@ -97,7 +102,7 @@ const yValue = (replicaId) => {
 };
 // ------------------------- draw methods -------------------------
 // ----- help methods -----
-const newLabel = () => {
+const newLabel = (caption) => {
     return label()
         .width(width)
         .height(height)
@@ -105,7 +110,8 @@ const newLabel = () => {
         .x(labelX)
         .y(yValue(replicaId))
         .replicaId(replicaId)
-        .data(localData);
+        .data(localData)
+        .caption(caption);
 };
 const drawMergedReplica = (components) => {
     console.log(`drawing merged replica with merge = ${merge}`);
@@ -147,26 +153,32 @@ const positionMergedReplicas = (senderId, receiverId) => {
         });
     });
 };
+/* const drawReplicas = (): void => {
+  // draw the currently active replicas
+  activeVisualizations.forEach((map, replicaId) => {
+    const g = groupElements.get(replicaId);
+    map.forEach((components, key) => {
+      components.forEach((component) => {
+        const props = Object.getOwnPropertyNames(component);
+        component
+          .x(props.includes('caption') ? labelX : baseX)
+          .y(yValue(replicaId))
+          .replicaId(key);
+        g.call(component);
+      });
+    });
+  });
+}; */
 const drawReplicas = () => {
     // draw the currently active replicas
-    activeVisualizations.forEach((map, replicaId) => {
-        const g = groupElements.get(replicaId);
-        map.forEach((components, key) => {
-            components.forEach((component) => {
-                const props = Object.getOwnPropertyNames(component);
-                component
-                    .x(props.includes('label') ? labelX : baseX)
-                    .y(yValue(replicaId))
-                    .replicaId(key);
-                g.call(component);
-            });
-        });
+    refactorMap.forEach((handler, label) => {
+        handler.drawAllComponents();
     });
 };
 // ----- component methods -----
 const drawFlag = (params, enabled) => {
     const { label, x, y, color } = params;
-    const Label = newLabel();
+    const Label = newLabel(label);
     const Flag = flag()
         .width(width)
         .height(height)
@@ -188,12 +200,12 @@ const drawFlag = (params, enabled) => {
 const drawCounter = (params, value, P) => {
     const { label, x, y, color } = params;
     const elements = [value.toString()];
-    const Label = newLabel();
+    const Label = newLabel(label);
     const Set = set()
         .width(width)
         .height(height)
         .margin(margin)
-        .x(baseX)
+        .x(x)
         .y(yValue(replicaId))
         .elements(elements)
         .replicaId(replicaId)
@@ -202,13 +214,15 @@ const drawCounter = (params, value, P) => {
         .width(width)
         .height(height)
         .margin(margin)
-        .x(baseX)
+        .x(x)
         .y(yValue(replicaId))
         .data(localData)
         .replicaId(replicaId)
-        .timestamp(P);
+        .timestamp(P)
+        .color(color);
     const components = [Label, Set, P_vector];
     updateVisualizations(label, components);
+    refactorMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
     if (merge) {
         drawMergedReplica(components);
     }
@@ -218,7 +232,7 @@ const drawCounter = (params, value, P) => {
 };
 const drawRegister = (params, value, timestamp) => {
     const { label, x, y, color } = params;
-    const Label = newLabel();
+    const Label = newLabel(label);
     // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
     const elements = value === undefined ? ['undefined'] : [value.toString()];
     const Set = set()
@@ -231,16 +245,7 @@ const drawRegister = (params, value, timestamp) => {
         .replicaId(replicaId)
         .data(localData);
     // TODO: get element widths
-    /* const Timestamp = reusableTimestamp()
-      .width(width)
-      .height(height)
-      .margin(margin)
-      .x(baseX + 100)
-      .y(yValue(replicaId))
-      .data(localData)
-      .replicaId(replicaId)
-      .timestamp(timestamp); */
-    const components = [Label, Set]; //, Timestamp];
+    const components = [Label, Set];
     updateVisualizations(label, components);
     if (merge) {
         drawMergedReplica(components);
@@ -251,7 +256,7 @@ const drawRegister = (params, value, timestamp) => {
 };
 const drawSet = (params, elements, tombstone) => {
     const { label, x, y, color } = params;
-    const Label = newLabel();
+    const Label = newLabel(label);
     const Set = set()
         .width(width)
         .height(height)
@@ -273,7 +278,7 @@ const drawSet = (params, elements, tombstone) => {
 };
 const drawTombstone = (params) => {
     const { label, x, y, color } = params;
-    const Label = newLabel();
+    const Label = newLabel(label);
     const Tombstone = tombstone()
         .width(width)
         .height(height)

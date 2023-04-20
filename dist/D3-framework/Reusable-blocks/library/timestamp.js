@@ -54,7 +54,7 @@ export const timestamp = () => {
             .attr('class', htmlClass)
             .call(positionRect)
             .attr('width', bandScale.bandwidth())
-            .attr('fill', colorScale(replicaId))
+            .attr('fill', color === undefined ? colorScale(replicaId) : color)
             .call(spawnRect)
             .append('title')
             .text((d) => d), (update) => update
@@ -62,7 +62,7 @@ export const timestamp = () => {
             .transition(t)
             .call(positionRect)
             .attr('width', bandScale.bandwidth())
-            .attr('fill', colorScale(replicaId))
+            .attr('fill', color === undefined ? colorScale(replicaId) : color)
             .select('title')
             .text((d) => d));
     };
