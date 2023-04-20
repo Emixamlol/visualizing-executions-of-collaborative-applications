@@ -72,7 +72,7 @@ export default class PN_Counter implements PN_CounterInterface {
   ];
 
   visualize = (params?: basicParameters): void => {
-    this.P.visualize({ label: 'P', x: 0, y: 0, color: '' });
-    this.N.visualize({ label: 'N', x: 0, y: 0, color: '' });
+    this.P.visualize({ label: 'P', x: 0, y: 0, color: 'green' });
+    this.N.visualize({ label: 'N', x: 400, y: 0, color: 'blue' });
   };
 }
