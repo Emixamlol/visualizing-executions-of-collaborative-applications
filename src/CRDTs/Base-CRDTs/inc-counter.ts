@@ -56,10 +56,10 @@ export default class Inc_Counter implements Inc_CounterInterface {
 
   visualize = (params?: basicParameters): void => {
     const defaultParameters: basicParameters = {
-      label: 'inc-counter',
+      label: 'P',
       x: 0,
       y: 0,
-      color: '',
+      color: undefined,
     };
     drawCounter(
       params === undefined ? defaultParameters : params,
