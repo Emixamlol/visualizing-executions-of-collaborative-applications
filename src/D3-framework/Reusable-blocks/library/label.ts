@@ -11,6 +11,7 @@ export const label = (): ReusableLabel => {
   let replicaId: ID;
   let data: Data;
   let color: string;
+  let caption: string;
 
   const my: ReusableLabel = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -47,13 +48,11 @@ export const label = (): ReusableLabel => {
             .attr('class', [htmlClass, replicaId].join(' '))
             .call(positionLabel)
             .call(spawnLabel)
-            .text(`${replicaId} : `),
+            .text(`${caption} : `),
         (update) =>
           update.attr('fill-opacity', 1).transition(t).call(positionLabel)
       );
   };
-
-  my.label = null;
 
   my.x = function (_?: number): any {
     return arguments.length ? ((x = _), my) : x;
@@ -85,6 +84,10 @@ export const label = (): ReusableLabel => {
 
   my.color = function (_?: string): any {
     return arguments.length ? ((color = _), my) : color;
+  };
+
+  my.caption = function (_?: string): any {
+    return arguments.length ? ((caption = _), my) : caption;
   };
 
   return my;
