@@ -15,6 +15,7 @@ import { set } from '../Reusable-blocks/library/set';
 import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/timestamp';
 import { tombstone } from '../Reusable-blocks/library/tombstone';
 import { valuePair } from '../Reusable-blocks/library/value-pair';
+import { componentHandling } from '../specific-information';
 
 const visualizationDiv = document.getElementById('visualization');
 const dimensions = visualizationDiv.getBoundingClientRect();
@@ -56,6 +57,8 @@ const activeVisualizations: Map<
   Map<string, ReusableComponents>
 > = new Map();
 
+const refactorMap: Map<ID, componentHandling> = new Map();
+
 // svg
 const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
   .select('div.visualization')
@@ -87,14 +90,17 @@ const sendObjectId = (id: ID): void => {
 
 // update replicaId
 const sendReplicaId = (id: ID): void => {
-  console.log(`replicaId = ${replicaId}, id = ${id}`);
   replicaId = id;
   if (!groupElements.has(id)) {
     const g = svg.append('g').attr('class', id);
     groupElements.set(id, g);
   }
+  if (!refactorMap.has(id)) {
+    const g = svg.append('g').attr('class', id);
+    const handler = new componentHandling(g);
+    refactorMap.set(id, handler);
+  }
   mergeG.selectChildren('*').remove();
-  console.log(`replicaId = ${replicaId}, id = ${id}`);
 };
 
 // update the data sent by the proxies
@@ -146,7 +152,7 @@ const yValue = (replicaId: ID): number => {
 // ------------------------- draw methods -------------------------
 
 // ----- help methods -----
-const newLabel = (): ReusableLabel => {
+const newLabel = (caption: string): ReusableLabel => {
   return label()
     .width(width)
     .height(height)
@@ -154,7 +160,8 @@ const newLabel = (): ReusableLabel => {
     .x(labelX)
     .y(yValue(replicaId))
     .replicaId(replicaId)
-    .data(localData);
+    .data(localData)
+    .caption(caption);
 };
 
 const drawMergedReplica = (components: ReusableComponents): void => {
@@ -208,7 +215,7 @@ const positionMergedReplicas = (senderId: ID, receiverId: ID): void => {
   });
 };
 
-const drawReplicas = (): void => {
+/* const drawReplicas = (): void => {
   // draw the currently active replicas
   activeVisualizations.forEach((map, replicaId) => {
     const g = groupElements.get(replicaId);
@@ -216,12 +223,18 @@ const drawReplicas = (): void => {
       components.forEach((component) => {
         const props = Object.getOwnPropertyNames(component);
         component
-          .x(props.includes('label') ? labelX : baseX)
+          .x(props.includes('caption') ? labelX : baseX)
           .y(yValue(replicaId))
           .replicaId(key);
         g.call(component);
       });
     });
+  });
+}; */
+const drawReplicas = (): void => {
+  // draw the currently active replicas
+  refactorMap.forEach((handler, label) => {
+    handler.drawAllComponents();
   });
 };
 
@@ -229,7 +242,7 @@ const drawReplicas = (): void => {
 const drawFlag = (params: basicParameters, enabled: boolean): void => {
   const { label, x, y, color } = params;
 
-  const Label = newLabel();
+  const Label = newLabel(label);
 
   const Flag = flag()
     .width(width)
@@ -261,13 +274,13 @@ const drawCounter = (
 
   const elements = [value.toString()];
 
-  const Label = newLabel();
+  const Label = newLabel(label);
 
   const Set = set()
     .width(width)
     .height(height)
     .margin(margin)
-    .x(baseX)
+    .x(x)
     .y(yValue(replicaId))
     .elements(elements)
     .replicaId(replicaId)
@@ -277,15 +290,23 @@ const drawCounter = (
     .width(width)
     .height(height)
     .margin(margin)
-    .x(baseX)
+    .x(x)
     .y(yValue(replicaId))
     .data(localData)
     .replicaId(replicaId)
-    .timestamp(P);
+    .timestamp(P)
+    .color(color);
 
   const components = [Label, Set, P_vector];
 
   updateVisualizations(label, components);
+  refactorMap
+    .get(replicaId)
+    .addComponents(components, {
+      ...params,
+      x: baseX + x,
+      y: yValue(replicaId) + y,
+    });
 
   if (merge) {
     drawMergedReplica(components);
@@ -301,7 +322,7 @@ const drawRegister = (
 ): void => {
   const { label, x, y, color } = params;
 
-  const Label = newLabel();
+  const Label = newLabel(label);
 
   // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
 
@@ -318,17 +339,8 @@ const drawRegister = (
     .data(localData);
 
   // TODO: get element widths
-  /* const Timestamp = reusableTimestamp()
-    .width(width)
-    .height(height)
-    .margin(margin)
-    .x(baseX + 100)
-    .y(yValue(replicaId))
-    .data(localData)
-    .replicaId(replicaId)
-    .timestamp(timestamp); */
 
-  const components = [Label, Set]; //, Timestamp];
+  const components = [Label, Set];
 
   updateVisualizations(label, components);
 
@@ -346,7 +358,7 @@ const drawSet = (
 ): void => {
   const { label, x, y, color } = params;
 
-  const Label = newLabel();
+  const Label = newLabel(label);
 
   const Set = set()
     .width(width)
@@ -373,7 +385,7 @@ const drawSet = (
 const drawTombstone = (params: basicParameters): void => {
   const { label, x, y, color } = params;
 
-  const Label = newLabel();
+  const Label = newLabel(label);
 
   const Tombstone = tombstone()
     .width(width)
