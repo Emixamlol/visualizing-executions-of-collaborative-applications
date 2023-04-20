@@ -15,7 +15,7 @@ import { set } from '../Reusable-blocks/library/set';
 import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/timestamp';
 import { tombstone } from '../Reusable-blocks/library/tombstone';
 import { valuePair } from '../Reusable-blocks/library/value-pair';
-import { componentHandling } from '../specific-information';
+import { componentHandling } from '../component-handling';
 
 const visualizationDiv = document.getElementById('visualization');
 const dimensions = visualizationDiv.getBoundingClientRect();
@@ -300,13 +300,11 @@ const drawCounter = (
   const components = [Label, Set, P_vector];
 
   updateVisualizations(label, components);
-  refactorMap
-    .get(replicaId)
-    .addComponents(components, {
-      ...params,
-      x: baseX + x,
-      y: yValue(replicaId) + y,
-    });
+  refactorMap.get(replicaId).addComponents(components, {
+    ...params,
+    x: baseX + x,
+    y: yValue(replicaId) + y,
+  });
 
   if (merge) {
     drawMergedReplica(components);
