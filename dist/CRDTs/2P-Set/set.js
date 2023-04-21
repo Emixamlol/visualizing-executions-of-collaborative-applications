@@ -35,17 +35,22 @@ export default class TwoPhase_Set {
         };
         this.getTimestamp = () => this.timestamp.getVector();
         this.visualize = (params) => {
-            console.log(`visualizing 2-phase set with pid = ${this.pid}`);
-            /*   const [elements, tombstone] = [
-              this.A.payload()[0].split(','),
-              this.R.payload()[0].split(','),
-            ];
-            console.log(elements);
-            console.log(tombstone);
-        
-            drawSet(elements, tombstone); */
-            this.A.visualize({ label: 'A', x: 0, y: 0, color: '' });
-            this.R.visualize({ label: 'R', x: 0, y: 0, color: '' });
+            this.A.visualize({
+                label: 'A',
+                x: 0,
+                y: 0,
+                color: 'blue',
+                xMerge: 0,
+                yMerge: 0,
+            });
+            this.R.visualize({
+                label: 'R',
+                x: 400,
+                y: 0,
+                color: 'red',
+                xMerge: 0,
+                yMerge: 0,
+            });
         };
         this.A = new GrowOnly_Set(maxProcesses, pid);
         this.R = new GrowOnly_Set(maxProcesses, pid);

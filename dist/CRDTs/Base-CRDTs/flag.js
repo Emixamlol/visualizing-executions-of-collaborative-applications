@@ -25,6 +25,8 @@ export default class LWW_Flag {
                 x: 0,
                 y: 0,
                 color: '',
+                xMerge: 0,
+                yMerge: 0,
             };
             drawFlag(params === undefined ? defaultParameters : params, this.value());
         };
