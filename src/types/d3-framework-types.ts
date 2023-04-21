@@ -34,6 +34,8 @@ export type basicParameters = {
   x: number;
   y: number;
   color: string;
+  xMerge: number;
+  yMerge: number;
 };
 
 // ------------------------------------------- processed data types -------------------------------------------
@@ -175,3 +177,4 @@ export interface ReusableLabel extends LibraryReusableInterface<ReusableLabel> {
 }
 
 export type ReusableComponents = Array<LibraryReusableInterface<any>>;
+export type ReusableComponent = LibraryReusableInterface<any>;

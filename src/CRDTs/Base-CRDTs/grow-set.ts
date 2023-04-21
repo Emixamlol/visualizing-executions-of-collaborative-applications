@@ -81,6 +81,8 @@ export default class GrowOnly_Set implements SetInterface {
       x: 0,
       y: 0,
       color: '',
+      xMerge: 0,
+      yMerge: 0,
     };
     drawSet(
       params === undefined ? defaultParameters : params,

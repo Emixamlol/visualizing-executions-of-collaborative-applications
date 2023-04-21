@@ -37,8 +37,6 @@ let replicas: Array<ID>;
 let startHeights: Array<number>;
 let merge: boolean = false;
 
-// TODO: refactor to work around groupElements map
-
 /**
  * map of id to group elements. The latter contains the svg elements drawing the replica with that id
  */
@@ -46,8 +44,6 @@ const groupElements: Map<
   ID,
   d3.Selection<SVGGElement, unknown, HTMLElement, any>
 > = new Map();
-
-// TODO : refactor so that composition is possible
 
 /**
  * map of replicas who are currently being visualized in the specific-svg, mapped to the Map of sub-elements visualizing them
@@ -57,7 +53,10 @@ const activeVisualizations: Map<
   Map<string, ReusableComponents>
 > = new Map();
 
-const refactorMap: Map<ID, componentHandling> = new Map();
+/**
+ * map of replicas who are currently being visualized in the specific-svg, mapped to their handlers
+ */
+const handlerMap: Map<ID, componentHandling> = new Map();
 
 // svg
 const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3
@@ -82,6 +81,7 @@ const sendObjectId = (id: ID): void => {
     );
     svg.selectChildren('*').filter(':not(g.merge)').remove();
     mergeG.selectChildren('*').remove();
+    handlerMap.clear();
     groupElements.clear();
     activeVisualizations.clear();
   }
@@ -95,10 +95,10 @@ const sendReplicaId = (id: ID): void => {
     const g = svg.append('g').attr('class', id);
     groupElements.set(id, g);
   }
-  if (!refactorMap.has(id)) {
+  if (!handlerMap.has(id)) {
     const g = svg.append('g').attr('class', id);
     const handler = new componentHandling(g);
-    refactorMap.set(id, handler);
+    handlerMap.set(id, handler);
   }
   mergeG.selectChildren('*').remove();
 };
@@ -118,24 +118,6 @@ const update = (data: Data): void => {
       )
     )
     .flat();
-};
-
-// add newly created visualization components for a replica to the map
-const updateVisualizations = (
-  label: string,
-  components: ReusableComponents
-): void => {
-  const subComponents = activeVisualizations.get(replicaId);
-
-  const id = label === undefined ? replicaId : label;
-
-  const allComponents =
-    subComponents === undefined
-      ? new Map([[id, components]])
-      : subComponents.set(id, components);
-
-  activeVisualizations.set(replicaId, allComponents);
-  console.log(activeVisualizations, 'activeVisualizations');
 };
 
 const remove = (id: ID): void => {
@@ -188,7 +170,15 @@ const positionMergedReplicas = (senderId: ID, receiverId: ID): void => {
   );
 
   merge = true;
-  const addX = 400;
+  const [senderHandler, receiverHandler] = [
+    handlerMap.get(senderId),
+    handlerMap.get(receiverId),
+  ];
+
+  senderHandler.positionMergedReplicas();
+  receiverHandler.positionMergedReplicas();
+
+  /* const addX = 400;
   const newY = height * 0.3;
 
   const [senderComponents, receiverComponents] = [
@@ -212,28 +202,13 @@ const positionMergedReplicas = (senderId: ID, receiverId: ID): void => {
       component.y(newY);
       g.call(component);
     });
-  });
+  }); */
 };
 
-/* const drawReplicas = (): void => {
-  // draw the currently active replicas
-  activeVisualizations.forEach((map, replicaId) => {
-    const g = groupElements.get(replicaId);
-    map.forEach((components, key) => {
-      components.forEach((component) => {
-        const props = Object.getOwnPropertyNames(component);
-        component
-          .x(props.includes('caption') ? labelX : baseX)
-          .y(yValue(replicaId))
-          .replicaId(key);
-        g.call(component);
-      });
-    });
-  });
-}; */
 const drawReplicas = (): void => {
+  console.log(handlerMap, 'handlerMap');
   // draw the currently active replicas
-  refactorMap.forEach((handler, label) => {
+  handlerMap.forEach((handler, label) => {
     handler.drawAllComponents();
   });
 };
@@ -242,7 +217,7 @@ const drawReplicas = (): void => {
 const drawFlag = (params: basicParameters, enabled: boolean): void => {
   const { label, x, y, color } = params;
 
-  const Label = newLabel(label);
+  const Label = newLabel(replicaId);
 
   const Flag = flag()
     .width(width)
@@ -256,7 +231,11 @@ const drawFlag = (params: basicParameters, enabled: boolean): void => {
 
   const components = [Label, Flag];
 
-  updateVisualizations(label, components);
+  handlerMap.get(replicaId).addComponents(components, {
+    ...params,
+    x: baseX + x,
+    y: yValue(replicaId) + y,
+  });
 
   if (merge) {
     drawMergedReplica(components);
@@ -299,8 +278,7 @@ const drawCounter = (
 
   const components = [Label, Set, P_vector];
 
-  updateVisualizations(label, components);
-  refactorMap.get(replicaId).addComponents(components, {
+  handlerMap.get(replicaId).addComponents(components, {
     ...params,
     x: baseX + x,
     y: yValue(replicaId) + y,
@@ -320,7 +298,7 @@ const drawRegister = (
 ): void => {
   const { label, x, y, color } = params;
 
-  const Label = newLabel(label);
+  const Label = newLabel(replicaId);
 
   // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
 
@@ -336,15 +314,21 @@ const drawRegister = (
     .replicaId(replicaId)
     .data(localData);
 
-  // TODO: get element widths
-
   const components = [Label, Set];
 
-  updateVisualizations(label, components);
+  handlerMap.get(replicaId).addComponents(components, {
+    ...params,
+    x: baseX + x,
+    y: yValue(replicaId) + y,
+  });
+
+  console.log(handlerMap, 'handlerMap in register');
 
   if (merge) {
     drawMergedReplica(components);
   } else {
+    console.log('drawing register');
+
     drawReplicas();
   }
 };
@@ -371,7 +355,11 @@ const drawSet = (
 
   const components = [Label, Set];
 
-  updateVisualizations(label, components);
+  handlerMap.get(replicaId).addComponents(components, {
+    ...params,
+    x: baseX + x,
+    y: yValue(replicaId) + y,
+  });
 
   if (merge) {
     drawMergedReplica(components);
@@ -396,7 +384,11 @@ const drawTombstone = (params: basicParameters): void => {
 
   const components = [Label, Tombstone];
 
-  updateVisualizations(label, components);
+  handlerMap.get(replicaId).addComponents(components, {
+    ...params,
+    x: baseX + x,
+    y: yValue(replicaId) + y,
+  });
 
   if (merge) {
     drawMergedReplica(components);

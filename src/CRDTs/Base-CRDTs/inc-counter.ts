@@ -60,6 +60,8 @@ export default class Inc_Counter implements Inc_CounterInterface {
       x: 0,
       y: 0,
       color: undefined,
+      xMerge: 0,
+      yMerge: 0,
     };
     drawCounter(
       params === undefined ? defaultParameters : params,
