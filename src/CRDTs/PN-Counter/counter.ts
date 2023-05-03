@@ -1,4 +1,4 @@
-import { drawCounter, drawSet } from '../../D3-framework';
+import { drawCounter, drawSet, drawSingleValue } from '../../D3-framework';
 import { CRDTtype, CRDTInterface } from '../../types/crdt-types';
 import { basicParameters } from '../../types/d3-framework-types';
 import Inc_Counter from '../Base-CRDTs/inc-counter';
@@ -72,32 +72,32 @@ export default class PN_Counter implements PN_CounterInterface {
   ];
 
   visualize = (params?: basicParameters): void => {
-    drawSet(
+    drawSingleValue(
       {
         label: 'Value',
         x: -35,
         y: 0,
         color: undefined,
-        xMerge: 0,
-        yMerge: 0,
+        xMerge: 60,
+        yMerge: 160,
       },
-      [this.value().toString()]
+      this.value()
     );
     this.P.visualize({
       label: 'P',
       x: 60,
       y: 0,
       color: 'green',
-      xMerge: 0,
-      yMerge: 0,
+      xMerge: 60,
+      yMerge: 200,
     });
     this.N.visualize({
       label: 'N',
       x: 460,
       y: 0,
       color: 'blue',
-      xMerge: 0,
-      yMerge: 0,
+      xMerge: 60,
+      yMerge: 240,
     });
   };
 }
