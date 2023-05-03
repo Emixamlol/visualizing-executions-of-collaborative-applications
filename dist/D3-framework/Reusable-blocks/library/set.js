@@ -10,6 +10,7 @@ export const set = () => {
     let color;
     let elements;
     let tombstone = [];
+    let innerG;
     const my = (selection) => {
         // set scales
         const replicas = data
@@ -42,7 +43,13 @@ export const set = () => {
             })
                 .call((tspan) => tspan.text((d) => d));
         };
-        g.selectAll(`text.${htmlClass}.${replicaId}`)
+        innerG = g
+            .selectAll(`g.${htmlClass}`)
+            .data([null])
+            .join('g')
+            .attr('class', htmlClass);
+        innerG
+            .selectAll(`text.${htmlClass}.${replicaId}`)
             .data([null])
             .join((enter) => enter
             .append('text')
@@ -96,5 +103,6 @@ export const set = () => {
     my.elements = function (_) {
         return arguments.length ? ((elements = _), my) : elements;
     };
+    my.bbox = () => innerG.node().getBBox();
     return my;
 };

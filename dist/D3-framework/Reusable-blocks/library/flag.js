@@ -9,6 +9,7 @@ export const flag = () => {
     let replicaId;
     let data = [];
     let color;
+    let innerG;
     const my = (selection) => {
         // set scales
         const replicas = data
@@ -37,7 +38,13 @@ export const flag = () => {
             .data([null])
             .join('g')
             .attr('class', replicaId);
-        g.selectAll('path')
+        innerG = g
+            .selectAll(`g.${htmlClass}`)
+            .data([null])
+            .join('g')
+            .attr('class', htmlClass);
+        innerG
+            .selectAll('path')
             .data([null])
             .join((enter) => enter
             .append('path')
@@ -74,5 +81,6 @@ export const flag = () => {
     my.color = function (_) {
         return arguments.length ? ((color = _), my) : color;
     };
+    my.bbox = () => innerG.node().getBBox();
     return my;
 };

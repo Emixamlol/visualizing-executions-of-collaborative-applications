@@ -1,5 +1,5 @@
 import { createCRDT } from '../CRDTs/create-crdt';
-import { sendObjectId, sendReplicaId, positionMergedReplicas, } from '../D3-framework/Svg/specific-svg';
+import { sendObjectId, sendReplicaId, positionMergedReplicas, mergeDone, } from '../D3-framework/Svg/specific-svg';
 import { CRDTtype, } from '../types/crdt-types';
 import { Message, } from '../types/proxy-types';
 export default class CrdtProxy {
@@ -31,7 +31,7 @@ export default class CrdtProxy {
         this.merge = (other) => {
             // TODO: refactor merge visualization and call it again
             if (this.replicaName === other.replicaName) {
-                // this.setupMergeVisualization(other); // set up the specific visualization of the merge
+                this.setupMergeVisualization(other); // set up the specific visualization of the merge
                 // perform the merge on the replicas and update the state
                 this.crdtReplica = this.crdtReplica.merge(other.crdtReplica);
                 this.state = Object.assign(Object.assign({}, this.state), { merges: this.state.merges.concat({
@@ -43,16 +43,15 @@ export default class CrdtProxy {
                     }) });
                 this.updateState(Message.merge);
                 this.crdtReplica.visualize();
+                mergeDone();
             }
         };
         this.apply = (fn, params) => {
-            console.log(this);
             this.crdtReplica[fn].apply(this.crdtReplica, params);
             this.updateState(Message.update);
             this.crdtReplica.visualize(); // visualize the update
         };
         this.visualize = () => {
-            console.log(this);
             sendObjectId(this.replicaName);
             sendReplicaId(this.id);
             this.crdtReplica.visualize();

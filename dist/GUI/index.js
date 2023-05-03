@@ -36,9 +36,9 @@ const updateButtons = updateButton()
     .methods([])
     .on('click', ([fn, params]) => {
     const id = allReplicasMenu.currentSelection();
-    console.log(id);
+    /*   console.log(id);
     console.log(fn);
-    console.log(params);
+    console.log(params); */
     proxies.applyToProxy(id, fn, params);
 });
 const siblingReplicasMenu = menu()

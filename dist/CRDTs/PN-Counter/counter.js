@@ -1,4 +1,4 @@
-import { drawSet } from '../../D3-framework';
+import { drawSingleValue } from '../../D3-framework';
 import { CRDTtype } from '../../types/crdt-types';
 import Inc_Counter from '../Base-CRDTs/inc-counter';
 import VectorClock from '../vector-clock';
@@ -37,29 +37,29 @@ export default class PN_Counter {
             this.timestamp.getVector(),
         ];
         this.visualize = (params) => {
-            drawSet({
+            drawSingleValue({
                 label: 'Value',
                 x: -35,
                 y: 0,
                 color: undefined,
-                xMerge: 0,
-                yMerge: 0,
-            }, [this.value().toString()]);
+                xMerge: 60,
+                yMerge: 160,
+            }, this.value());
             this.P.visualize({
                 label: 'P',
                 x: 60,
                 y: 0,
                 color: 'green',
-                xMerge: 0,
-                yMerge: 0,
+                xMerge: 60,
+                yMerge: 200,
             });
             this.N.visualize({
                 label: 'N',
                 x: 460,
                 y: 0,
                 color: 'blue',
-                xMerge: 0,
-                yMerge: 0,
+                xMerge: 60,
+                yMerge: 240,
             });
         };
         this.pid = pid;

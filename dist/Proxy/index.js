@@ -34,7 +34,7 @@ const convertToData = () => Array.from(proxies).map(([objectId, replicas]) => [
  */
 const sendToFramework = () => {
     const data = convertToData();
-    console.log(data);
+    // console.log(data);
     framework.update(data);
 };
 /**
@@ -42,7 +42,7 @@ const sendToFramework = () => {
  */
 const sendToGui = () => {
     const data = convertToData();
-    console.log(data);
+    // console.log(data);
     gui.update(data);
 };
 /**
@@ -69,7 +69,7 @@ export const addProxy = (id, crdt, params) => {
         const type = proxy.getType();
         conceptualCRDTNames.set(id, { id, type });
     }
-    console.log(proxies);
+    // console.log(proxies);
     sendToFramework();
     sendToGui();
 };
@@ -82,8 +82,7 @@ export const queryProxy = (id, params) => {
     const { id: conceptualId } = conceptualCRDTNames.get(id);
     const replicas = proxies.get(conceptualId);
     const proxy = replicas.get(id);
-    console.log(proxy.query(params));
-    console.log(proxies);
+    proxy.query(params);
 };
 /**
  * Replicates a proxy, which creates a new proxy with the contained CRDT object being a replica of the replicated proxy's CRDT object
@@ -115,7 +114,7 @@ export const replicateProxy = (idToReplicate, replicaId) => {
             proxies.set(idToReplicate, replicas.set(replicaId, replica)); // save the replica in proxies
         }
     }
-    console.log(proxies);
+    // console.log(proxies);
     sendToFramework();
     sendToGui();
 };
@@ -134,7 +133,7 @@ export const mergeProxy = (id, other) => {
         replicas.get(other),
     ];
     p1.merge(p2);
-    console.log(proxies);
+    // console.log(proxies);
     sendToFramework();
 };
 /**
@@ -146,7 +145,6 @@ export const mergeProxy = (id, other) => {
  */
 export const applyToProxy = (id, fn, params) => {
     const { id: conceptualId } = conceptualCRDTNames.get(id); // get the id of the conceptual CRDT object the proxy is a replica from
-    console.log(conceptualId);
     const replicas = proxies.get(conceptualId);
     const proxy = replicas.get(id);
     proxy.apply(fn, params);

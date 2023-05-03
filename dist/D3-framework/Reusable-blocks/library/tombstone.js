@@ -9,6 +9,7 @@ export const tombstone = () => {
     let replicaId;
     let data = [];
     let color;
+    let innerG;
     const my = (selection) => {
         // set scales
         const replicas = data
@@ -48,7 +49,13 @@ export const tombstone = () => {
         const colorCross = (path) => {
             path.attr('fill', rgb(255, 255, 255));
         };
-        g.selectAll('path#cross')
+        innerG = g
+            .selectAll(`g.${htmlClass}`)
+            .data([null])
+            .join('g')
+            .attr('class', htmlClass);
+        innerG
+            .selectAll('path#cross')
             .data([null])
             .join((enter) => enter
             .append('path')
@@ -83,5 +90,6 @@ export const tombstone = () => {
     my.color = function (_) {
         return arguments.length ? ((color = _), my) : color;
     };
+    my.bbox = () => innerG.node().getBBox();
     return my;
 };

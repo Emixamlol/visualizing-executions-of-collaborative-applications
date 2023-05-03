@@ -5,8 +5,8 @@ export const updateButton = () => {
     const listeners = d3.dispatch('click');
     const my = (selection) => {
         const htmlClass = 'crdt-update-methods';
-        console.log('update buttons are =');
-        console.log(methods);
+        /* console.log('update buttons are =');
+        console.log(methods); */
         const form = selection
             .selectAll(`form.${htmlClass}`)
             .data([null])
