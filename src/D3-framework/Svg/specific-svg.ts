@@ -16,6 +16,7 @@ import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/times
 import { tombstone } from '../Reusable-blocks/library/tombstone';
 import { valuePair } from '../Reusable-blocks/library/value-pair';
 import { componentHandling } from '../component-handling';
+import { singleValue } from '../Reusable-blocks/library/single-value';
 
 const visualizationDiv = document.getElementById('visualization');
 const dimensions = visualizationDiv.getBoundingClientRect();
@@ -36,14 +37,6 @@ let localData: Data = [];
 let replicas: Array<ID>;
 let startHeights: Array<number>;
 let merge: boolean = false;
-
-/**
- * map of id to group elements. The latter contains the svg elements drawing the replica with that id
- */
-const groupElements: Map<
-  ID,
-  d3.Selection<SVGGElement, unknown, HTMLElement, any>
-> = new Map();
 
 /**
  * map of replicas who are currently being visualized in the specific-svg, mapped to the Map of sub-elements visualizing them
@@ -76,13 +69,9 @@ const mergeG = svg.append('g').attr('class', 'merge');
 const sendObjectId = (id: ID): void => {
   console.log(`objectId = ${objecId}, sent id = ${id}`);
   if (objecId !== id) {
-    console.log(
-      `removing all elements (except merge group) in specific visualization`
-    );
     svg.selectChildren('*').filter(':not(g.merge)').remove();
     mergeG.selectChildren('*').remove();
     handlerMap.clear();
-    groupElements.clear();
     activeVisualizations.clear();
   }
   objecId = id;
@@ -91,10 +80,6 @@ const sendObjectId = (id: ID): void => {
 // update replicaId
 const sendReplicaId = (id: ID): void => {
   replicaId = id;
-  if (!groupElements.has(id)) {
-    const g = svg.append('g').attr('class', id);
-    groupElements.set(id, g);
-  }
   if (!handlerMap.has(id)) {
     const g = svg.append('g').attr('class', id);
     const handler = new componentHandling(g);
@@ -122,13 +107,17 @@ const update = (data: Data): void => {
 
 const remove = (id: ID): void => {
   svg.selectAll(`g.${id}`).remove();
-  groupElements.delete(id);
+  handlerMap.delete(id);
   activeVisualizations.delete(id);
 };
 
 const yValue = (replicaId: ID): number => {
   const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
   return startHeights.at(index);
+};
+
+const mergeDone = (): void => {
+  merge = false;
 };
 
 // ------------------------- draw methods -------------------------
@@ -149,7 +138,6 @@ const newLabel = (caption: string): ReusableLabel => {
 const drawMergedReplica = (components: ReusableComponents): void => {
   console.log(`drawing merged replica with merge = ${merge}`);
 
-  merge = false;
   const addX = width / 5;
   const newY = height * 0.75;
 
@@ -177,32 +165,6 @@ const positionMergedReplicas = (senderId: ID, receiverId: ID): void => {
 
   senderHandler.positionMergedReplicas();
   receiverHandler.positionMergedReplicas();
-
-  /* const addX = 400;
-  const newY = height * 0.3;
-
-  const [senderComponents, receiverComponents] = [
-    activeVisualizations.get(senderId),
-    activeVisualizations.get(receiverId),
-  ];
-
-  senderComponents.forEach((components, key) => {
-    const g = groupElements.get(senderId);
-    components.forEach((component) => {
-      component.y(newY);
-      g.call(component);
-    });
-  });
-
-  receiverComponents.forEach((components, key) => {
-    const g = groupElements.get(receiverId);
-    components.forEach((component) => {
-      const newX = component.x() + addX;
-      component.x(newX);
-      component.y(newY);
-      g.call(component);
-    });
-  }); */
 };
 
 const drawReplicas = (): void => {
@@ -244,6 +206,36 @@ const drawFlag = (params: basicParameters, enabled: boolean): void => {
   }
 };
 
+const drawSingleValue = (params: basicParameters, value: number): void => {
+  const { label, x, y } = params;
+
+  const Label = newLabel(label);
+
+  const Value = singleValue()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .x(baseX)
+    .y(yValue(replicaId))
+    .replicaId(replicaId)
+    .data(localData)
+    .value(value);
+
+  const components = [Label, Value];
+
+  handlerMap.get(replicaId).addComponents(components, {
+    ...params,
+    x: baseX + x,
+    y: yValue(replicaId) + y,
+  });
+
+  if (merge) {
+    drawMergedReplica(components);
+  } else {
+    drawReplicas();
+  }
+};
+
 const drawCounter = (
   params: basicParameters,
   value: number,
@@ -251,19 +243,17 @@ const drawCounter = (
 ): void => {
   const { label, x, y, color } = params;
 
-  const elements = [value.toString()];
-
   const Label = newLabel(label);
 
-  const Set = set()
+  const Value = singleValue()
     .width(width)
     .height(height)
     .margin(margin)
     .x(x)
     .y(yValue(replicaId))
-    .elements(elements)
     .replicaId(replicaId)
-    .data(localData);
+    .data(localData)
+    .value(value);
 
   const P_vector = reusableTimestamp()
     .width(width)
@@ -276,7 +266,7 @@ const drawCounter = (
     .timestamp(P)
     .color(color);
 
-  const components = [Label, Set, P_vector];
+  const components = [Label, Value, P_vector];
 
   handlerMap.get(replicaId).addComponents(components, {
     ...params,
@@ -403,7 +393,9 @@ export {
   sendObjectId,
   sendReplicaId,
   update,
+  mergeDone,
   drawFlag,
+  drawSingleValue,
   drawCounter,
   drawRegister,
   drawSet,
