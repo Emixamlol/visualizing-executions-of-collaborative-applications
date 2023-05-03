@@ -4,6 +4,7 @@ import {
   sendObjectId,
   sendReplicaId,
   positionMergedReplicas,
+  mergeDone,
 } from '../D3-framework/Svg/specific-svg';
 import {
   CRDTInterface,
@@ -78,7 +79,7 @@ export default class CrdtProxy implements ProxyInterface {
   merge = (other: CrdtProxy): void => {
     // TODO: refactor merge visualization and call it again
     if (this.replicaName === other.replicaName) {
-      // this.setupMergeVisualization(other); // set up the specific visualization of the merge
+      this.setupMergeVisualization(other); // set up the specific visualization of the merge
       // perform the merge on the replicas and update the state
       this.crdtReplica = this.crdtReplica.merge(other.crdtReplica);
       this.state = {
@@ -93,18 +94,17 @@ export default class CrdtProxy implements ProxyInterface {
       };
       this.updateState(Message.merge);
       this.crdtReplica.visualize();
+      mergeDone();
     }
   };
 
   apply = (fn: string, params: string[]): void => {
-    console.log(this);
     this.crdtReplica[fn].apply(this.crdtReplica, params);
     this.updateState(Message.update);
     this.crdtReplica.visualize(); // visualize the update
   };
 
   visualize = (): void => {
-    console.log(this);
     sendObjectId(this.replicaName);
     sendReplicaId(this.id);
     this.crdtReplica.visualize();
