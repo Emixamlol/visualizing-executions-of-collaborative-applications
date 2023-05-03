@@ -141,11 +141,19 @@ interface LibraryReusableInterface<T> extends ReusablePatternInterface<T> {
 
   color(): string;
   color(value: string): T;
+
+  bbox(): SVGRect;
 }
 
 export interface ReusableFlag extends LibraryReusableInterface<ReusableFlag> {
   enabled(): boolean;
   enabled(value: boolean): ReusableFlag;
+}
+
+export interface ReusableSingleValue
+  extends LibraryReusableInterface<ReusableSingleValue> {
+  value(): number;
+  value(value: number): ReusableSingleValue;
 }
 
 export interface ReusableSet extends LibraryReusableInterface<ReusableSet> {
