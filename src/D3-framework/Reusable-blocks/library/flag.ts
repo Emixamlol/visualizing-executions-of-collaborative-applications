@@ -12,6 +12,12 @@ export const flag = (): ReusableFlag => {
   let replicaId: ID;
   let data: Data = [];
   let color: string;
+  let innerG: d3.Selection<
+    d3.BaseType | SVGGElement,
+    any,
+    d3.BaseType | SVGGElement,
+    any
+  >;
 
   const my: ReusableFlag = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -51,7 +57,14 @@ export const flag = (): ReusableFlag => {
       .join('g')
       .attr('class', replicaId);
 
-    g.selectAll('path')
+    innerG = g
+      .selectAll(`g.${htmlClass}`)
+      .data([null])
+      .join('g')
+      .attr('class', htmlClass);
+
+    innerG
+      .selectAll('path')
       .data([null])
       .join(
         (enter) =>
@@ -102,6 +115,8 @@ export const flag = (): ReusableFlag => {
   my.color = function (_?: string): any {
     return arguments.length ? ((color = _), my) : color;
   };
+
+  my.bbox = () => (innerG.node() as SVGGraphicsElement).getBBox();
 
   return my;
 };

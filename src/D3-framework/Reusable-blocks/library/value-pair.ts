@@ -16,6 +16,12 @@ export const valuePair = (): ReusableValuePair => {
   let data: Data = [];
   let color: string;
   let tuples: Array<[string, ID]>;
+  let innerG: d3.Selection<
+    d3.BaseType | SVGGElement,
+    any,
+    d3.BaseType | SVGGElement,
+    any
+  >;
 
   const my: ReusableValuePair = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -57,7 +63,14 @@ export const valuePair = (): ReusableValuePair => {
         .text((d) => d[0]);
     };
 
-    g.selectAll(`text.${htmlClass}.${replicaId}`)
+    innerG = g
+      .selectAll(`g.${htmlClass}`)
+      .data([null])
+      .join('g')
+      .attr('class', htmlClass);
+
+    innerG
+      .selectAll(`text.${htmlClass}.${replicaId}`)
       .data([null])
       .join(
         (enter) =>
@@ -116,10 +129,7 @@ export const valuePair = (): ReusableValuePair => {
       .join('rect')
       .attr('x', (d, i) => x + bandScale(i.toString()))
       .attr('y', y)
-      .attr('height', (d) => {
-        console.log(d);
-        return yScale(d);
-      })
+      .attr('height', (d) => yScale(d))
       .attr('width', bandScale.bandwidth())
       .attr('fill', colorScale(replicaId) as string);
   };
@@ -159,6 +169,8 @@ export const valuePair = (): ReusableValuePair => {
   my.tuples = function (_?: Array<[string, ID]>): any {
     return arguments.length ? ((tuples = _), my) : tuples;
   };
+
+  my.bbox = () => (innerG.node() as SVGGraphicsElement).getBBox();
 
   return my;
 };

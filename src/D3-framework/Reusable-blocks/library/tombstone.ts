@@ -16,6 +16,12 @@ export const tombstone = (): ReusableTombstone => {
   let replicaId: ID;
   let data: Data = [];
   let color: string;
+  let innerG: d3.Selection<
+    d3.BaseType | SVGGElement,
+    any,
+    d3.BaseType | SVGGElement,
+    any
+  >;
 
   const my: ReusableTombstone = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -78,7 +84,14 @@ export const tombstone = (): ReusableTombstone => {
       path.attr('fill', rgb(255, 255, 255));
     };
 
-    g.selectAll('path#cross')
+    innerG = g
+      .selectAll(`g.${htmlClass}`)
+      .data([null])
+      .join('g')
+      .attr('class', htmlClass);
+
+    innerG
+      .selectAll('path#cross')
       .data([null])
       .join(
         (enter) =>
@@ -127,6 +140,8 @@ export const tombstone = (): ReusableTombstone => {
   my.color = function (_?: string): any {
     return arguments.length ? ((color = _), my) : color;
   };
+
+  my.bbox = () => (innerG.node() as SVGGraphicsElement).getBBox();
 
   return my;
 };

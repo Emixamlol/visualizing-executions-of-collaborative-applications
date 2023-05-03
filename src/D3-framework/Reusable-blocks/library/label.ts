@@ -12,6 +12,12 @@ export const label = (): ReusableLabel => {
   let data: Data;
   let color: string;
   let caption: string;
+  let innerG: d3.Selection<
+    d3.BaseType | SVGGElement,
+    any,
+    d3.BaseType | SVGGElement,
+    any
+  >;
 
   const my: ReusableLabel = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -39,7 +45,14 @@ export const label = (): ReusableLabel => {
       text.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
     };
 
-    g.selectAll(`text.${htmlClass}.${replicaId}`)
+    innerG = g
+      .selectAll(`g.${htmlClass}`)
+      .data([null])
+      .join('g')
+      .attr('class', htmlClass);
+
+    innerG
+      .selectAll(`text.${htmlClass}.${replicaId}`)
       .data([null])
       .join(
         (enter) =>
@@ -89,6 +102,8 @@ export const label = (): ReusableLabel => {
   my.caption = function (_?: string): any {
     return arguments.length ? ((caption = _), my) : caption;
   };
+
+  my.bbox = () => (innerG.node() as SVGGraphicsElement).getBBox();
 
   return my;
 };

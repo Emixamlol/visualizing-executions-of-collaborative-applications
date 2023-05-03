@@ -13,6 +13,12 @@ export const set = (): ReusableSet => {
   let color: string;
   let elements: Array<string>;
   let tombstone: Array<string> = [];
+  let innerG: d3.Selection<
+    d3.BaseType | SVGGElement,
+    any,
+    d3.BaseType | SVGGElement,
+    any
+  >;
 
   const my: ReusableSet = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -55,7 +61,14 @@ export const set = (): ReusableSet => {
         .call((tspan) => tspan.text((d) => d));
     };
 
-    g.selectAll(`text.${htmlClass}.${replicaId}`)
+    innerG = g
+      .selectAll(`g.${htmlClass}`)
+      .data([null])
+      .join('g')
+      .attr('class', htmlClass);
+
+    innerG
+      .selectAll(`text.${htmlClass}.${replicaId}`)
       .data([null])
       .join(
         (enter) =>
@@ -131,6 +144,8 @@ export const set = (): ReusableSet => {
   my.elements = function (_?: Array<string>): any {
     return arguments.length ? ((elements = _), my) : elements;
   };
+
+  my.bbox = () => (innerG.node() as SVGGraphicsElement).getBBox();
 
   return my;
 };

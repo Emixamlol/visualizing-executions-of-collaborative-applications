@@ -16,6 +16,12 @@ export const timestamp = (): ReusableTimestamp => {
   let data: Data = [];
   let color: string;
   let timestamp: Array<number>;
+  let innerG: d3.Selection<
+    d3.BaseType | SVGGElement,
+    any,
+    d3.BaseType | SVGGElement,
+    any
+  >;
 
   const my: ReusableTimestamp = (
     selection: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -44,7 +50,7 @@ export const timestamp = (): ReusableTimestamp => {
     const bandScale = d3
       .scaleBand()
       .domain(d3.range(timestamp.length).map((val) => val.toString()))
-      .range([50, 300])
+      .range([0, 300])
       .paddingInner(0.05);
 
     const yScale = d3
@@ -61,12 +67,19 @@ export const timestamp = (): ReusableTimestamp => {
         .attr('x', (d, i) => x + bandScale(i.toString()))
         .attr('y', y)
         .attr('height', (d) => {
-          console.log(d);
+          // console.log(d);
           return yScale(d);
         });
     };
 
-    g.selectAll('rect')
+    innerG = g
+      .selectAll(`g.${htmlClass}`)
+      .data([null])
+      .join('g')
+      .attr('class', htmlClass);
+
+    innerG
+      .selectAll('rect')
       .data(timestamp)
       .join(
         (enter) =>
@@ -95,6 +108,11 @@ export const timestamp = (): ReusableTimestamp => {
             .select('title')
             .text((d) => d)
       );
+
+    console.log(
+      (innerG.node() as SVGGraphicsElement).getBBox(),
+      'inner g bbox'
+    );
   };
 
   my.x = function (_?: number): any {
@@ -132,6 +150,8 @@ export const timestamp = (): ReusableTimestamp => {
   my.timestamp = function (_?: Array<number>): any {
     return arguments.length ? ((timestamp = _), my) : timestamp;
   };
+
+  my.bbox = () => (innerG.node() as SVGGraphicsElement).getBBox();
 
   return my;
 };
