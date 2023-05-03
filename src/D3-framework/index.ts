@@ -4,6 +4,7 @@ import { update as mainSvgUpdate } from './Svg/main-svg';
 import {
   update as specificSvgUpdate,
   drawFlag,
+  drawSingleValue,
   drawCounter,
   drawRegister,
   drawSet,
@@ -15,4 +16,12 @@ const update = (data: Data) => {
   specificSvgUpdate(data);
 };
 
-export { update, drawCounter, drawFlag, drawRegister, drawSet, drawTombstone };
+export {
+  update,
+  drawCounter,
+  drawFlag,
+  drawRegister,
+  drawSet,
+  drawTombstone,
+  drawSingleValue,
+};
