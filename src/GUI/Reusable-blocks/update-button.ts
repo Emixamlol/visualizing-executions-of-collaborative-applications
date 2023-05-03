@@ -12,8 +12,8 @@ export const updateButton = (): ReusableButton => {
   ) => {
     const htmlClass = 'crdt-update-methods';
 
-    console.log('update buttons are =');
-    console.log(methods);
+    /* console.log('update buttons are =');
+    console.log(methods); */
 
     const form = selection
       .selectAll(`form.${htmlClass}`)

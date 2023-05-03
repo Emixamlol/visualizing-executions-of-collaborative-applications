@@ -32,7 +32,7 @@ const convertToData = (): Data =>
  */
 const sendToFramework = (): void => {
   const data: Data = convertToData();
-  console.log(data);
+  // console.log(data);
 
   framework.update(data);
 };
@@ -42,7 +42,7 @@ const sendToFramework = (): void => {
  */
 const sendToGui = (): void => {
   const data: Data = convertToData();
-  console.log(data);
+  // console.log(data);
 
   gui.update(data);
 };
@@ -73,7 +73,7 @@ export const addProxy = (id: ID, crdt: CRDTtype, params: string[]): void => {
     const type = proxy.getType();
     conceptualCRDTNames.set(id, { id, type });
   }
-  console.log(proxies);
+  // console.log(proxies);
   sendToFramework();
   sendToGui();
 };
@@ -88,8 +88,7 @@ export const queryProxy = (id: ID, params: string[]): void => {
   const { id: conceptualId } = conceptualCRDTNames.get(id);
   const replicas = proxies.get(conceptualId);
   const proxy = replicas.get(id);
-  console.log(proxy.query(params));
-  console.log(proxies);
+  proxy.query(params);
 };
 
 /**
@@ -124,7 +123,7 @@ export const replicateProxy = (idToReplicate: ID, replicaId: ID): void => {
       proxies.set(idToReplicate, replicas.set(replicaId, replica)); // save the replica in proxies
     }
   }
-  console.log(proxies);
+  // console.log(proxies);
   sendToFramework();
   sendToGui();
 };
@@ -144,7 +143,7 @@ export const mergeProxy = (id: ID, other: ID): void => {
     replicas.get(other),
   ];
   p1.merge(p2);
-  console.log(proxies);
+  // console.log(proxies);
   sendToFramework();
 };
 
@@ -157,7 +156,6 @@ export const mergeProxy = (id: ID, other: ID): void => {
  */
 export const applyToProxy = (id: ID, fn: string, params: string[]): void => {
   const { id: conceptualId } = conceptualCRDTNames.get(id); // get the id of the conceptual CRDT object the proxy is a replica from
-  console.log(conceptualId);
   const replicas: Map<ID, CrdtProxy> = proxies.get(conceptualId);
   const proxy: CrdtProxy = replicas.get(id);
   proxy.apply(fn, params);

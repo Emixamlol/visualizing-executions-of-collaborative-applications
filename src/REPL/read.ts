@@ -2,7 +2,7 @@ import { ParsedCode, Keyword } from '../types/repl-types';
 
 export const read = (code: string): ParsedCode => {
   const toParse = `toParse: ${code}`;
-  console.log(toParse);
+  // console.log(toParse);
 
   const parsed = code.split(/\s|\(|\)|,|\[|\]|=/i).filter((el) => el !== ''); // transforms the string of code into an array of tokens
   const keyword = parsed.shift(); // get the first word of the parsed code
@@ -30,7 +30,7 @@ export const read = (code: string): ParsedCode => {
       parameters = [keyword, ...parsed];
   }
 
-  console.log(`reading: proc = ${proc}, parameters = ${parameters}`);
+  // console.log(`reading: proc = ${proc}, parameters = ${parameters}`);
 
   return { proc, parameters };
 };
