@@ -39,7 +39,7 @@ export default class PN_Counter {
         this.visualize = (params) => {
             drawSingleValue({
                 label: 'Value',
-                x: -35,
+                x: -80,
                 y: 0,
                 color: undefined,
                 xMerge: 60,
@@ -47,7 +47,7 @@ export default class PN_Counter {
             }, this.value());
             this.P.visualize({
                 label: 'P',
-                x: 60,
+                x: 40,
                 y: 0,
                 color: 'green',
                 xMerge: 60,
@@ -55,7 +55,7 @@ export default class PN_Counter {
             });
             this.N.visualize({
                 label: 'N',
-                x: 460,
+                x: 440,
                 y: 0,
                 color: 'blue',
                 xMerge: 60,

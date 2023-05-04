@@ -2,7 +2,6 @@ import * as d3 from 'd3';
 import { getStartYs } from '../data-processing';
 import { flag } from '../Reusable-blocks/library/flag';
 import { label } from '../Reusable-blocks/library/label';
-import { mergeArrows } from '../Reusable-blocks/library/merge';
 import { set } from '../Reusable-blocks/library/set';
 import { timestamp as reusableTimestamp } from '../Reusable-blocks/library/timestamp';
 import { tombstone } from '../Reusable-blocks/library/tombstone';
@@ -26,10 +25,6 @@ let replicas;
 let startHeights;
 let merge = false;
 /**
- * map of replicas who are currently being visualized in the specific-svg, mapped to the Map of sub-elements visualizing them
- */
-const activeVisualizations = new Map();
-/**
  * map of replicas who are currently being visualized in the specific-svg, mapped to their handlers
  */
 const handlerMap = new Map();
@@ -51,7 +46,6 @@ const sendObjectId = (id) => {
         svg.selectChildren('*').filter(':not(g.merge)').remove();
         mergeG.selectChildren('*').remove();
         handlerMap.clear();
-        activeVisualizations.clear();
     }
     objecId = id;
 };
@@ -77,7 +71,6 @@ const update = (data) => {
 const remove = (id) => {
     svg.selectAll(`g.${id}`).remove();
     handlerMap.delete(id);
-    activeVisualizations.delete(id);
 };
 const yValue = (replicaId) => {
     const index = replicaId ? replicas.findIndex((id) => id === replicaId) : 0;
@@ -99,18 +92,10 @@ const newLabel = (caption) => {
         .data(localData)
         .caption(caption);
 };
-const drawMergedReplica = (components) => {
+const drawMergedReplica = () => {
     console.log(`drawing merged replica with merge = ${merge}`);
-    const addX = width / 5;
-    const newY = height * 0.75;
-    const arrows = mergeArrows();
-    mergeG.call(arrows);
-    components.forEach((component) => {
-        const newX = component.x() + addX;
-        component.x(newX);
-        component.y(newY);
-        mergeG.call(component);
-    });
+    const handler = handlerMap.get(replicaId);
+    handler.drawMerge(mergeG);
 };
 const positionMergedReplicas = (senderId, receiverId) => {
     console.log(`positioning merged replicas with senderId = ${senderId}; receiverId = ${receiverId}`);
@@ -119,8 +104,8 @@ const positionMergedReplicas = (senderId, receiverId) => {
         handlerMap.get(senderId),
         handlerMap.get(receiverId),
     ];
-    senderHandler.positionMergedReplicas();
-    receiverHandler.positionMergedReplicas();
+    senderHandler.positionMergedReplicas(1);
+    receiverHandler.positionMergedReplicas(2);
 };
 const drawReplicas = () => {
     console.log(handlerMap, 'handlerMap');
@@ -145,7 +130,7 @@ const drawFlag = (params, enabled) => {
     const components = [Label, Flag];
     handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
     if (merge) {
-        drawMergedReplica(components);
+        drawMergedReplica();
     }
     else {
         drawReplicas();
@@ -166,7 +151,7 @@ const drawSingleValue = (params, value) => {
     const components = [Label, Value];
     handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
     if (merge) {
-        drawMergedReplica(components);
+        drawMergedReplica();
     }
     else {
         drawReplicas();
@@ -197,7 +182,7 @@ const drawCounter = (params, value, P) => {
     const components = [Label, Value, P_vector];
     handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
     if (merge) {
-        drawMergedReplica(components);
+        drawMergedReplica();
     }
     else {
         drawReplicas();
@@ -221,7 +206,7 @@ const drawRegister = (params, value, timestamp) => {
     handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
     console.log(handlerMap, 'handlerMap in register');
     if (merge) {
-        drawMergedReplica(components);
+        drawMergedReplica();
     }
     else {
         console.log('drawing register');
@@ -244,7 +229,7 @@ const drawSet = (params, elements, tombstone) => {
     const components = [Label, Set];
     handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
     if (merge) {
-        drawMergedReplica(components);
+        drawMergedReplica();
     }
     else {
         drawReplicas();
@@ -264,7 +249,7 @@ const drawTombstone = (params) => {
     const components = [Label, Tombstone];
     handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
     if (merge) {
-        drawMergedReplica(components);
+        drawMergedReplica();
     }
     else {
         drawReplicas();
