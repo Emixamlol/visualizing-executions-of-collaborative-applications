@@ -34,7 +34,7 @@ export default class Inc_Counter {
                 xMerge: 0,
                 yMerge: 0,
             };
-            drawCounter(params === undefined ? defaultParameters : params, this.value(), this.P.slice());
+            drawCounter(params === undefined ? defaultParameters : params[0], this.value(), this.P.slice());
         };
         this.pid = pid;
         this.timestamp = new VectorClock(n);

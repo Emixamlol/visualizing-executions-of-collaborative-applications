@@ -79,6 +79,10 @@ const yValue = (replicaId) => {
 const mergeDone = () => {
     merge = false;
 };
+const addComponents = (components, params) => {
+    const { label, x, y } = params;
+    handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { label: label ? label : replicaId, x: baseX + x, y: yValue(replicaId) + y }));
+};
 // ------------------------- draw methods -------------------------
 // ----- help methods -----
 const newLabel = (caption) => {
@@ -116,8 +120,9 @@ const drawReplicas = () => {
 };
 // ----- component methods -----
 const drawFlag = (params, enabled) => {
-    const { label, x, y, color } = params;
-    const Label = newLabel(replicaId);
+    const label = params.label ? params.label : replicaId;
+    const { x, y } = params;
+    const Label = newLabel(label);
     const Flag = flag()
         .width(width)
         .height(height)
@@ -128,7 +133,7 @@ const drawFlag = (params, enabled) => {
         .replicaId(replicaId)
         .data(localData);
     const components = [Label, Flag];
-    handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
+    addComponents(components, params);
     if (merge) {
         drawMergedReplica();
     }
@@ -137,7 +142,8 @@ const drawFlag = (params, enabled) => {
     }
 };
 const drawSingleValue = (params, value) => {
-    const { label, x, y } = params;
+    const label = params.label ? params.label : replicaId;
+    const { x, y } = params;
     const Label = newLabel(label);
     const Value = singleValue()
         .width(width)
@@ -149,7 +155,7 @@ const drawSingleValue = (params, value) => {
         .data(localData)
         .value(value);
     const components = [Label, Value];
-    handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
+    addComponents(components, params);
     if (merge) {
         drawMergedReplica();
     }
@@ -158,7 +164,8 @@ const drawSingleValue = (params, value) => {
     }
 };
 const drawCounter = (params, value, P) => {
-    const { label, x, y, color } = params;
+    const label = params.label ? params.label : replicaId;
+    const { x, y, color } = params;
     const Label = newLabel(label);
     const Value = singleValue()
         .width(width)
@@ -180,7 +187,7 @@ const drawCounter = (params, value, P) => {
         .timestamp(P)
         .color(color);
     const components = [Label, Value, P_vector];
-    handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
+    addComponents(components, params);
     if (merge) {
         drawMergedReplica();
     }
@@ -189,7 +196,8 @@ const drawCounter = (params, value, P) => {
     }
 };
 const drawRegister = (params, value, timestamp) => {
-    const { label, x, y, color } = params;
+    const label = params.label ? params.label : replicaId;
+    const { x, y, color } = params;
     const Label = newLabel(replicaId);
     // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
     const elements = value === undefined ? ['undefined'] : [value.toString()];
@@ -203,7 +211,7 @@ const drawRegister = (params, value, timestamp) => {
         .replicaId(replicaId)
         .data(localData);
     const components = [Label, Set];
-    handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
+    addComponents(components, params);
     console.log(handlerMap, 'handlerMap in register');
     if (merge) {
         drawMergedReplica();
@@ -214,7 +222,8 @@ const drawRegister = (params, value, timestamp) => {
     }
 };
 const drawSet = (params, elements, tombstone) => {
-    const { label, x, y, color } = params;
+    const label = params.label ? params.label : replicaId;
+    const { x, y, color } = params;
     const Label = newLabel(label);
     const Set = set()
         .width(width)
@@ -227,7 +236,7 @@ const drawSet = (params, elements, tombstone) => {
         .replicaId(replicaId)
         .data(localData);
     const components = [Label, Set];
-    handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
+    addComponents(components, params);
     if (merge) {
         drawMergedReplica();
     }
@@ -236,7 +245,8 @@ const drawSet = (params, elements, tombstone) => {
     }
 };
 const drawTombstone = (params) => {
-    const { label, x, y, color } = params;
+    const label = params.label ? params.label : replicaId;
+    const { x, y, color } = params;
     const Label = newLabel(label);
     const Tombstone = tombstone()
         .width(width)
@@ -247,7 +257,7 @@ const drawTombstone = (params) => {
         .replicaId(replicaId)
         .data(localData);
     const components = [Label, Tombstone];
-    handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { x: baseX + x, y: yValue(replicaId) + y }));
+    addComponents(components, params);
     if (merge) {
         drawMergedReplica();
     }

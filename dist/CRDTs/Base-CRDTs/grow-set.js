@@ -49,14 +49,14 @@ export default class GrowOnly_Set {
         this.getTimestamp = () => this.timestamp.getVector();
         this.visualize = (params) => {
             const defaultParameters = {
-                label: 'grow-set',
+                label: undefined,
                 x: 0,
                 y: 0,
                 color: '',
                 xMerge: 0,
                 yMerge: 0,
             };
-            drawSet(params === undefined ? defaultParameters : params, Array.from(this.A));
+            drawSet(params === undefined ? defaultParameters : params[0], Array.from(this.A));
         };
         this.A = new Set([]);
         this.pid = pid;

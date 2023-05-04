@@ -29,7 +29,7 @@ export default class LWW_Register {
                 xMerge: 0,
                 yMerge: 0,
             };
-            drawRegister(params === undefined ? defaultParameters : params, this.value(), this.getTimestamp());
+            drawRegister(params === undefined ? defaultParameters : params[0], this.value(), this.getTimestamp());
         };
         this.X = undefined;
         this.pid = pid;

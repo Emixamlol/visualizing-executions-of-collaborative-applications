@@ -21,14 +21,14 @@ export default class LWW_Flag {
         this.getTimestamp = () => this.timestamp.getVector();
         this.visualize = (params) => {
             const defaultParameters = {
-                label: 'flag',
+                label: undefined,
                 x: 0,
                 y: 0,
                 color: '',
-                xMerge: 0,
-                yMerge: 0,
+                xMerge: 150,
+                yMerge: 180,
             };
-            drawFlag(params === undefined ? defaultParameters : params, this.value());
+            drawFlag(params === undefined ? defaultParameters : params[0], this.value());
         };
         this.flag = true;
         this.pid = pid;

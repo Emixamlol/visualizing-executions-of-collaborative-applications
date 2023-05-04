@@ -45,22 +45,26 @@ export default class PN_Counter {
                 xMerge: 60,
                 yMerge: 160,
             }, this.value());
-            this.P.visualize({
-                label: 'P',
-                x: 40,
-                y: 0,
-                color: 'green',
-                xMerge: 60,
-                yMerge: 200,
-            });
-            this.N.visualize({
-                label: 'N',
-                x: 440,
-                y: 0,
-                color: 'blue',
-                xMerge: 60,
-                yMerge: 240,
-            });
+            this.P.visualize([
+                {
+                    label: 'P',
+                    x: 40,
+                    y: 0,
+                    color: 'green',
+                    xMerge: 60,
+                    yMerge: 200,
+                },
+            ]);
+            this.N.visualize([
+                {
+                    label: 'N',
+                    x: 440,
+                    y: 0,
+                    color: 'blue',
+                    xMerge: 60,
+                    yMerge: 240,
+                },
+            ]);
         };
         this.pid = pid;
         this.timestamp = new VectorClock(n);
