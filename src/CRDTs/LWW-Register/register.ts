@@ -49,7 +49,7 @@ export default class LWW_Register implements RegisterInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (params: basicParameters): void => {
+  visualize = (params: Array<basicParameters>): void => {
     const defaultParameters: basicParameters = {
       label: 'register',
       x: 0,
@@ -59,7 +59,7 @@ export default class LWW_Register implements RegisterInterface {
       yMerge: 0,
     };
     drawRegister(
-      params === undefined ? defaultParameters : params,
+      params === undefined ? defaultParameters : params[0],
       this.value(),
       this.getTimestamp()
     );

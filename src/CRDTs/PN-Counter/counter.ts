@@ -71,7 +71,7 @@ export default class PN_Counter implements PN_CounterInterface {
     this.timestamp.getVector(),
   ];
 
-  visualize = (params?: basicParameters): void => {
+  visualize = (params?: Array<basicParameters>): void => {
     drawSingleValue(
       {
         label: 'Value',
@@ -83,21 +83,25 @@ export default class PN_Counter implements PN_CounterInterface {
       },
       this.value()
     );
-    this.P.visualize({
-      label: 'P',
-      x: 40,
-      y: 0,
-      color: 'green',
-      xMerge: 60,
-      yMerge: 200,
-    });
-    this.N.visualize({
-      label: 'N',
-      x: 440,
-      y: 0,
-      color: 'blue',
-      xMerge: 60,
-      yMerge: 240,
-    });
+    this.P.visualize([
+      {
+        label: 'P',
+        x: 40,
+        y: 0,
+        color: 'green',
+        xMerge: 60,
+        yMerge: 200,
+      },
+    ]);
+    this.N.visualize([
+      {
+        label: 'N',
+        x: 440,
+        y: 0,
+        color: 'blue',
+        xMerge: 60,
+        yMerge: 240,
+      },
+    ]);
   };
 }

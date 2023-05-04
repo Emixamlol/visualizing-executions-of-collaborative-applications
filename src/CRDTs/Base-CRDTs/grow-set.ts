@@ -75,9 +75,9 @@ export default class GrowOnly_Set implements SetInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (params?: basicParameters): void => {
+  visualize = (params?: Array<basicParameters>): void => {
     const defaultParameters: basicParameters = {
-      label: 'grow-set',
+      label: undefined,
       x: 0,
       y: 0,
       color: '',
@@ -85,7 +85,7 @@ export default class GrowOnly_Set implements SetInterface {
       yMerge: 0,
     };
     drawSet(
-      params === undefined ? defaultParameters : params,
+      params === undefined ? defaultParameters : params[0],
       Array.from(this.A)
     );
   };

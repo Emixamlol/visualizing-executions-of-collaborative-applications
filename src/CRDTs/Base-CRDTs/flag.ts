@@ -59,15 +59,18 @@ export default class LWW_Flag implements FlagInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (params?: basicParameters): void => {
+  visualize = (params?: Array<basicParameters>): void => {
     const defaultParameters: basicParameters = {
-      label: 'flag',
+      label: undefined,
       x: 0,
       y: 0,
       color: '',
-      xMerge: 0,
-      yMerge: 0,
+      xMerge: 150,
+      yMerge: 180,
     };
-    drawFlag(params === undefined ? defaultParameters : params, this.value());
+    drawFlag(
+      params === undefined ? defaultParameters : params[0],
+      this.value()
+    );
   };
 }

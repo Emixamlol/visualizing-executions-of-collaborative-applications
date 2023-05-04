@@ -54,7 +54,7 @@ export default class Inc_Counter implements Inc_CounterInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (params?: basicParameters): void => {
+  visualize = (params?: Array<basicParameters>): void => {
     const defaultParameters: basicParameters = {
       label: 'P',
       x: 0,
@@ -64,7 +64,7 @@ export default class Inc_Counter implements Inc_CounterInterface {
       yMerge: 0,
     };
     drawCounter(
-      params === undefined ? defaultParameters : params,
+      params === undefined ? defaultParameters : params[0],
       this.value(),
       this.P.slice()
     );

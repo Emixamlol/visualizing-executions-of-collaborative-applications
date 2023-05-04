@@ -68,22 +68,26 @@ export default class TwoPhase_Set implements SetInterface {
 
   getTimestamp = (): number[] => this.timestamp.getVector();
 
-  visualize = (params: basicParameters): void => {
-    this.A.visualize({
-      label: 'A',
-      x: 0,
-      y: 0,
-      color: 'blue',
-      xMerge: 0,
-      yMerge: 0,
-    });
-    this.R.visualize({
-      label: 'R',
-      x: 400,
-      y: 0,
-      color: 'red',
-      xMerge: 0,
-      yMerge: 0,
-    });
+  visualize = (params: Array<basicParameters>): void => {
+    this.A.visualize([
+      {
+        label: 'A',
+        x: 0,
+        y: 0,
+        color: 'blue',
+        xMerge: 0,
+        yMerge: 0,
+      },
+    ]);
+    this.R.visualize([
+      {
+        label: 'R',
+        x: 400,
+        y: 0,
+        color: 'red',
+        xMerge: 0,
+        yMerge: 0,
+      },
+    ]);
   };
 }
