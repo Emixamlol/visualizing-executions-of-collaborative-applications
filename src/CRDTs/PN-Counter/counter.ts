@@ -75,7 +75,7 @@ export default class PN_Counter implements PN_CounterInterface {
     drawSingleValue(
       {
         label: 'Value',
-        x: -35,
+        x: -80,
         y: 0,
         color: undefined,
         xMerge: 60,
@@ -85,7 +85,7 @@ export default class PN_Counter implements PN_CounterInterface {
     );
     this.P.visualize({
       label: 'P',
-      x: 60,
+      x: 40,
       y: 0,
       color: 'green',
       xMerge: 60,
@@ -93,7 +93,7 @@ export default class PN_Counter implements PN_CounterInterface {
     });
     this.N.visualize({
       label: 'N',
-      x: 460,
+      x: 440,
       y: 0,
       color: 'blue',
       xMerge: 60,
