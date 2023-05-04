@@ -108,11 +108,6 @@ export const timestamp = (): ReusableTimestamp => {
             .select('title')
             .text((d) => d)
       );
-
-    console.log(
-      (innerG.node() as SVGGraphicsElement).getBBox(),
-      'inner g bbox'
-    );
   };
 
   my.x = function (_?: number): any {
