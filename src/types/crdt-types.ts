@@ -23,7 +23,7 @@ export interface CRDTInterface {
 
   getTimestamp(): Array<number>;
 
-  visualize(params?: basicParameters): void; // how should the CRDT be visualized in the specific visualization
+  visualize(params?: Array<basicParameters>): void; // how should the CRDT be visualized in the specific visualization
 }
 
 // ------------------------------------------ revisited ------------------------------------------
