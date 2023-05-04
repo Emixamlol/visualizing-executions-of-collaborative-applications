@@ -72,7 +72,6 @@ export const timestamp = () => {
             .attr('fill', color === undefined ? colorScale(replicaId) : color)
             .select('title')
             .text((d) => d));
-        console.log(innerG.node().getBBox(), 'inner g bbox');
     };
     my.x = function (_) {
         return arguments.length ? ((x = _), my) : x;
