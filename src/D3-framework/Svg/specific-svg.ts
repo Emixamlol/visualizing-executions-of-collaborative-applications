@@ -110,6 +110,19 @@ const mergeDone = (): void => {
   merge = false;
 };
 
+const addComponents = (
+  components: ReusableComponents,
+  params: basicParameters
+): void => {
+  const { label, x, y } = params;
+  handlerMap.get(replicaId).addComponents(components, {
+    ...params,
+    label: label ? label : replicaId,
+    x: baseX + x,
+    y: yValue(replicaId) + y,
+  });
+};
+
 // ------------------------- draw methods -------------------------
 
 // ----- help methods -----
@@ -156,9 +169,10 @@ const drawReplicas = (): void => {
 
 // ----- component methods -----
 const drawFlag = (params: basicParameters, enabled: boolean): void => {
-  const { label, x, y, color } = params;
+  const label = params.label ? params.label : replicaId;
+  const { x, y } = params;
 
-  const Label = newLabel(replicaId);
+  const Label = newLabel(label);
 
   const Flag = flag()
     .width(width)
@@ -172,11 +186,7 @@ const drawFlag = (params: basicParameters, enabled: boolean): void => {
 
   const components = [Label, Flag];
 
-  handlerMap.get(replicaId).addComponents(components, {
-    ...params,
-    x: baseX + x,
-    y: yValue(replicaId) + y,
-  });
+  addComponents(components, params);
 
   if (merge) {
     drawMergedReplica();
@@ -186,7 +196,8 @@ const drawFlag = (params: basicParameters, enabled: boolean): void => {
 };
 
 const drawSingleValue = (params: basicParameters, value: number): void => {
-  const { label, x, y } = params;
+  const label = params.label ? params.label : replicaId;
+  const { x, y } = params;
 
   const Label = newLabel(label);
 
@@ -202,11 +213,7 @@ const drawSingleValue = (params: basicParameters, value: number): void => {
 
   const components = [Label, Value];
 
-  handlerMap.get(replicaId).addComponents(components, {
-    ...params,
-    x: baseX + x,
-    y: yValue(replicaId) + y,
-  });
+  addComponents(components, params);
 
   if (merge) {
     drawMergedReplica();
@@ -220,7 +227,8 @@ const drawCounter = (
   value: number,
   P: Array<number>
 ): void => {
-  const { label, x, y, color } = params;
+  const label = params.label ? params.label : replicaId;
+  const { x, y, color } = params;
 
   const Label = newLabel(label);
 
@@ -247,11 +255,7 @@ const drawCounter = (
 
   const components = [Label, Value, P_vector];
 
-  handlerMap.get(replicaId).addComponents(components, {
-    ...params,
-    x: baseX + x,
-    y: yValue(replicaId) + y,
-  });
+  addComponents(components, params);
 
   if (merge) {
     drawMergedReplica();
@@ -265,7 +269,8 @@ const drawRegister = (
   value: string,
   timestamp: Array<number>
 ): void => {
-  const { label, x, y, color } = params;
+  const label = params.label ? params.label : replicaId;
+  const { x, y, color } = params;
 
   const Label = newLabel(replicaId);
 
@@ -285,11 +290,7 @@ const drawRegister = (
 
   const components = [Label, Set];
 
-  handlerMap.get(replicaId).addComponents(components, {
-    ...params,
-    x: baseX + x,
-    y: yValue(replicaId) + y,
-  });
+  addComponents(components, params);
 
   console.log(handlerMap, 'handlerMap in register');
 
@@ -307,7 +308,8 @@ const drawSet = (
   elements: Array<string>,
   tombstone?: Array<string>
 ): void => {
-  const { label, x, y, color } = params;
+  const label = params.label ? params.label : replicaId;
+  const { x, y, color } = params;
 
   const Label = newLabel(label);
 
@@ -324,11 +326,7 @@ const drawSet = (
 
   const components = [Label, Set];
 
-  handlerMap.get(replicaId).addComponents(components, {
-    ...params,
-    x: baseX + x,
-    y: yValue(replicaId) + y,
-  });
+  addComponents(components, params);
 
   if (merge) {
     drawMergedReplica();
@@ -338,7 +336,8 @@ const drawSet = (
 };
 
 const drawTombstone = (params: basicParameters): void => {
-  const { label, x, y, color } = params;
+  const label = params.label ? params.label : replicaId;
+  const { x, y, color } = params;
 
   const Label = newLabel(label);
 
@@ -353,11 +352,7 @@ const drawTombstone = (params: basicParameters): void => {
 
   const components = [Label, Tombstone];
 
-  handlerMap.get(replicaId).addComponents(components, {
-    ...params,
-    x: baseX + x,
-    y: yValue(replicaId) + y,
-  });
+  addComponents(components, params);
 
   if (merge) {
     drawMergedReplica();
