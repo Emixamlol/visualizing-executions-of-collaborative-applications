@@ -27,12 +27,12 @@ export default class Inc_Counter {
         this.getTimestamp = () => this.timestamp.getVector();
         this.visualize = (params) => {
             const defaultParameters = {
-                label: 'P',
+                label: undefined,
                 x: 0,
                 y: 0,
                 color: undefined,
-                xMerge: 0,
-                yMerge: 0,
+                xMerge: 60,
+                yMerge: 200,
             };
             drawCounter(params === undefined ? defaultParameters : params[0], this.value(), this.P.slice());
         };

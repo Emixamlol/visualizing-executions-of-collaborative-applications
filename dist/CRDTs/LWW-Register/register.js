@@ -26,8 +26,8 @@ export default class LWW_Register {
                 x: 0,
                 y: 0,
                 color: '',
-                xMerge: 0,
-                yMerge: 0,
+                xMerge: 100,
+                yMerge: 165,
             };
             drawRegister(params === undefined ? defaultParameters : params[0], this.value(), this.getTimestamp());
         };
