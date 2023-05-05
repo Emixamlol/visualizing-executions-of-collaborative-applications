@@ -30,7 +30,7 @@ export const set = (): ReusableSet => {
 
     const colorScale = d3
       .scaleOrdinal()
-      .domain(replicas)
+      .domain(elements)
       .range(d3.schemePaired);
 
     const t = d3.transition().duration(1000);
@@ -67,7 +67,14 @@ export const set = (): ReusableSet => {
       .join('g')
       .attr('class', htmlClass);
 
-    innerG
+    /**
+     * -----------------------------------------------------------
+     * different visualization options
+     * -----------------------------------------------------------
+     */
+
+    //! current (text representation)
+    /* innerG
       .selectAll(`text.${htmlClass}.${replicaId}`)
       .data([null])
       .join(
@@ -102,7 +109,26 @@ export const set = (): ReusableSet => {
                   .filter((d) => tombstone.includes(d))
                   .attr('fill', 'red')
             )
-      );
+      ); */
+    // !donut chart
+    /*    const da = [9, 20, 30, 8, 12];
+    const pie = d3.pie().value((d) => d[0]).sort(null);
+    const ready_data = pie(elements);
+
+    const arc = d3.arc().innerRadius(100).outerRadius(300)
+
+    innerG
+      .selectAll(`path.${htmlClass}.${replicaId}`)
+      .data(ready_data)
+      .join('')
+      .attr('class', [htmlClass, replicaId].join(' '))
+      .attr('d', arc)
+      .attr('fill', (d) => colorScale(d.data[0]) as string)
+      .attr('stroke', 'black')
+      .attr('stroke-width', '2px')
+      .attr('opacity', 0.7); */
+
+    // treemap
   };
 
   my.x = function (_?: number): any {
