@@ -55,8 +55,8 @@ export default class LWW_Register implements RegisterInterface {
       x: 0,
       y: 0,
       color: '',
-      xMerge: 0,
-      yMerge: 0,
+      xMerge: 100,
+      yMerge: 165,
     };
     drawRegister(
       params === undefined ? defaultParameters : params[0],
