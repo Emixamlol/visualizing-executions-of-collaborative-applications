@@ -180,7 +180,8 @@ const delay = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-const demo = async () => {
+// DEMO 1
+/* const demo = async () => {
   addProxy('p', CRDTtype.counter, ['5', '0']);
   await delay(1000);
   replicateProxy('p', 'p2');
@@ -190,6 +191,21 @@ const demo = async () => {
   applyToProxy('p', 'increment', []);
   await delay(1000);
   mergeProxy('p2', 'p');
+};
+
+demo(); */
+
+// DEMO 2
+const demo = async () => {
+  addProxy('gs', CRDTtype.grow_set, ['5', '0']);
+  await delay(1000);
+  replicateProxy('gs', 'gs2');
+  await delay(1000);
+  addProxy('x', CRDTtype.register, ['4', '0']);
+  // await delay(1000);
+  // applyToProxy('gs', 'add', ['element']);
+  // await delay(1000);
+  // mergeProxy('gs2', 'gs');
 };
 
 demo();
