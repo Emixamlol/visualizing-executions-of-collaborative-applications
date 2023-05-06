@@ -152,8 +152,8 @@ export interface ReusableFlag extends LibraryReusableInterface<ReusableFlag> {
 
 export interface ReusableSingleValue
   extends LibraryReusableInterface<ReusableSingleValue> {
-  value(): number;
-  value(value: number): ReusableSingleValue;
+  value(): number | string;
+  value(value: number | string): ReusableSingleValue;
 }
 
 export interface ReusableSet extends LibraryReusableInterface<ReusableSet> {
