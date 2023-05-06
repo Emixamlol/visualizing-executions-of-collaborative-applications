@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { Data, margin, ReusableSet } from '../../../types/d3-framework-types';
 import { ID } from '../../../types/proxy-types';
+import { StringToColor } from '../../../Utils/stringToColor';
 
 export const set = (): ReusableSet => {
   let x: number;
@@ -46,7 +47,20 @@ export const set = (): ReusableSet => {
       .join('g')
       .attr('class', replicaId);
 
-    const spawnElement = (tspan) => {
+    innerG = g
+      .selectAll(`g.${htmlClass}`)
+      .data([null])
+      .join('g')
+      .attr('class', htmlClass);
+
+    /**
+     * -----------------------------------------------------------
+     * different visualization options
+     * -----------------------------------------------------------
+     */
+
+    //! (text representation)
+    /*     const spawnElement = (tspan) => {
       tspan.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
     };
 
@@ -61,20 +75,7 @@ export const set = (): ReusableSet => {
         .call((tspan) => tspan.text((d) => d));
     };
 
-    innerG = g
-      .selectAll(`g.${htmlClass}`)
-      .data([null])
-      .join('g')
-      .attr('class', htmlClass);
-
-    /**
-     * -----------------------------------------------------------
-     * different visualization options
-     * -----------------------------------------------------------
-     */
-
-    //! current (text representation)
-    /* innerG
+    innerG
       .selectAll(`text.${htmlClass}.${replicaId}`)
       .data([null])
       .join(
@@ -111,24 +112,54 @@ export const set = (): ReusableSet => {
             )
       ); */
     // !donut chart
-    /*    const da = [9, 20, 30, 8, 12];
-    const pie = d3.pie().value((d) => d[0]).sort(null);
-    const ready_data = pie(elements);
+    const reworked: Array<{ el: string; num: 1 }> = elements.map((str) => ({
+      el: str,
+      num: 1,
+    }));
+    const pie = d3.pie<{ el: string; num: 1 }>().value((d) => d.num);
+    const ready_data = pie(reworked);
 
-    const arc = d3.arc().innerRadius(100).outerRadius(300)
+    const arc = d3
+      .arc<d3.PieArcDatum<{ el: string; num: 1 }>>()
+      .innerRadius(0)
+      .outerRadius(20);
+
+    console.log(ready_data, 'ready data');
+
+    const spawnElement = (enter) => {
+      enter.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
+    };
+
+    const positionSet = (enter) => {
+      enter
+        .attr('transform', `translate(${x + 20}, ${y})`)
+        .attr('fill', (d) => StringToColor(d.data.el))
+        .attr('stroke', 'black')
+        .attr('stroke-width', '2px')
+        .attr('opacity', 0.7);
+    };
 
     innerG
-      .selectAll(`path.${htmlClass}.${replicaId}`)
+      .selectAll('path')
       .data(ready_data)
-      .join('')
-      .attr('class', [htmlClass, replicaId].join(' '))
-      .attr('d', arc)
-      .attr('fill', (d) => colorScale(d.data[0]) as string)
-      .attr('stroke', 'black')
-      .attr('stroke-width', '2px')
-      .attr('opacity', 0.7); */
+      .join(
+        (enter) =>
+          enter
+            .append('path')
+            .attr('class', (d) => d.data.el)
+            .attr('d', arc)
+            .call(positionSet)
+            .call(spawnElement),
+        (update) => update.attr('d', arc).call(positionSet).call(spawnElement)
+      );
+
+    elements.forEach((str) =>
+      console.log(StringToColor(str), 'string to color')
+    );
 
     // treemap
+
+    // circular packing
   };
 
   my.x = function (_?: number): any {
