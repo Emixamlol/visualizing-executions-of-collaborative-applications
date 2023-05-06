@@ -18,8 +18,8 @@ const labelX = margin.left * 2 + 50;
 const baseX = labelX + 50;
 const svgClass = 'specific-svg';
 // local information
-let objecId = 'p'; // the id of the conceptual object represented by several replicas
-let replicaId = 'p'; // the id of the current CRDT replica being visualized
+let objecId; // = 'p'; // the id of the conceptual object represented by several replicas
+let replicaId; // = 'p'; // the id of the current CRDT replica being visualized
 let localData = [];
 let replicas;
 let startHeights;
@@ -42,7 +42,7 @@ const mergeG = svg.append('g').attr('class', 'merge');
 // update objectId
 const sendObjectId = (id) => {
     console.log(`objectId = ${objecId}, sent id = ${id}`);
-    if (objecId !== id) {
+    if (objecId !== id && objecId !== undefined) {
         svg.selectChildren('*').filter(':not(g.merge)').remove();
         mergeG.selectChildren('*').remove();
         handlerMap.clear();
@@ -56,6 +56,7 @@ const sendReplicaId = (id) => {
         const g = svg.append('g').attr('class', id);
         const handler = new componentHandling(g);
         handlerMap.set(id, handler);
+        console.log(handlerMap, 'handlermap');
     }
     mergeG.selectChildren('*').remove();
 };
@@ -81,6 +82,7 @@ const mergeDone = () => {
 };
 const addComponents = (components, params) => {
     const { label, x, y } = params;
+    console.log(handlerMap, 'handlermap');
     handlerMap.get(replicaId).addComponents(components, Object.assign(Object.assign({}, params), { label: label ? label : replicaId, x: baseX + x, y: yValue(replicaId) + y }));
 };
 // ------------------------- draw methods -------------------------
@@ -200,17 +202,26 @@ const drawRegister = (params, value, timestamp) => {
     const { x, y, color } = params;
     const Label = newLabel(replicaId);
     // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
-    const elements = value === undefined ? ['undefined'] : [value.toString()];
-    const Set = set()
+    // const elements = value === undefined ? ['undefined'] : [value.toString()];
+    /* const Set = set()
+      .width(width)
+      .height(height)
+      .margin(margin)
+      .x(baseX)
+      .y(yValue(replicaId))
+      .elements(elements)
+      .replicaId(replicaId)
+      .data(localData); */
+    const Value = singleValue()
         .width(width)
         .height(height)
         .margin(margin)
-        .x(baseX)
+        .x(x)
         .y(yValue(replicaId))
-        .elements(elements)
         .replicaId(replicaId)
-        .data(localData);
-    const components = [Label, Set];
+        .data(localData)
+        .value(value === undefined ? 'undefined' : value);
+    const components = [Label, Value]; //Set];
     addComponents(components, params);
     console.log(handlerMap, 'handlerMap in register');
     if (merge) {
@@ -224,6 +235,8 @@ const drawRegister = (params, value, timestamp) => {
 const drawSet = (params, elements, tombstone) => {
     const label = params.label ? params.label : replicaId;
     const { x, y, color } = params;
+    console.log('drawing set');
+    console.log(`${label}, ${x}, ${y}, ${color}`, 'label, x, y, color');
     const Label = newLabel(label);
     const Set = set()
         .width(width)
@@ -236,6 +249,7 @@ const drawSet = (params, elements, tombstone) => {
         .replicaId(replicaId)
         .data(localData);
     const components = [Label, Set];
+    console.log(components, 'components');
     addComponents(components, params);
     if (merge) {
         drawMergedReplica();

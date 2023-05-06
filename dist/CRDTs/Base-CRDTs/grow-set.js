@@ -53,8 +53,8 @@ export default class GrowOnly_Set {
                 x: 0,
                 y: 0,
                 color: '',
-                xMerge: 0,
-                yMerge: 0,
+                xMerge: 150,
+                yMerge: 180,
             };
             drawSet(params === undefined ? defaultParameters : params[0], Array.from(this.A));
         };

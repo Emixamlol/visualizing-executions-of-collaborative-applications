@@ -166,16 +166,31 @@ export const visualizeCRDT = (id) => {
 const delay = (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
 };
+// DEMO 1
+/* const demo = async () => {
+  addProxy('p', CRDTtype.counter, ['5', '0']);
+  await delay(1000);
+  replicateProxy('p', 'p2');
+  await delay(1000);
+  addProxy('x', CRDTtype.register, ['4', '0']);
+  await delay(1000);
+  applyToProxy('p', 'increment', []);
+  await delay(1000);
+  mergeProxy('p2', 'p');
+};
+
+demo(); */
+// DEMO 2
 const demo = () => __awaiter(void 0, void 0, void 0, function* () {
-    addProxy('p', CRDTtype.counter, ['5', '0']);
+    addProxy('gs', CRDTtype.grow_set, ['5', '0']);
     yield delay(1000);
-    replicateProxy('p', 'p2');
+    replicateProxy('gs', 'gs2');
     yield delay(1000);
     addProxy('x', CRDTtype.register, ['4', '0']);
-    yield delay(1000);
-    applyToProxy('p', 'increment', []);
-    yield delay(1000);
-    mergeProxy('p2', 'p');
+    // await delay(1000);
+    // applyToProxy('gs', 'add', ['element']);
+    // await delay(1000);
+    // mergeProxy('gs2', 'gs');
 });
 demo();
 /* const firstElement = <Type>(arr: Type[]): Type | undefined => {

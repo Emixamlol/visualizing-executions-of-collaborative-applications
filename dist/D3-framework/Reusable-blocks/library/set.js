@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { StringToColor } from '../../../Utils/stringToColor';
 export const set = () => {
     let x;
     let y;
@@ -29,20 +30,6 @@ export const set = () => {
             .data([null])
             .join('g')
             .attr('class', replicaId);
-        const spawnElement = (tspan) => {
-            tspan.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
-        };
-        const positionSet = (tspan) => {
-            tspan
-                .attr('class', [htmlClass, replicaId].join(' '))
-                .attr('x', x)
-                .attr('y', (d, i) => y + i * 20)
-                .attr('fill', (d) => {
-                if (tombstone.includes(d))
-                    return 'red';
-            })
-                .call((tspan) => tspan.text((d) => d));
-        };
         innerG = g
             .selectAll(`g.${htmlClass}`)
             .data([null])
@@ -53,8 +40,23 @@ export const set = () => {
          * different visualization options
          * -----------------------------------------------------------
          */
-        //! current (text representation)
-        /* innerG
+        //! (text representation)
+        /*     const spawnElement = (tspan) => {
+          tspan.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
+        };
+    
+        const positionSet = (tspan) => {
+          tspan
+            .attr('class', [htmlClass, replicaId].join(' '))
+            .attr('x', x)
+            .attr('y', (d, i) => y + i * 20)
+            .attr('fill', (d) => {
+              if (tombstone.includes(d)) return 'red';
+            })
+            .call((tspan) => tspan.text((d) => d));
+        };
+    
+        innerG
           .selectAll(`text.${htmlClass}.${replicaId}`)
           .data([null])
           .join(
@@ -91,23 +93,40 @@ export const set = () => {
                 )
           ); */
         // !donut chart
-        /*    const da = [9, 20, 30, 8, 12];
-        const pie = d3.pie().value((d) => d[0]).sort(null);
-        const ready_data = pie(elements);
-    
-        const arc = d3.arc().innerRadius(100).outerRadius(300)
-    
+        const reworked = elements.map((str) => ({
+            el: str,
+            num: 1,
+        }));
+        const pie = d3.pie().value((d) => d.num);
+        const ready_data = pie(reworked);
+        const arc = d3
+            .arc()
+            .innerRadius(0)
+            .outerRadius(20);
+        console.log(ready_data, 'ready data');
+        const spawnElement = (enter) => {
+            enter.attr('fill-opacity', 0).transition(t).attr('fill-opacity', 1);
+        };
+        const positionSet = (enter) => {
+            enter
+                .attr('transform', `translate(${x + 20}, ${y})`)
+                .attr('fill', (d) => StringToColor(d.data.el))
+                .attr('stroke', 'black')
+                .attr('stroke-width', '2px')
+                .attr('opacity', 0.7);
+        };
         innerG
-          .selectAll(`path.${htmlClass}.${replicaId}`)
-          .data(ready_data)
-          .join('')
-          .attr('class', [htmlClass, replicaId].join(' '))
-          .attr('d', arc)
-          .attr('fill', (d) => colorScale(d.data[0]) as string)
-          .attr('stroke', 'black')
-          .attr('stroke-width', '2px')
-          .attr('opacity', 0.7); */
+            .selectAll('path')
+            .data(ready_data)
+            .join((enter) => enter
+            .append('path')
+            .attr('class', (d) => d.data.el)
+            .attr('d', arc)
+            .call(positionSet)
+            .call(spawnElement), (update) => update.attr('d', arc).call(positionSet).call(spawnElement));
+        elements.forEach((str) => console.log(StringToColor(str), 'string to color'));
         // treemap
+        // circular packing
     };
     my.x = function (_) {
         return arguments.length ? ((x = _), my) : x;
