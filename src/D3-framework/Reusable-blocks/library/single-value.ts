@@ -15,7 +15,7 @@ export const singleValue = (): ReusableSingleValue => {
   let replicaId: ID;
   let data: Data;
   let color: string;
-  let value: number;
+  let value: number | string;
   let innerG: d3.Selection<
     d3.BaseType | SVGGElement,
     any,
