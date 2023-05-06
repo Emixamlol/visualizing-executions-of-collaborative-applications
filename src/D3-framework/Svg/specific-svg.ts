@@ -31,8 +31,8 @@ const baseX = labelX + 50;
 const svgClass = 'specific-svg';
 
 // local information
-let objecId: ID = 'p'; // the id of the conceptual object represented by several replicas
-let replicaId: ID = 'p'; // the id of the current CRDT replica being visualized
+let objecId: ID; // = 'p'; // the id of the conceptual object represented by several replicas
+let replicaId: ID; // = 'p'; // the id of the current CRDT replica being visualized
 let localData: Data = [];
 let replicas: Array<ID>;
 let startHeights: Array<number>;
@@ -60,7 +60,7 @@ const mergeG = svg.append('g').attr('class', 'merge');
 // update objectId
 const sendObjectId = (id: ID): void => {
   console.log(`objectId = ${objecId}, sent id = ${id}`);
-  if (objecId !== id) {
+  if (objecId !== id && objecId !== undefined) {
     svg.selectChildren('*').filter(':not(g.merge)').remove();
     mergeG.selectChildren('*').remove();
     handlerMap.clear();
@@ -75,6 +75,7 @@ const sendReplicaId = (id: ID): void => {
     const g = svg.append('g').attr('class', id);
     const handler = new componentHandling(g);
     handlerMap.set(id, handler);
+    console.log(handlerMap, 'handlermap');
   }
   mergeG.selectChildren('*').remove();
 };
@@ -115,6 +116,8 @@ const addComponents = (
   params: basicParameters
 ): void => {
   const { label, x, y } = params;
+  console.log(handlerMap, 'handlermap');
+
   handlerMap.get(replicaId).addComponents(components, {
     ...params,
     label: label ? label : replicaId,
@@ -276,9 +279,9 @@ const drawRegister = (
 
   // [1,2,3].toString().split(',').map(el => parseInt(el)) = [1,2,3]
 
-  const elements = value === undefined ? ['undefined'] : [value.toString()];
+  // const elements = value === undefined ? ['undefined'] : [value.toString()];
 
-  const Set = set()
+  /* const Set = set()
     .width(width)
     .height(height)
     .margin(margin)
@@ -286,9 +289,19 @@ const drawRegister = (
     .y(yValue(replicaId))
     .elements(elements)
     .replicaId(replicaId)
-    .data(localData);
+    .data(localData); */
 
-  const components = [Label, Set];
+  const Value = singleValue()
+    .width(width)
+    .height(height)
+    .margin(margin)
+    .x(x)
+    .y(yValue(replicaId))
+    .replicaId(replicaId)
+    .data(localData)
+    .value(value === undefined ? 'undefined' : value);
+
+  const components = [Label, Value]; //Set];
 
   addComponents(components, params);
 
@@ -311,6 +324,9 @@ const drawSet = (
   const label = params.label ? params.label : replicaId;
   const { x, y, color } = params;
 
+  console.log('drawing set');
+  console.log(`${label}, ${x}, ${y}, ${color}`, 'label, x, y, color');
+
   const Label = newLabel(label);
 
   const Set = set()
@@ -325,6 +341,8 @@ const drawSet = (
     .data(localData);
 
   const components = [Label, Set];
+
+  console.log(components, 'components');
 
   addComponents(components, params);
 
